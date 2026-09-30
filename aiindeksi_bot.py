@@ -447,15 +447,69 @@ def handle(msg, db):
             yozuv["nomer"], yozuv["ism"], yozuv["fakultet"], yozuv["kurs"]))
     return YAKUN.format(**yozuv), kanal_kb()
 
+
+# ─────────────────── WEB QATLAM (Render free uchun) ───────────────────
+def make_server(get_db):
+    """Mini app (/), health check (/healthz) va jonli statistika (/stats.json)."""
+    from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
+    MINI = os.path.join(HERE, "miniapp", "index.html")
+
+    class H(BaseHTTPRequestHandler):
+        protocol_version = "HTTP/1.1"
+        def log_message(self, *a):
+            pass
+        def _send(self, code, body, ctype):
+            b = body.encode("utf-8") if isinstance(body, str) else body
+            self.send_response(code)
+            self.send_header("Content-Type", ctype)
+            self.send_header("Content-Length", str(len(b)))
+            self.send_header("Cache-Control", "no-store")
+            self.end_headers()
+            self.wfile.write(b)
+        def do_GET(self):
+            p = self.path.split("?")[0]
+            if p in ("/", "/index.html"):
+                try:
+                    with open(MINI, encoding="utf-8") as f:
+                        self._send(200, f.read(), "text/html; charset=utf-8")
+                except OSError:
+                    self._send(404, "miniapp topilmadi", "text/plain")
+            elif p == "/healthz":
+                self._send(200, '{"ok":true}', "application/json")
+            elif p == "/stats.json":
+                db = get_db()
+                fak, kurs = {}, {}
+                for u in db["users"].values():
+                    fak[u.get("fakultet", "?")] = fak.get(u.get("fakultet", "?"), 0) + 1
+                    kurs[u.get("kurs", "?")] = kurs.get(u.get("kurs", "?"), 0) + 1
+                self._send(200, json.dumps(
+                    {"members": len(db["users"]), "fakultet": fak, "kurs": kurs,
+                     "updated": time.strftime("%Y-%m-%d %H:%M", time.gmtime())},
+                    ensure_ascii=False), "application/json; charset=utf-8")
+            else:
+                self._send(404, "not found", "text/plain")
+
+    port = int(os.environ.get("PORT", "8000"))
+    return ThreadingHTTPServer(("0.0.0.0", port), H)
+
+def keep_alive(url):
+    """Render free web service uyquga ketmasligi uchun o'z-o'zini pinglab turadi."""
+    while True:
+        time.sleep(240)
+        try:
+            urllib.request.urlopen(url + "/healthz", timeout=15).read()
+        except Exception:
+            pass
+
 # ─────────────────────────── LONG-POLLING / DEMO / TEST ───────────────────────────
-def poll():
+def poll(db=None):
+    db = db or db_load()
     if not TOKEN:
         raise SystemExit("TOKEN topilmadi! Qarang: fayl boshidagi yo'riqnoma "
                          "(yoki --demo bilan sinab ko'ring).")
     log.info("Bot ishga tushdi (long-polling). DB: %s | kanal: %s | adminlar: %s",
              DB_PATH, CHANNEL or "(sozlanmagan)", sorted(ADMIN_IDS))
     offset = 0
-    db = db_load()
     while True:
         nat = tg("getUpdates", timeout=POLL_TIMEOUT, offset=offset,
                  allowed_updates='["message"]')
@@ -541,5 +595,16 @@ if __name__ == "__main__":
         test()
     elif DEMO:
         demo()
+    elif os.environ.get("PORT"):
+        import threading
+        db = db_load()
+        threading.Thread(target=poll, kwargs={"db": db}, daemon=True).start()
+        su = os.environ.get("SELF_URL", "").strip().rstrip("/")
+        if su:
+            threading.Thread(target=keep_alive, args=(su,), daemon=True).start()
+            log.info("Keep-alive yoqildi: %s", su)
+        log.info("Web rejim: mini app / , /healthz , /stats.json (port %s)",
+                 os.environ.get("PORT"))
+        make_server(lambda: db).serve_forever()
     else:
         poll()

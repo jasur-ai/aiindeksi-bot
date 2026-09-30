@@ -52,6 +52,9 @@
 <div class="card">Sertifikat + maqola yo'li + ijtimoiy faollik hujjati.</div>
 </div>
 
+<h2>📊 Jonli statistika</h2>
+<div class="card" id="live">Yuklanmoqda…</div>
+
 <h2>❓ Savollar</h2>
 <details class="card"><summary>Kafolat bormi?</summary><p>Yo'q — va bu halollik. Biz imkoniyat va isbotlovchi hujjat beramiz; qaror komissiyalarda. Mezonlarni o'zing tekshir: VMQ 149-son.</p></details>
 <details class="card"><summary>Vaqtim yo'q</summary><p>Minimal rejim oyiga 3 soat. Natija baribir hisobotga va davomatga kiradi.</p></details>
@@ -91,6 +94,13 @@ if (tg) {
   document.getElementById('join').href = 'https://t.me/aiindeksi_bot?start=miniapp';
   document.getElementById('chan').href = 'https://t.me/Raqamli_tadqiqot';
 }
+fetch('/stats.json').then(function(r){return r.json();}).then(function(d){
+  var top = Object.keys(d.fakultet||{}).sort(function(a,b){return d.fakultet[b]-d.fakultet[a];}).slice(0,3)
+    .map(function(k){return k+' — '+d.fakultet[k];}).join(' · ');
+  document.getElementById('live').innerHTML =
+    '👥 A\'zolar: <b>'+d.members+'</b>  ·  🎓 kurslar: '+Object.keys(d.kurs||{}).length+
+    '<br>🏛 Yetakchi fakultetlar: '+(top||'hali yo\'q — birinchi bo\'l!')+'<br><span style="color:var(--mut);font-size:11px">yangilangan: '+d.updated+' UTC</span>';
+}).catch(function(){ document.getElementById('live').innerHTML = 'Statistika tez orada.'; });
 </script>
 </body>
 </html>
