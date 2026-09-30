@@ -1,0 +1,9 @@
+token.txt
+admin.txt
+channel.txt
+secrets.txt
+*.json
+*.csv
+*.xlsx
+__pycache__/
+*.log

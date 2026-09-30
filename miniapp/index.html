@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>AI INDEKSI klubi — TDIU</title>
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
+<style>
+  :root{--bg:#ffffff;--fg:#131313;--card:#f4f6fa;--accent:#1F3864;--accent2:#C00000;--ok:#2E752E;--mut:#595959;}
+  *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+  body{font-family:-apple-system,'Segoe UI',Roboto,sans-serif;background:var(--bg);color:var(--fg);padding:14px 14px 90px}
+  .hero{background:linear-gradient(135deg,#1F3864,#2E5490);color:#fff;border-radius:16px;padding:18px;margin-bottom:14px}
+  .hero .num{font-size:40px;font-weight:800;letter-spacing:-1px}
+  .hero .sub{font-size:13px;opacity:.92;margin-top:4px;line-height:1.45}
+  .tag{display:inline-block;background:rgba(255,255,255,.16);border-radius:20px;padding:3px 10px;font-size:11px;margin-top:8px}
+  h2{font-size:15px;margin:16px 0 8px;color:var(--accent)}
+  .card{background:var(--card);border-radius:14px;padding:12px 14px;margin-bottom:8px;font-size:13.5px;line-height:1.5}
+  .card b{color:var(--accent)}
+  .card .g{color:var(--ok);font-weight:700}
+  details.card summary{cursor:pointer;font-weight:700;color:var(--accent);list-style:none}
+  details.card summary::after{content:' ＋';color:var(--mut)}
+  details[open].card summary::after{content:' －'}
+  details.card p{margin-top:8px;color:var(--mut)}
+  .btn{display:block;width:100%;border:none;border-radius:14px;padding:14px;font-size:15px;font-weight:700;margin-top:10px;cursor:pointer;text-align:center;text-decoration:none}
+  .btn.main{background:var(--accent);color:#fff}
+  .btn.sec{background:var(--card);color:var(--accent)}
+  .steps{counter-reset:s}
+  .steps .card::before{counter-increment:s;content:counter(s);display:inline-block;width:22px;height:22px;line-height:22px;text-align:center;border-radius:50%;background:var(--accent);color:#fff;font-size:12px;font-weight:700;margin-right:8px}
+  .foot{margin-top:18px;font-size:11px;color:var(--mut);line-height:1.6;text-align:center}
+  .bar{position:fixed;bottom:0;left:0;right:0;background:var(--bg);padding:10px 14px calc(10px + env(safe-area-inset-bottom));box-shadow:0 -2px 10px rgba(0,0,0,.06)}
+</style>
+</head>
+<body>
+<div class="hero">
+  <div class="num">30 / 60</div>
+  <div class="sub">O'zbekiston bank sektorining AI ochiqligi: 60 o'lchov nuqtasidan 30 tasi bo'sh.
+  Bo'sh katakchalarni <b>sen</b> to'ldirasan.</div>
+  <span class="tag">AI INDEKSI klubi · TDIU · ADRL</span>
+</div>
+
+<h2>💰 Senga nima beradi?</h2>
+<div class="card"><span class="g">1. Kontrakt → grant.</span> VMQ 149: ijtimoiy faollik uchun <b>20 ball</b>, 02-mezon = to'garak. Ballar tif.tsue.uz da.</div>
+<div class="card"><span class="g">2. Nomdor stipendiya</span> (~1,6 mln so'm) va <span class="g">Prezident stipendiyasi</span> (~2,4 mln): talab — 2 ta maqola + faollik. Baza bizda.</div>
+<div class="card"><span class="g">3. Magistratura:</span> testda «ilmiy maqola yozish ko'nikmalari» bloki, suhbatda 50 ball — ikkalasiga ham tayyorlaymiz.</div>
+<div class="card"><span class="g">4. Karyera:</span> milliy AAI-UZ hisobotida mualliflik + bank/IT kontakt + tavsiyanoma.</div>
+
+<h2>🪜 Qanday qo'shilasan?</h2>
+<div class="steps">
+<div class="card">Botda 40 soniyalik ro'yxat: ism, fakultet, kurs, yo'nalish.</div>
+<div class="card">Oyiga ~3 soat: bitta bank, bitta o'lchov katakchasi.</div>
+<div class="card">Isming choraklik hisobot mualliflari ro'yxatiga kiradi.</div>
+<div class="card">Sertifikat + maqola yo'li + ijtimoiy faollik hujjati.</div>
+</div>
+
+<h2>❓ Savollar</h2>
+<details class="card"><summary>Kafolat bormi?</summary><p>Yo'q — va bu halollik. Biz imkoniyat va isbotlovchi hujjat beramiz; qaror komissiyalarda. Mezonlarni o'zing tekshir: VMQ 149-son.</p></details>
+<details class="card"><summary>Vaqtim yo'q</summary><p>Minimal rejim oyiga 3 soat. Natija baribir hisobotga va davomatga kiradi.</p></details>
+<details class="card"><summary>IT bilmayman</summary><p>Kod shart emas: qidirish, solishtirish, jadvalga yozish. Excel yetarli.</p></details>
+<details class="card"><summary>Pul to'laymanmi?</summary><p>Yo'q. Nizom 9.2: badal taqiqlangan. Nashrlar ham bepul.</p></details>
+
+<h2>📣 Birinchi ochiq uchrashuv</h2>
+<div class="card"><b>[KUN], [SOAT] · [XONA]</b><br>60 daqiqa: 30/60 natijasi jonli → bo'sh katakni birga to'ldiramiz → botni jonli sinov. Kelganlar — mualliflar ro'yxatiga.</div>
+
+<div class="bar">
+  <a class="btn main" id="join" href="#">✅ Ro'yxatdan o'tish (bot)</a>
+  <a class="btn sec" id="chan" href="#">📣 Kanalga a'zo bo'lish</a>
+</div>
+
+<div class="foot">Klub faqat OCHIQ manbalar bilan ishlaydi · A'zolik BEPUL<br>ADRL — Applied Digital Research Lab · AAI-UZ</div>
+
+<script>
+var tg = window.Telegram && window.Telegram.WebApp;
+if (tg) {
+  tg.ready(); tg.expand();
+  var tp = tg.themeParams;
+  if (tp && tp.bg_color) {
+    var r = document.documentElement.style;
+    r.setProperty('--bg', tp.bg_color); r.setProperty('--fg', tp.text_color || '#131313');
+    r.setProperty('--card', tp.secondary_bg_color || '#f4f6fa');
+    r.setProperty('--mut', tp.hint_color || '#595959');
+  }
+  document.getElementById('join').onclick = function(e){
+    e.preventDefault();
+    tg.openTelegramLink('https://t.me/aiindeksi_bot?start=miniapp');
+  };
+  document.getElementById('chan').onclick = function(e){
+    e.preventDefault();
+    tg.openTelegramLink('https://t.me/Raqamli_tadqiqot');
+  };
+} else {
+  document.getElementById('join').href = 'https://t.me/aiindeksi_bot?start=miniapp';
+  document.getElementById('chan').href = 'https://t.me/Raqamli_tadqiqot';
+}
+</script>
+</body>
+</html>
