@@ -87,7 +87,11 @@ START_MATN = (
     "va fanga hissa.\n\n"
     "Ro'yxatdan o'tish 4 savoldan iborat (≈40 soniya):\n"
     "  1) ism-familiya\n  2) fakultet\n  3) kurs\n  4) ta'lim yo'nalishi\n\n"
-    "Boshlaymizmi? Ism-familiangizni yozing ✍️"
+    "Boshlaymizmi? Ism-familiangizni yozing ✍️\n\n"
+    "⚖️ Maxfiylik: saqlanadigani faqat ism, fakultet, kurs, yo'nalish va "
+    "Telegram ID — klub reyestri uchun (Nizom, 8-bo'lim). Ro'yxatdan o'tish "
+    "orqali rozilik bildirasiz. Ko'rish: /holat · O'chirish: /bekor · "
+    "Batafsil: /maxfiylik"
 )
 SAVOLAR = [
     ("ism",      "1/4  ·  Ism-familiangizni yozing:\nMasalan: Aliyeva Malika Rashidovna"),
@@ -132,11 +136,26 @@ FOYDA_MATN = (
     "komissiyada, hujjat bizda.\n\n"
     "Bizda halollik qoida: va'da bermaymiz — ko'rsatamiz. Ro'yxatdan o'tish: /start"
 )
+MAXFIYLIK_MATN = (
+    "⚖️ MA'LUMOTLAR SIYOSATI (qisqa)\n\n"
+    "1. Saqlanadi: ism, fakultet, kurs, yo'nalish, Telegram ID, sana. Boshqa "
+    "hech narsa (telefon, passport, joylashuv SO'RALMAYDI).\n"
+    "2. Maqsad: klub reyestri, davomat va Ijtimoiy faollik indeksi hujjatlari "
+    "(Nizom, 8-bo'lim). Uchinchi shaxsga berilmaydi.\n"
+    "3. Huquqlaringiz: /holat (ko'rish), /bekor (o'chirish) — istalgan payt, "
+    "savolsiz.\n"
+    "4. Server: bot vaqtincha xorijiy hostingda (Render). Chorak yakunida "
+    "reyestr universitetdagi rasmiy saqlovga topshiriladi va bot bazasi "
+    "tozalanadi (ZRU-547, 27-1-modda talabiga intilamiz).\n"
+    "5. Hodisa bo'lsa (token/database ochilsa): 24 soat ichida kanalda ochiq "
+    "e'lon va parol almashtirish protsedurasi ishlaydi."
+)
 HELP_MATN = (
     "📘 Buyruqlar:\n"
     "/start — ro'yxatdan o'tishni boshlash\n"
     "/foyda — menga nima beradi? (6 ta aniq foyda)\n"
     "/holat — mening yozuvim\n"
+    "/maxfiylik — ma'lumotlar siyosati\n"
     "/bekor — jarayonni bekor qilish / yozuvni o'chirish\n"
     "/help  — shu ro'yxat\n\n"
     "Admin uchun: /statlar, /export (CSV+XLSX), /elon (kanalga e'lon)\n\n"
@@ -346,9 +365,32 @@ def statlar(db):
     q += ["  • %s — %d" % (k, v) for k, v in sorted(kurs.items(), key=lambda kv: str(kv[0]))]
     return "\n".join(q), None
 
+def flood_guard(chat_id, db):
+    if TEST or DEMO:
+        return False, False
+    """60 soniyada 6+ xabar → 10 daqiqalik tanaffus (spam/flood himoyasi)."""
+    now = time.time()
+    fl = db.setdefault("flood", {})
+    cool = fl.get("cool", {})
+    if cool.get(str(chat_id), 0) > now:
+        return False, True          # sovutish davri: jim o'tkazamiz
+    arr = [t for t in fl.setdefault(str(chat_id), []) if now - t < 60]
+    arr.append(now)
+    fl[str(chat_id)] = arr[-8:]
+    if len(arr) >= 6:
+        cool[str(chat_id)] = now + 600
+        return True, False
+    return False, False
+
 def handle(msg, db):
     chat_id = msg["chat"]["id"]
     matn = (msg.get("text") or "").strip()
+    blok, jim = flood_guard(chat_id, db)
+    if blok:
+        return (" Juda tez yozmoqdasiz — 10 daqiqa tanaffus. "
+                "Bot ham, operator ham odam 🙂", None)
+    if jim:
+        return None, None
     st = db["state"].get(str(chat_id))
 
     if matn == "/start":
@@ -370,6 +412,8 @@ def handle(msg, db):
         return HELP_MATN, None
     if matn in ("/foyda", "/benefit", "/foida"):
         return FOYDA_MATN, None
+    if matn in ("/maxfiylik", "/privacy"):
+        return MAXFIYLIK_MATN, None
     if matn == "/holat":
         return holat(chat_id, db)
     if matn in ("/bekor", "/cancel"):
