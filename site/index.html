@@ -43,8 +43,8 @@
   --shadowL:0 2px 4px rgba(0,0,0,.4),0 24px 60px -20px rgba(0,0,0,.7);
   --glow:rgba(var(--accR),.14);
 }
-:root{--navy:#5A2509;--navy2:#B34A12;--navy3:#2A1105;--blue:#D9541A;--acc:#FF9A4D;--accR:255,154,77;--navyR:90,37,9;--pri:#C64C14;--bg:#ECEAE6;--surf:#F5F3EF;--surf2:#E4E0DA;--ink:#1A1714;--ink2:#38322C;--muted:#665F57;--line:#D9D3CB;--line2:#CAC2B8;--cellE:#DFD9D1;--cellF:linear-gradient(135deg,#F07A30,#CF5317)}
-[data-theme="dark"]{--cellF:linear-gradient(135deg,#FF8C42,#DD5818);--pri:#E8641E;--alt:#121009;--navy:#5A2509;--navy2:#B34A12;--navy3:#2A1105;--navyR:90,37,9;--bg:#0E0D0B;--surf:#171512;--surf2:#1D1A16;--ink:#F4F1EC;--ink2:#DAD3C9;--muted:#A39B91;--line:#2A2621;--line2:#37312A;--cellE:#221E19}
+:root{--navy:#0E3440;--navy2:#155A63;--navy3:#082128;--blue:#0D857A;--acc:#3CC8B8;--accR:60,200,184;--navyR:14,52,64;--pri:#0B7A70;--bg:#EBEEF0;--surf:#F4F6F7;--surf2:#E2E7EA;--ink:#0E1A22;--ink2:#2A3A45;--muted:#55636D;--line:#D4DBE0;--line2:#C5CED5;--cellE:#DCE2E6;--cellF:linear-gradient(135deg,#17A595,#0B7A70);--green:#0D9484;--amber:#5E7C8A}
+[data-theme="dark"]{--cellF:linear-gradient(135deg,#3CC8B8,#16A090);--pri:#0F8A7F;--alt:#0C1317;--blue:#3CC8B8;--green:#3CC8B8;--amber:#8FB3C2;--navy:#0F3A44;--navy2:#17656E;--navy3:#08222A;--navyR:15,58,68;--bg:#0A1013;--surf:#11181C;--surf2:#162026;--ink:#EEF3F5;--ink2:#CFD9DE;--muted:#93A1AA;--line:#1F2A30;--line2:#2A363D;--cellE:#172126}
 *{box-sizing:border-box;margin:0;padding:0}
 html{scroll-behavior:smooth;scroll-padding-top:80px;-webkit-text-size-adjust:100%}
 body{font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;background:var(--bg);color:var(--ink);font-size:16px;line-height:1.55;-webkit-font-smoothing:antialiased;font-feature-settings:"cv11","ss01","tnum" 0;transition:background .35s,color .35s;overflow-x:hidden}
@@ -97,13 +97,14 @@ button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
 .dots{position:absolute;inset:0;background-image:radial-gradient(color-mix(in srgb,var(--muted) 30%,transparent) 1px,transparent 1.2px);background-size:26px 26px;-webkit-mask-image:radial-gradient(ellipse 70% 60% at 50% 35%,#000 30%,transparent 75%);mask-image:radial-gradient(ellipse 70% 60% at 50% 35%,#000 30%,transparent 75%);opacity:.6}
 .blob{position:absolute;border-radius:50%;filter:blur(70px);opacity:.55;animation:drift 18s ease-in-out infinite alternate}
 .b1{width:520px;height:520px;background:radial-gradient(circle,rgba(var(--accR),.55),transparent 65%);top:-120px;right:-80px}
-.b2{width:460px;height:460px;background:radial-gradient(circle,color-mix(in srgb,var(--blue) 30%,transparent),transparent 65%);top:180px;left:-160px;animation-duration:22s}
+.b2{width:460px;height:460px;background:radial-gradient(circle,color-mix(in srgb,var(--navy2) 32%,transparent),transparent 65%);top:180px;left:-160px;animation-duration:22s}
 [data-theme="dark"] .blob{opacity:.35}
 @keyframes drift{0%{transform:translate(0,0) scale(1)}50%{transform:translate(-40px,30px) scale(1.08)}100%{transform:translate(30px,-20px) scale(.95)}}
 .hero .w{display:grid;grid-template-columns:1.05fr .95fr;gap:64px;align-items:center}
 .pill{display:inline-flex;align-items:center;gap:10px;font-size:13.5px;font-weight:500;color:var(--ink2);background:var(--surf);border:1px solid var(--line);padding:6px 14px 6px 8px;border-radius:999px;box-shadow:var(--shadow);margin-bottom:26px;transition:transform .2s}
 .pill:hover{transform:translateY(-1px)}
 .pill b{font-size:11.5px;font-weight:700;color:#fff;background:var(--green);padding:3px 8px;border-radius:999px;letter-spacing:.3px}
+[data-theme="dark"] .pill b{color:#04201D}
 .pill svg{width:14px;height:14px;color:var(--muted)}
 h1{font-size:clamp(40px,5.6vw,66px);line-height:1.04;letter-spacing:-2.2px;font-weight:800}
 .rot{display:inline-grid;vertical-align:bottom;overflow:hidden;height:1.08em}
@@ -124,8 +125,8 @@ h1{font-size:clamp(40px,5.6vw,66px);line-height:1.04;letter-spacing:-2.2px;font-
 .ix::before{content:"";position:absolute;inset:-1px;border-radius:27px;padding:1px;background:linear-gradient(140deg,color-mix(in srgb,var(--acc) 60%,transparent),transparent 40%,transparent 60%,color-mix(in srgb,var(--navy2) 50%,transparent));-webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;mask-composite:exclude;pointer-events:none}
 .ixt{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px}
 .ixt b{font-size:12px;font-weight:700;color:var(--muted);letter-spacing:1px;text-transform:uppercase;display:flex;align-items:center;gap:8px}
-.live{width:8px;height:8px;border-radius:50%;background:var(--green);box-shadow:0 0 0 0 rgba(31,169,113,.6);animation:pulse 2s infinite}
-@keyframes pulse{0%{box-shadow:0 0 0 0 rgba(31,169,113,.55)}70%{box-shadow:0 0 0 9px rgba(31,169,113,0)}100%{box-shadow:0 0 0 0 rgba(31,169,113,0)}}
+.live{width:8px;height:8px;border-radius:50%;background:var(--green);box-shadow:0 0 0 0 color-mix(in srgb,var(--green) 60%,transparent);animation:pulse 2s infinite}
+@keyframes pulse{0%{box-shadow:0 0 0 0 color-mix(in srgb,var(--green) 55%,transparent)}70%{box-shadow:0 0 0 9px transparent}100%{box-shadow:0 0 0 0 transparent}}
 .ixt span{font-size:12px;color:var(--muted)}
 .ixn{display:flex;align-items:baseline;gap:10px;margin:4px 0 16px}
 .ixn b{font-size:46px;font-weight:800;letter-spacing:-1.6px;line-height:1;font-variant-numeric:tabular-nums}
@@ -537,14 +538,14 @@ footer{padding:56px 0 40px;border-top:1px solid var(--line);margin-top:110px;fon
     <div class="tile t1 rv" style="--i:0"><span class="ti" style="--c:var(--blue)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg></span>
       <div class="mini" id="mini"></div>
       <h3>Hissa</h3><p>Bitta bo'sh katakni to'ldirsang — mamlakatda yangi bilim paydo bo'ladi. Isming hisobot mualliflari qatorida.</p></div>
-    <div class="tile t2 rv" style="--i:1"><span class="ti" style="--c:#E0457B"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8a6 6 0 1 1 12 0c0 7 3 8 3 8H3s3-1 3-8"/><path d="M10 20a2 2 0 0 0 4 0"/></svg></span><h3>Xabardorlik</h3><p>AI ning real manzarasi birinchi sizda: digest va choraklik hisobot.</p></div>
-    <div class="tile t3 rv" style="--i:2"><span class="ti" style="--c:#7C5CF0"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 17l6-6 4 4 8-8"/><path d="M14 7h7v7"/></svg></span>
+    <div class="tile t2 rv" style="--i:1"><span class="ti" style="--c:var(--blue)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8a6 6 0 1 1 12 0c0 7 3 8 3 8H3s3-1 3-8"/><path d="M10 20a2 2 0 0 0 4 0"/></svg></span><h3>Xabardorlik</h3><p>AI ning real manzarasi birinchi sizda: digest va choraklik hisobot.</p></div>
+    <div class="tile t3 rv" style="--i:2"><span class="ti" style="--c:var(--blue)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 17l6-6 4 4 8-8"/><path d="M14 7h7v7"/></svg></span>
       <div class="chips"><span class="chip">Manba tekshirish</span><span class="chip">Excel</span><span class="chip">Python</span><span class="chip">Ilmiy yozish</span><span class="chip">Himoya</span></div>
       <h3>Rivojlanish</h3><p>Ma'ruzada berilmaydigan ko'nikmalar — amaliyotda.</p></div>
-    <div class="tile t4 rv" style="--i:3"><span class="ti" style="--c:#1FA971"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3"/><path d="M3 20c0-3 3-5 6-5s6 2 6 5"/><circle cx="17" cy="9" r="2.3"/><path d="M15.5 14.6c3 .2 5.5 2 5.5 5"/></svg></span>
+    <div class="tile t4 rv" style="--i:3"><span class="ti" style="--c:var(--blue)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3"/><path d="M3 20c0-3 3-5 6-5s6 2 6 5"/><circle cx="17" cy="9" r="2.3"/><path d="M15.5 14.6c3 .2 5.5 2 5.5 5"/></svg></span>
       <div class="chips"><span class="chip">Akademik</span><span class="chip">Media</span><span class="chip">Marketing</span><span class="chip">Tashkiliy</span><span class="chip">Texnika / Data</span><span class="chip">Sifat va etika</span></div>
       <h3>Jamoa</h3><p>1 koordinator, 6 yo'nalish, turli fakultetlar.</p></div>
-    <div class="tile t5 rv" style="--i:4"><span class="ti" style="--c:#E39B12"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="9" r="6"/><path d="M8.5 14L7 22l5-3 5 3-1.5-8"/></svg></span>
+    <div class="tile t5 rv" style="--i:4"><span class="ti" style="--c:var(--blue)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="9" r="6"/><path d="M8.5 14L7 22l5-3 5 3-1.5-8"/></svg></span>
       <div class="lv"><span>Kuzatuvchi</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg><span>Tahlilchi</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg><span>Verifikator</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg><span>Muharrir</span></div>
       <h3>Tan olinish</h3><p>Sertifikatda aniq: kim, nima qildi.</p></div>
   </div>
