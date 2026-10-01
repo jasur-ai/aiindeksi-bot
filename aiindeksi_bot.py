@@ -391,6 +391,11 @@ def flood_guard(chat_id, db):
 def handle(msg, db):
     chat_id = msg["chat"]["id"]
     matn = (msg.get("text") or "").strip()
+    if matn.startswith("/"):
+        # «/start site», «/start miniapp» (deep-link) va «/buyruq@aiindeksi_bot» → toza buyruq
+        bosh, _, qolgan = matn.partition(" ")
+        bosh = bosh.split("@")[0]
+        matn = bosh if bosh == "/start" else (bosh + (" " + qolgan if qolgan else ""))
     blok, jim = flood_guard(chat_id, db)
     if blok:
         return (" Juda tez yozmoqdasiz — 10 daqiqa tanaffus. "

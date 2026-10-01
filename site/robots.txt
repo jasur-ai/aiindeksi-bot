@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://ailabs.onrender.com/sitemap.xml

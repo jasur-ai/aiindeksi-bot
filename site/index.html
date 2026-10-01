@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AI Labs — sun'iy intellektni o'lchaydigan talabalar laboratoriyasi · TDIU</title>
+<meta name="description" content="AI Labs — TDIU talabalarining mustaqil tadqiqot laboratoriyasi. Sun&#x27;iy intellekt O&#x27;zbekistonda qayerda ishlayotganini ochiq ma&#x27;lumotlar asosida o&#x27;lchaymiz.">
+<meta name="theme-color" content="#1F3864">
+<link rel="canonical" href="https://ailabs.onrender.com/">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="preload" href="fonts/inter-regular.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="fonts/inter-extrabold.woff2" as="font" type="font/woff2" crossorigin>
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="AI Labs">
+<meta property="og:title" content="AI Labs — sun'iy intellekt O'zbekistonda qayerda ishlayapti? Biz o'lchaymiz.">
+<meta property="og:description" content="AI Labs — TDIU talabalarining mustaqil tadqiqot laboratoriyasi. Sun&#x27;iy intellekt O&#x27;zbekistonda qayerda ishlayotganini ochiq ma&#x27;lumotlar asosida o&#x27;lchaymiz.">
+<meta property="og:url" content="https://ailabs.onrender.com/">
+<meta property="og:image" content="https://ailabs.onrender.com/og.png">
+<meta property="og:image:width" content="1200"><meta property="og:image:height" content="630">
+<meta property="og:locale" content="uz_UZ">
+<meta name="twitter:card" content="summary_large_image">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Organization","name":"AI Labs","alternateName":["ADRL — Applied Digital Research Lab","Sun'iy intellekt monitoringi va raqamli o'lchov klubi"],"url":"https://ailabs.onrender.com/","logo":"https://ailabs.onrender.com/apple-touch-icon.png","parentOrganization":{"@type":"CollegeOrUniversity","name":"Toshkent davlat iqtisodiyot universiteti"},"sameAs":["https://t.me/Raqamli_tadqiqot","https://t.me/aiindeksi_bot"]}</script>
+<style>
+@font-face{font-family:Inter;src:url(fonts/inter-regular.woff2) format("woff2");font-weight:400;font-display:swap}
+@font-face{font-family:Inter;src:url(fonts/inter-medium.woff2) format("woff2");font-weight:500;font-display:swap}
+@font-face{font-family:Inter;src:url(fonts/inter-semibold.woff2) format("woff2");font-weight:600;font-display:swap}
+@font-face{font-family:Inter;src:url(fonts/inter-bold.woff2) format("woff2");font-weight:700;font-display:swap}
+@font-face{font-family:Inter;src:url(fonts/inter-extrabold.woff2) format("woff2");font-weight:800;font-display:swap}
+:root{--navy:#1F3864;--navy2:#2E5490;--acc:#4DA3FF;--blue:#2F6FDB;--ink:#0E1A2B;--muted:#5A6A80;--bg:#fff;--soft:#F4F7FB;--line:#E4E9F0;--card:#fff;--empty:#E9EEF5;--sh:0 1px 2px rgba(14,26,43,.04),0 8px 24px rgba(14,26,43,.06)}
+@media (prefers-color-scheme:dark){:root{--ink:#EEF3F9;--muted:#9AA9BC;--bg:#0D1520;--soft:#121C2A;--line:#223146;--card:#152133;--empty:#1D2B3F;--sh:0 1px 2px rgba(0,0,0,.3),0 8px 24px rgba(0,0,0,.25)}}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth;scroll-padding-top:76px;-webkit-text-size-adjust:100%}
+body{font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;background:var(--bg);color:var(--ink);font-size:16.5px;line-height:1.6;-webkit-font-smoothing:antialiased;font-feature-settings:"cv11","ss01"}
+a{color:inherit;text-decoration:none}
+.w{max-width:1120px;margin:0 auto;padding:0 24px}
+/* nav */
+.nav{position:sticky;top:0;z-index:50;background:color-mix(in srgb,var(--bg) 82%,transparent);backdrop-filter:saturate(1.6) blur(14px);-webkit-backdrop-filter:saturate(1.6) blur(14px);border-bottom:1px solid transparent;transition:border-color .2s}
+.nav.sc{border-bottom-color:var(--line)}
+.nav .w{display:flex;align-items:center;height:64px;gap:28px}
+.brand{display:flex;align-items:center;gap:10px;font-weight:800;font-size:18px;letter-spacing:-.3px}
+.brand svg{width:32px;height:32px;display:block}
+.links{display:flex;gap:26px;margin-left:auto;font-size:14.5px;font-weight:500;color:var(--muted)}
+.links a:hover{color:var(--ink)}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;height:44px;padding:0 20px;border-radius:12px;font-weight:600;font-size:15px;transition:transform .15s,box-shadow .15s,background .15s;white-space:nowrap}
+.btn.p{background:var(--navy);color:#fff;box-shadow:0 4px 14px rgba(31,56,100,.28)}
+@media (prefers-color-scheme:dark){.btn.p{background:var(--blue)}}
+.btn.p:hover{transform:translateY(-1px);box-shadow:0 8px 22px rgba(31,56,100,.34)}
+.btn.g{background:var(--soft);color:var(--ink);border:1px solid var(--line)}
+.btn.g:hover{background:var(--line)}
+.btn svg{width:18px;height:18px}
+.nav .btn{height:38px;padding:0 16px;font-size:14px}
+.burger{display:none;margin-left:auto;background:none;border:0;color:var(--ink);width:40px;height:40px;cursor:pointer}
+.burger svg{width:24px;height:24px}
+/* hero */
+.hero{padding:72px 0 64px;position:relative;overflow:hidden}
+.hero::before{content:"";position:absolute;inset:-40% -20% auto auto;width:720px;height:720px;background:radial-gradient(closest-side,rgba(77,163,255,.16),transparent);pointer-events:none}
+.hero .w{display:grid;grid-template-columns:1.1fr .9fr;gap:56px;align-items:center;position:relative}
+.eyebrow{display:inline-flex;align-items:center;gap:8px;font-size:13px;font-weight:600;color:var(--blue);background:color-mix(in srgb,var(--acc) 12%,transparent);padding:6px 12px;border-radius:999px;margin-bottom:22px}
+.eyebrow i{width:7px;height:7px;border-radius:50%;background:var(--acc);box-shadow:0 0 0 4px color-mix(in srgb,var(--acc) 25%,transparent)}
+h1{font-size:clamp(36px,5.2vw,58px);line-height:1.06;letter-spacing:-1.6px;font-weight:800}
+h1 em{font-style:normal;background:linear-gradient(90deg,var(--navy2),var(--acc));-webkit-background-clip:text;background-clip:text;color:transparent}
+@media (prefers-color-scheme:dark){h1 em{background:linear-gradient(90deg,#7DB8FF,var(--acc));-webkit-background-clip:text;background-clip:text}}
+.lead{font-size:clamp(17px,1.6vw,19px);color:var(--muted);margin:22px 0 32px;max-width:560px}
+.cta{display:flex;gap:12px;flex-wrap:wrap}
+.note{margin-top:22px;font-size:13.5px;color:var(--muted);display:flex;gap:18px;flex-wrap:wrap}
+.note span::before{content:"✓ ";color:#22A06B;font-weight:700}
+/* index card */
+.ixc{background:var(--card);border:1px solid var(--line);border-radius:22px;padding:24px;box-shadow:var(--sh)}
+.ixh{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:16px}
+.ixh b{font-size:13px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.8px}
+.ixh span{font-size:12px;color:var(--muted)}
+.big{font-size:44px;font-weight:800;letter-spacing:-1.2px;line-height:1}
+.big small{font-size:15px;font-weight:500;color:var(--muted);letter-spacing:0;margin-left:8px}
+.grid{display:grid;grid-template-columns:22px repeat(6,1fr);gap:5px;margin:18px 0 14px}
+.grid i{aspect-ratio:1.6;border-radius:5px;opacity:0;transform:scale(.6);transition:opacity .4s,transform .4s;transition-delay:var(--d)}
+.grid.on i{opacity:1;transform:none}
+.grid i.f{background:linear-gradient(135deg,var(--navy2),var(--navy))}
+@media (prefers-color-scheme:dark){.grid i.f{background:linear-gradient(135deg,#3C7BE0,#2A5BB0)}}
+.grid i.e{background:var(--empty);border:1px dashed color-mix(in srgb,var(--muted) 35%,transparent)}
+.gh,.gr{font-size:10.5px;color:var(--muted);font-weight:600;text-align:center;align-self:center}
+.leg{display:flex;gap:16px;font-size:12.5px;color:var(--muted)}
+.leg span{display:flex;align-items:center;gap:6px}
+.leg i{width:12px;height:12px;border-radius:3px;display:inline-block}
+.leg .lf{background:var(--navy)}.leg .le{background:var(--empty);border:1px dashed var(--muted)}
+/* stats */
+.stats{border-block:1px solid var(--line);background:var(--soft)}
+.stats .w{display:grid;grid-template-columns:repeat(5,1fr)}
+.st{padding:28px 12px;text-align:center}
+.st+.st{border-left:1px solid var(--line)}
+.st b{display:block;font-size:34px;font-weight:800;letter-spacing:-1px;color:var(--navy);font-variant-numeric:tabular-nums}
+@media (prefers-color-scheme:dark){.st b{color:#7DB8FF}}
+.st span{font-size:13.5px;color:var(--muted)}
+/* sections */
+section{padding:96px 0}
+.sh{max-width:680px;margin-bottom:48px}
+.sh.c{margin-inline:auto;text-align:center}
+.kick{font-size:13px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;color:var(--blue);margin-bottom:12px}
+h2{font-size:clamp(28px,3.6vw,40px);line-height:1.15;letter-spacing:-1px;font-weight:800}
+.sh p{color:var(--muted);margin-top:14px;font-size:17.5px}
+.cards{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:28px;transition:transform .2s,box-shadow .2s}
+.card:hover{transform:translateY(-3px);box-shadow:var(--sh)}
+.card h3{font-size:19px;font-weight:700;margin:18px 0 8px;letter-spacing:-.3px}
+.card p{color:var(--muted);font-size:15.5px}
+.ic{width:44px;height:44px;border-radius:12px;display:flex;align-items:center;justify-content:center;color:var(--c);background:color-mix(in srgb,var(--c) 13%,transparent)}
+.ic svg{width:22px;height:22px}
+.band{margin-top:28px;border-radius:18px;padding:26px 30px;background:linear-gradient(135deg,var(--navy2),var(--navy));color:#fff;display:flex;gap:28px;justify-content:center;flex-wrap:wrap;font-size:18px;font-weight:600}
+.band span{opacity:.7;font-weight:500}.band b{color:#9CCBFF}
+.soft{background:var(--soft)}
+.pilot{display:grid;grid-template-columns:1.1fr .9fr;gap:48px;align-items:start}
+.bar{margin-bottom:18px}
+.bl{display:flex;justify-content:space-between;font-size:14.5px;margin-bottom:7px}
+.bl b{font-weight:600}.bl span{color:var(--muted);font-variant-numeric:tabular-nums;font-weight:600}
+.bt{height:10px;background:var(--empty);border-radius:6px;overflow:hidden}
+.bf{height:100%;width:0;background:linear-gradient(90deg,var(--navy),var(--acc));border-radius:6px;transition:width 1.1s cubic-bezier(.2,.8,.2,1)}
+.on .bf{width:var(--w)}
+.facts{display:flex;flex-direction:column;gap:14px}
+.fact{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:20px 22px}
+.fact b{font-size:28px;font-weight:800;letter-spacing:-.8px;color:var(--navy);display:block;line-height:1.1}
+@media (prefers-color-scheme:dark){.fact b{color:#7DB8FF}}
+.fact p{color:var(--muted);font-size:15px;margin-top:6px}
+.ethic{margin-top:28px;display:flex;gap:14px;padding:18px 20px;border-radius:14px;border:1px solid color-mix(in srgb,#22A06B 35%,transparent);background:color-mix(in srgb,#22A06B 7%,transparent);font-size:14.5px;color:var(--muted)}
+.ethic svg{flex:0 0 22px;width:22px;height:22px;color:#22A06B;margin-top:1px}
+.ethic b{color:var(--ink)}
+.dims{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.dim{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:22px}
+.dh{display:flex;justify-content:space-between;align-items:center}
+.dc{font-size:12.5px;font-weight:700;color:var(--blue);background:color-mix(in srgb,var(--acc) 12%,transparent);padding:3px 9px;border-radius:7px}
+.dw{font-size:22px;font-weight:800;letter-spacing:-.5px}
+.dim h3{font-size:17px;margin:14px 0 6px;font-weight:700}
+.dim p{color:var(--muted);font-size:14.5px}
+.princ{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-top:20px}
+.pr{padding:20px;border-radius:16px;background:var(--soft);border:1px solid var(--line)}
+.pr b{display:block;font-size:15.5px;margin-bottom:4px}
+.pr p{font-size:14px;color:var(--muted)}
+.vals{display:grid;grid-template-columns:repeat(6,1fr);gap:20px}
+.vals .card{grid-column:span 2}
+.vals .card:nth-child(4){grid-column:2/span 2}
+.team{margin-top:36px;background:var(--card);border:1px solid var(--line);border-radius:18px;padding:26px 28px;display:flex;flex-direction:column;align-items:flex-start;gap:16px}
+.team h3{font-size:17px;font-weight:700}
+.team p{font-size:14.5px;color:var(--muted)}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{font-size:13.5px;font-weight:600;padding:7px 13px;border-radius:999px;background:var(--soft);border:1px solid var(--line)}
+.join{display:grid;grid-template-columns:1fr 1fr;gap:56px;align-items:center}
+.steps{list-style:none;display:flex;flex-direction:column;gap:14px}
+.steps li{display:flex;gap:16px;align-items:flex-start;background:var(--card);border:1px solid var(--line);border-radius:16px;padding:18px 20px}
+.sn{flex:0 0 34px;height:34px;border-radius:50%;background:var(--navy);color:#fff;font-weight:700;display:flex;align-items:center;justify-content:center;font-size:15px}
+@media (prefers-color-scheme:dark){.sn{background:var(--blue)}}
+.steps p{padding-top:5px;font-size:15.5px}
+.faq{max-width:780px;margin:0 auto}
+details{border-bottom:1px solid var(--line)}
+summary{list-style:none;cursor:pointer;padding:22px 0;font-weight:600;font-size:17.5px;display:flex;justify-content:space-between;align-items:center;gap:16px}
+summary::-webkit-details-marker{display:none}
+.pm{flex:0 0 22px;height:22px;position:relative}
+.pm::before,.pm::after{content:"";position:absolute;left:50%;top:50%;width:14px;height:2px;background:var(--muted);border-radius:2px;transform:translate(-50%,-50%);transition:transform .25s}
+.pm::after{transform:translate(-50%,-50%) rotate(90deg)}
+details[open] .pm::after{transform:translate(-50%,-50%) rotate(0)}
+details p{color:var(--muted);padding:0 40px 22px 0;font-size:16px}
+.final{padding:0 0 96px}
+.fin{border-radius:28px;padding:64px 40px;text-align:center;background:radial-gradient(600px 300px at 80% 0%,rgba(77,163,255,.35),transparent),linear-gradient(135deg,var(--navy2),var(--navy));color:#fff;position:relative;overflow:hidden}
+.fin h2{color:#fff}.fin p{color:rgba(255,255,255,.75);margin:14px auto 30px;max-width:540px;font-size:17.5px}
+.fin .btn.p{background:#fff;color:var(--navy);box-shadow:none}
+.fin .btn.g{background:rgba(255,255,255,.1);border-color:rgba(255,255,255,.25);color:#fff}
+footer{border-top:1px solid var(--line);padding:44px 0 36px;font-size:14px;color:var(--muted)}
+.ft{display:grid;grid-template-columns:1.4fr 1fr 1fr;gap:32px}
+.ft h4{font-size:13px;text-transform:uppercase;letter-spacing:1px;color:var(--ink);margin-bottom:12px}
+.ft a{display:block;margin-bottom:8px}.ft a:hover{color:var(--ink)}
+.ft a.brand{display:flex;color:var(--ink);margin:0}
+.ft p{margin-top:12px;max-width:380px}
+.copy{margin-top:32px;padding-top:20px;border-top:1px solid var(--line);display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px;font-size:13px}
+/* reveal */
+.rv{opacity:0;transform:translateY(14px);transition:opacity .6s ease,transform .6s ease}
+.rv.on{opacity:1;transform:none}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important;scroll-behavior:auto!important}.rv{opacity:1;transform:none}.grid i{opacity:1;transform:none}.bf{width:var(--w)}}
+/* responsive */
+@media (max-width:960px){
+ .hero .w,.pilot,.join{grid-template-columns:1fr;gap:40px}
+ .cards,.dims{grid-template-columns:1fr 1fr}
+ .princ{grid-template-columns:1fr 1fr}
+ .vals{grid-template-columns:1fr 1fr}.vals .card,.vals .card:nth-child(4){grid-column:auto}
+ .stats .w{grid-template-columns:repeat(3,1fr)}.st:nth-child(4){border-left:0}
+ .st:nth-child(n+4){border-top:1px solid var(--line)}
+}
+@media (max-width:760px){
+ .links{display:none;position:absolute;top:64px;left:0;right:0;flex-direction:column;gap:0;background:var(--bg);border-bottom:1px solid var(--line);padding:8px 24px 16px}
+ .links a{padding:12px 0;border-bottom:1px solid var(--line);font-size:16px;color:var(--ink)}
+ .nav.open .links{display:flex}
+ .burger{display:block}.nav .btn{display:none}
+ section{padding:72px 0}.hero{padding:44px 0 52px}
+ .cards,.dims,.princ,.vals{grid-template-columns:1fr}
+ .stats .w{grid-template-columns:1fr 1fr}.st{border-left:0!important;border-top:1px solid var(--line)}
+ .st:nth-child(-n+2){border-top:0}.st:nth-child(even){border-left:1px solid var(--line)!important}
+ .st:last-child{grid-column:span 2}
+ .ft{grid-template-columns:1fr}
+ .big small{display:block;margin:8px 0 0}
+ .fin{padding:48px 24px;border-radius:22px}.band{font-size:16px;gap:14px;flex-direction:column;align-items:center}
+ details p{padding-right:0}
+}
+</style>
+</head>
+<body>
+<header class="nav"><div class="w">
+  <a class="brand" href="#top" aria-label="AI Labs — bosh sahifa"><svg viewBox="0 0 512 512" aria-hidden="true"><defs><linearGradient id="lg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#2E5490"/><stop offset="1" stop-color="#1F3864"/></linearGradient></defs><rect width="512" height="512" rx="112" fill="url(#lg)"/><g transform="translate(11 -2)"><polyline points="118,388 210,136 302,388" fill="none" stroke="#fff" stroke-width="44" stroke-linecap="round" stroke-linejoin="round"/><line x1="372" y1="250" x2="372" y2="388" stroke="#fff" stroke-width="44" stroke-linecap="round"/><circle cx="372" cy="170" r="26" fill="#4DA3FF"/></g></svg><span>AI Labs</span></a>
+  <nav class="links" aria-label="Asosiy menyu">
+    <a href="#biz">Biz haqimizda</a><a href="#pilot">Pilot</a><a href="#metod">Metod</a><a href="#klub">Klub</a><a href="#faq">Savollar</a>
+  </nav>
+  <a class="btn p" href="https://t.me/aiindeksi_bot?start=site" target="_blank" rel="noopener">Qo'shilish</a>
+  <button class="burger" aria-label="Menyu" aria-expanded="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button>
+</div></header>
+
+<main id="top">
+<section class="hero"><div class="w">
+  <div>
+    <span class="eyebrow"><i></i>TDIU · mustaqil tadqiqot laboratoriyasi</span>
+    <h1>Sun'iy intellekt O'zbekistonda qayerda ishlayapti? <em>Biz o'lchaymiz.</em></h1>
+    <p class="lead">AI Labs — talabalar laboratoriyasi. Ochiq manbalardan dalil yig'amiz, har bir ballni tekshiriladigan manbaga bog'laymiz va har chorak milliy hisobot chiqaramiz.</p>
+    <div class="cta">
+      <a class="btn p" href="https://t.me/aiindeksi_bot?start=site" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M21.9 4.3 18.7 19.4c-.2 1.1-.9 1.3-1.8.8l-4.9-3.6-2.4 2.3c-.3.3-.5.5-1 .5l.4-5 9.1-8.2c.4-.4-.1-.6-.6-.2L6.2 13 1.4 11.5c-1-.3-1.1-1 .2-1.5L20.6 2.8c.9-.3 1.6.2 1.3 1.5z"/></svg>Qo'shilish — 40 soniya</a>
+      <a class="btn g" href="#pilot">Pilot natijasi <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12l7 7 7-7"/></svg></a>
+    </div>
+    <div class="note"><span>A'zolik bepul</span><span>Barcha fakultetlar</span><span>Kod bilish shart emas</span></div>
+  </div>
+  <div class="ixc rv" aria-label="Pilot natijasi">
+    <div class="ixh"><b>Pilot · bank sektori</b><span>29.09.2026</span></div>
+    <div class="big">30 / 60<small>katakda dalil topildi</small></div>
+    <div class="grid" role="img" aria-label="10 bank × 6 o'lchov: 30 katakda dalil topildi"><span></span><span class="gh">D1</span><span class="gh">D2</span><span class="gh">D3</span><span class="gh">D4</span><span class="gh">D5</span><span class="gh">D6</span><span class="gr">1</span><i class="f" style="--d:0ms"></i><i class="f" style="--d:14ms"></i><i class="f" style="--d:28ms"></i><i class="f" style="--d:42ms"></i><i class="f" style="--d:56ms"></i><i class="f" style="--d:70ms"></i><span class="gr">2</span><i class="f" style="--d:84ms"></i><i class="f" style="--d:98ms"></i><i class="f" style="--d:112ms"></i><i class="f" style="--d:126ms"></i><i class="f" style="--d:140ms"></i><i class="f" style="--d:154ms"></i><span class="gr">3</span><i class="f" style="--d:168ms"></i><i class="e" style="--d:182ms"></i><i class="f" style="--d:196ms"></i><i class="e" style="--d:210ms"></i><i class="f" style="--d:224ms"></i><i class="f" style="--d:238ms"></i><span class="gr">4</span><i class="e" style="--d:252ms"></i><i class="e" style="--d:266ms"></i><i class="f" style="--d:280ms"></i><i class="e" style="--d:294ms"></i><i class="f" style="--d:308ms"></i><i class="f" style="--d:322ms"></i><span class="gr">5</span><i class="e" style="--d:336ms"></i><i class="e" style="--d:350ms"></i><i class="f" style="--d:364ms"></i><i class="e" style="--d:378ms"></i><i class="f" style="--d:392ms"></i><i class="f" style="--d:406ms"></i><span class="gr">6</span><i class="f" style="--d:420ms"></i><i class="e" style="--d:434ms"></i><i class="f" style="--d:448ms"></i><i class="f" style="--d:462ms"></i><i class="e" style="--d:476ms"></i><i class="e" style="--d:490ms"></i><span class="gr">7</span><i class="e" style="--d:504ms"></i><i class="f" style="--d:518ms"></i><i class="e" style="--d:532ms"></i><i class="f" style="--d:546ms"></i><i class="e" style="--d:560ms"></i><i class="e" style="--d:574ms"></i><span class="gr">8</span><i class="e" style="--d:588ms"></i><i class="e" style="--d:602ms"></i><i class="e" style="--d:616ms"></i><i class="e" style="--d:630ms"></i><i class="e" style="--d:644ms"></i><i class="f" style="--d:658ms"></i><span class="gr">9</span><i class="e" style="--d:672ms"></i><i class="e" style="--d:686ms"></i><i class="e" style="--d:700ms"></i><i class="e" style="--d:714ms"></i><i class="e" style="--d:728ms"></i><i class="f" style="--d:742ms"></i><span class="gr">10</span><i class="e" style="--d:756ms"></i><i class="e" style="--d:770ms"></i><i class="e" style="--d:784ms"></i><i class="e" style="--d:798ms"></i><i class="e" style="--d:812ms"></i><i class="f" style="--d:826ms"></i></div>
+    <div class="leg"><span><i class="lf"></i>dalil bor</span><span><i class="le"></i>ochiq dalil yo'q</span></div>
+  </div>
+</div></section>
+
+<div class="stats"><div class="w">
+  <div class="st"><b>35</b><span>tijorat banki reyestrda</span></div>
+  <div class="st"><b>10</b><span>bank pilotda</span></div>
+  <div class="st"><b>6</b><span>o'lchov</span></div>
+  <div class="st"><b>32</b><span>ochiq manba</span></div>
+  <div class="st"><b>30/60</b><span>katakda dalil</span></div>
+</div></div>
+
+<section id="biz"><div class="w">
+  <div class="sh rv"><div class="kick">Biz haqimizda</div><h2>AI haqida gapirmaymiz. AI ni o'lchaymiz.</h2>
+  <p>Hamma sun'iy intellekt haqida gapiradi, lekin u qayerda haqiqatan ishlayotganini hech kim tizimli o'lchamaydi. Biz shu bo'sh joyni to'ldiramiz.</p></div>
+  <div class="cards">
+    <div class="card rv"><span class="ic" style="--c:#2F6FDB"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="M7 15l4-4 3 3 5-6"/></svg></span><h3>O'lchaymiz</h3><p>Har bir tashkilotni 6 o'lchov bo'yicha 0–3 shkalada baholaymiz: strategiyadan tortib oshkorlikkacha.</p></div>
+    <div class="card rv"><span class="ic" style="--c:#22A06B"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 12l2 2 4-4"/><path d="M12 3l7 3v6c0 4.5-3 8-7 9-4-1-7-4.5-7-9V6z"/></svg></span><h3>Tekshiramiz</h3><p>Har bir ball ochiq, tekshiriladigan manbaga bog'langan. Manba yo'q — ball ham yo'q.</p></div>
+    <div class="card rv"><span class="ic" style="--c:#8B5CF6"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"/><path d="M14 3v6h6M8 13h8M8 17h5"/></svg></span><h3>Nashr qilamiz</h3><p>Har chorak ochiq hisobot. Har bir tashkilotga oldindan yozma so'rov va javob berish huquqi.</p></div>
+  </div>
+  <div class="band rv"><span>IT klublar o'rgatadi.</span><span>Keys klublar yozadi.</span><b>AI Labs o'lchaydi.</b></div>
+</div></section>
+
+<section id="pilot" class="soft"><div class="w">
+  <div class="sh rv"><div class="kick">Pilot · bank sektori</div><h2>Har ikkinchi katak bo'sh.</h2>
+  <p>10 bank, 6 o'lchov, 60 katak. Ochiq manbalardan faqat 30 tasida dalil topildi — sektor AI faoliyatining yarmi haqida ochiq ma'lumot yo'q.</p></div>
+  <div class="pilot">
+    <div class="bars rv"><div class="bar"><div class="bl"><b>D1 · Strategik tayyorgarlik</b><span>4/10</span></div>
+<div class="bt"><div class="bf" style="--w:40%"></div></div></div><div class="bar"><div class="bl"><b>D2 · Ma'lumot infratuzilmasi</b><span>3/10</span></div>
+<div class="bt"><div class="bf" style="--w:30%"></div></div></div><div class="bar"><div class="bl"><b>D3 · Amaliy joriy etish</b><span>6/10</span></div>
+<div class="bt"><div class="bf" style="--w:60%"></div></div></div><div class="bar"><div class="bl"><b>D4 · Kadrlar salohiyati</b><span>4/10</span></div>
+<div class="bt"><div class="bf" style="--w:40%"></div></div></div><div class="bar"><div class="bl"><b>D5 · Regulyatorik muvofiqlik</b><span>5/10</span></div>
+<div class="bt"><div class="bf" style="--w:50%"></div></div></div><div class="bar"><div class="bl"><b>D6 · Oshkorlik</b><span>8/10</span></div>
+<div class="bt"><div class="bf" style="--w:80%"></div></div></div></div>
+    <div class="facts">
+      <div class="fact rv"><b>3/10</b><p>Eng yopiq o'lchov — <strong>ma&#x27;lumot infratuzilmasi</strong>. Hisoblash quvvati va ma'lumot ombori haqida deyarli hech narsa e'lon qilinmagan.</p></div>
+      <div class="fact rv"><b>8/10</b><p>Eng ochiq o'lchov — <strong>oshkorlik</strong>. Banklarning aksariyati savollarga javob beradi, lekin raqamlarni kam e'lon qiladi.</p></div>
+      <div class="fact rv"><b>32</b><p>ochiq manba: Markaziy bank reyestri, rasmiy saytlar, hisobotlar va OAV materiallari. Ma'lumot yig'ilgan sana: 29.09.2026.</p></div>
+    </div>
+  </div>
+  <div class="ethic rv"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l7 3v6c0 4.5-3 8-7 9-4-1-7-4.5-7-9V6z"/><path d="M9 12l2 2 4-4"/></svg><div><b>Nega bank nomlari yo'q?</b> Har bir bank bo'yicha natija avval o'sha bankka yozma so'rov sifatida yuboriladi va 10 ish kuni javob kutiladi. Javob kelsa, u o'zgarishsiz ilova qilinadi. Shundan keyingina nomli natijalar e'lon qilinadi.</div></div>
+</div></section>
+
+<section id="metod"><div class="w">
+  <div class="sh rv"><div class="kick">Metod</div><h2>6 o'lchov, bitta shkala.</h2>
+  <p>Har bir o'lchov 0 dan 3 gacha baholanadi va vazni bilan umumiy indeksga qo'shiladi. Eng katta vazn — amaliy joriy etishda: gap emas, ishlayotgan xizmat muhim.</p></div>
+  <div class="dims"><div class="dim rv"><div class="dh"><span class="dc">D1</span><span class="dw">15%</span></div><h3>Strategik tayyorgarlik</h3><p>AI strategiyasi, yo&#x27;l xaritasi, rahbariyat pozitsiyasi</p></div><div class="dim rv"><div class="dh"><span class="dc">D2</span><span class="dw">15%</span></div><h3>Ma&#x27;lumot infratuzilmasi</h3><p>Ma&#x27;lumot ombori, hisoblash quvvati, MLOps</p></div><div class="dim rv"><div class="dh"><span class="dc">D3</span><span class="dw">30%</span></div><h3>Amaliy joriy etish</h3><p>Ishlayotgan AI xizmatlari: chat-bot, skoring, ovozli yordamchi</p></div><div class="dim rv"><div class="dh"><span class="dc">D4</span><span class="dw">15%</span></div><h3>Kadrlar salohiyati</h3><p>AI/ML mutaxassislari, vakansiyalar, xodimlarni o&#x27;qitish</p></div><div class="dim rv"><div class="dh"><span class="dc">D5</span><span class="dw">15%</span></div><h3>Regulyatorik muvofiqlik</h3><p>AI boshqaruvi, xavfsizlik, ma&#x27;lumot himoyasi</p></div><div class="dim rv"><div class="dh"><span class="dc">D6</span><span class="dw">10%</span></div><h3>Oshkorlik</h3><p>AI haqida ochiq hisobot va savollarga javob berish</p></div></div>
+  <div class="princ">
+    <div class="pr rv"><b>Faqat ochiq manba</b><p>Har bir ball havola va sana bilan. Istalgan odam qayta tekshira oladi.</p></div>
+    <div class="pr rv"><b>Bo'sh — bu 0 emas</b><p>0 — yo'qligi isbotlangan. Bo'sh katak — ma'lumot topilmagan. Ikkisi aralashtirilmaydi.</p></div>
+    <div class="pr rv"><b>Javob huquqi</b><p>Har bir tashkilotga e'londan oldin yozma so'rov va 10 ish kuni muddat.</p></div>
+    <div class="pr rv"><b>Ochiq tuzatish</b><p>Xato topilsa — ochiq tuzatamiz. Tuzatish e'loni hech qachon o'chirilmaydi.</p></div>
+  </div>
+</div></section>
+
+<section id="klub" class="soft"><div class="w">
+  <div class="sh c rv"><div class="kick">Klub</div><h2>Talaba natija uchun keladi.</h2>
+  <p>Tadqiqot — bu yo'l. Natija — siz bilan qoladigan bilim, jamoa va isbotlangan ish.</p></div>
+  <div class="vals"><div class="card rv"><span class="ic" style="--c:#3B82F6"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8a6 6 0 1 1 12 0c0 7 3 8 3 8H3s3-1 3-8"/><path d="M10 20a2 2 0 0 0 4 0"/></svg></span><h3>Xabardorlik</h3><p>AI ning O&#x27;zbekistondagi real manzarasi birinchi bo&#x27;lib sizda: ochiq ma&#x27;lumot, haftalik digest, choraklik milliy hisobot.</p></div><div class="card rv"><span class="ic" style="--c:#22A06B"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3"/><path d="M3 20c0-3 3-5 6-5s6 2 6 5"/><circle cx="17" cy="9" r="2.3"/><path d="M15.5 14.6c3 .2 5.5 2 5.5 5"/></svg></span><h3>Jamoa</h3><p>Turli fakultetlardan fikrdoshlar, mentor va peer-review madaniyati. Birinchi kurs talabasi ham o&#x27;z o&#x27;rnini topadi.</p></div><div class="card rv"><span class="ic" style="--c:#F08C2E"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 17l6-6 4 4 8-8"/><path d="M14 7h7v7"/></svg></span><h3>Rivojlanish</h3><p>Ma&#x27;ruzada berilmaydigan ko&#x27;nikmalar: manba tekshirish, indeks qurish, Excel/Python, ilmiy yozish va himoya.</p></div><div class="card rv"><span class="ic" style="--c:#8B5CF6"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg></span><h3>Hissa</h3><p>Bitta bo&#x27;sh katakni to&#x27;ldirsang — mamlakatda yangi bilim paydo bo&#x27;ladi. Isming hisobot mualliflari qatorida.</p></div><div class="card rv"><span class="ic" style="--c:#E0A100"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="9" r="6"/><path d="M8.5 14L7 22l5-3 5 3-1.5-8"/></svg></span><h3>Tan olinish</h3><p>Sertifikatda aniq yoziladi: kim, nima qildi. 4 ichki daraja, mualliflik, kurator tavsiyanomasi.</p></div></div>
+  <div class="team rv"><div><h3>Jamoa tuzilmasi</h3><p>1 umumiy koordinator va 6 yo'nalish. Har bir yo'nalish rahbari o'z sohasida professional.</p></div>
+  <div class="chips"><span class="chip">Akademik</span><span class="chip">Media</span><span class="chip">Marketing</span><span class="chip">Tashkiliy</span><span class="chip">Texnika / Data</span><span class="chip">Sifat va etika</span></div></div>
+</div></section>
+
+<section id="qoshilish"><div class="w join">
+  <div class="rv"><div class="kick">Qo'shilish</div><h2>4 qadam. Birinchisi — 40 soniya.</h2>
+  <p style="color:var(--muted);margin:14px 0 28px;font-size:17.5px">Ro'yxat Telegram bot orqali. Bot ichidagi «AI Labs» tugmasi orqali ham ro'yxatdan o'tish mumkin.</p>
+  <div class="cta"><a class="btn p" href="https://t.me/aiindeksi_bot?start=site" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M21.9 4.3 18.7 19.4c-.2 1.1-.9 1.3-1.8.8l-4.9-3.6-2.4 2.3c-.3.3-.5.5-1 .5l.4-5 9.1-8.2c.4-.4-.1-.6-.6-.2L6.2 13 1.4 11.5c-1-.3-1.1-1 .2-1.5L20.6 2.8c.9-.3 1.6.2 1.3 1.5z"/></svg>Botda ro'yxatdan o'tish</a><a class="btn g" href="https://t.me/Raqamli_tadqiqot" target="_blank" rel="noopener">Kanal</a></div></div>
+  <ol class="steps"><li class="rv"><span class="sn">1</span><p>Telegram botda 40 soniyalik ro&#x27;yxat: ism, fakultet, kurs, yo&#x27;nalish.</p></li><li class="rv"><span class="sn">2</span><p>Oyiga taxminan 3 soat: bitta tashkilot, bitta o&#x27;lchov katakchasi.</p></li><li class="rv"><span class="sn">3</span><p>Isming choraklik hisobot mualliflari ro&#x27;yxatiga kiradi.</p></li><li class="rv"><span class="sn">4</span><p>Sertifikat va har bir ish uchun tasdiqlovchi hujjat — nashr yo&#x27;li uchun baza.</p></li></ol>
+</div></section>
+
+<section id="faq" class="soft"><div class="w">
+  <div class="sh c rv"><div class="kick">Savollar</div><h2>Ko'p beriladigan savollar</h2></div>
+  <div class="faq"><details class="rv"><summary>Kafolat bormi?<span class="pm"></span></summary><p>Yo&#x27;q — va bu halollik. Biz imkoniyat va har bir ish uchun tasdiqlovchi hujjat beramiz; baholash va qarorlar tegishli komissiyalarda.</p></details><details class="rv"><summary>Vaqtim kam.<span class="pm"></span></summary><p>Minimal rejim — oyiga 3 soat. Shu vaqt ichida qilingan ish ham hisobotga kiradi.</p></details><details class="rv"><summary>IT yoki dasturlashni bilmayman.<span class="pm"></span></summary><p>Kod shart emas: qidirish, solishtirish, jadvalga yozish. Excel yetarli — qolganini jamoada o&#x27;rganasiz.</p></details><details class="rv"><summary>Qaysi fakultetdan bo&#x27;lishim kerak?<span class="pm"></span></summary><p>Istalgan fakultetdan. Iqtisodchi, buxgalter, menejer, moliyachi — har biriga o&#x27;z yo&#x27;nalishida ish bor.</p></details><details class="rv"><summary>Pul to&#x27;laymanmi?<span class="pm"></span></summary><p>Yo&#x27;q. Nizomning 9.2-bandi bo&#x27;yicha a&#x27;zolik badali taqiqlangan. Hisobotlar ham bepul va ochiq.</p></details><details class="rv"><summary>Bu rasmiy klubmi?<span class="pm"></span></summary><p>Klub TDIU yo&#x27;riqnomasi asosida rasmiy ro&#x27;yxatdan o&#x27;tkazilmoqda. Rasmiy nomi — «Sun&#x27;iy intellekt monitoringi va raqamli o&#x27;lchov» klubi.</p></details></div>
+</div></section>
+
+<section class="final" style="padding-top:96px"><div class="w">
+  <div class="fin rv"><h2>Bo'sh katak seni kutyapti.</h2>
+  <p>Bitta katakni to'ldirsang — mamlakatda yangi bilim paydo bo'ladi. Isming esa hisobot mualliflari qatorida.</p>
+  <div class="cta" style="justify-content:center"><a class="btn p" href="https://t.me/aiindeksi_bot?start=site" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M21.9 4.3 18.7 19.4c-.2 1.1-.9 1.3-1.8.8l-4.9-3.6-2.4 2.3c-.3.3-.5.5-1 .5l.4-5 9.1-8.2c.4-.4-.1-.6-.6-.2L6.2 13 1.4 11.5c-1-.3-1.1-1 .2-1.5L20.6 2.8c.9-.3 1.6.2 1.3 1.5z"/></svg>Qo'shilish</a><a class="btn g" href="https://t.me/Raqamli_tadqiqot" target="_blank" rel="noopener">Kanalga obuna</a></div></div>
+</div></section>
+</main>
+
+<footer><div class="w">
+  <div class="ft">
+    <div><a class="brand" href="#top"><svg viewBox="0 0 512 512" aria-hidden="true"><defs><linearGradient id="lg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#2E5490"/><stop offset="1" stop-color="#1F3864"/></linearGradient></defs><rect width="512" height="512" rx="112" fill="url(#lg)"/><g transform="translate(11 -2)"><polyline points="118,388 210,136 302,388" fill="none" stroke="#fff" stroke-width="44" stroke-linecap="round" stroke-linejoin="round"/><line x1="372" y1="250" x2="372" y2="388" stroke="#fff" stroke-width="44" stroke-linecap="round"/><circle cx="372" cy="170" r="26" fill="#4DA3FF"/></g></svg><span>AI Labs</span></a>
+    <p>Rasmiy nomi: «Sun'iy intellekt monitoringi va raqamli o'lchov» klubi · Toshkent davlat iqtisodiyot universiteti. Xalqaro nomi: ADRL — Applied Digital Research Lab.</p></div>
+    <div><h4>Bo'limlar</h4><a href="#biz">Biz haqimizda</a><a href="#pilot">Pilot</a><a href="#metod">Metod</a><a href="#faq">Savollar</a></div>
+    <div><h4>Aloqa</h4><a href="https://t.me/aiindeksi_bot?start=site" target="_blank" rel="noopener">Telegram bot · @aiindeksi_bot</a><a href="https://t.me/Raqamli_tadqiqot" target="_blank" rel="noopener">Kanal · @Raqamli_tadqiqot</a></div>
+  </div>
+  <div class="copy"><span>© 2026 AI Labs · TDIU</span><span>Faqat ochiq manbalar · A'zolik bepul (Nizom 9.2)</span></div>
+</div></footer>
+<script>
+var nav=document.querySelector('.nav');
+addEventListener('scroll',function(){nav.classList.toggle('sc',scrollY>8)},{passive:true});
+document.querySelector('.burger').addEventListener('click',function(){var o=nav.classList.toggle('open');this.setAttribute('aria-expanded',o)});
+document.querySelectorAll('.links a').forEach(function(a){a.addEventListener('click',function(){nav.classList.remove('open')})});
+var io=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){e.target.classList.add('on');io.unobserve(e.target)}})},{threshold:.15});
+document.querySelectorAll('.rv,.grid,.bars').forEach(function(el){io.observe(el)});
+</script>
+</body>
+</html>
