@@ -2,10 +2,15 @@
 # -*- coding: utf-8 -*-
 """
 ════════════════════════════════════════════════════════════════════════════
- AI Labs klubi — Telegram ro'yxatdan o'tish boti   (@aiindeksi_bot)   v2.0
+ AI Labs klubi — Telegram ro'yxatdan o'tish boti   (@aiindeksi_bot)   v2.1
  «Sun'iy intellekt monitoringi va raqamli o'lchov» klubi (ADRL / AAI-UZ)
  Toshkent davlat iqtisodiyot universiteti
 ════════════════════════════════════════════════════════════════════════════
+
+ v2.1: DOIMIY BAZA — yopiq GitHub ombori (AILABS_DB_REPO/AILABS_DB_TOKEN), Render restarti
+   endi ma'lumotni o'chirmaydi; /export → uslubli XLSX (har ustun alohida, Toshkent vaqti),
+   /export csv → vergulli CSV; /royxat → telefonda matnli ro'yxat; admin xabarida yo'nalish
+   va @username.
 
  v2.0 YANGILIKLARI:
    • CSV endi HAR BIR YOZUV alohida qatorda (va qo'shimcha XLSX — Excel'da
@@ -32,6 +37,7 @@
  XAVFSIZLIK: uchala faylni Git'ga qo'shmang; token ochiq qolsa BotFather /revoke.
 """
 
+import base64
 import csv
 import hashlib
 import hmac
@@ -75,6 +81,12 @@ CHANNEL = "" if TEST else _read_secret("channel.txt", "AIINDEKSI_CHANNEL")
 DB_PATH = os.path.join(HERE, "demo_db.json" if DEMO else
                        ("test_db.json" if TEST else "aiindeksi_jazmalar.json"))
 
+# Doimiy baza: yopiq GitHub ombori (Render free diski har restartda o'chadi)
+GH_REPO = "" if (DEMO or TEST) else _read_secret("ghrepo.txt", "AILABS_DB_REPO")
+GH_TOKEN = "" if (DEMO or TEST) else _read_secret("ghtoken.txt", "AILABS_DB_TOKEN")
+GH_FILE = "db.json"
+TZ_SOAT = 5   # Toshkent = UTC+5
+
 def kanal_url():
     return ("https://t.me/" + CHANNEL.lstrip("@")) if CHANNEL.startswith("@") else ""
 
@@ -93,7 +105,7 @@ START_MATN = (
     "  1) ism-familiya\n  2) fakultet\n  3) kurs\n  4) ta'lim yo'nalishi\n\n"
     "Boshlaymizmi? Ism-familiangizni yozing ✍️\n\n"
     "⚖️ Maxfiylik: saqlanadigani faqat ism, fakultet, kurs, yo'nalish va "
-    "Telegram ID — klub reyestri uchun (Nizom, 8-bo'lim). Ro'yxatdan o'tish "
+    "Telegram ID/username — klub reyestri uchun (Nizom, 8-bo'lim). Ro'yxatdan o'tish "
     "orqali rozilik bildirasiz. Ko'rish: /holat · O'chirish: /bekor · "
     "Batafsil: /maxfiylik"
 )
@@ -142,13 +154,14 @@ FOYDA_MATN = (
 )
 MAXFIYLIK_MATN = (
     "⚖️ MA'LUMOTLAR SIYOSATI (qisqa)\n\n"
-    "1. Saqlanadi: ism, fakultet, kurs, yo'nalish, Telegram ID, sana. Boshqa "
+    "1. Saqlanadi: ism, fakultet, kurs, yo'nalish, Telegram ID va username, sana. Boshqa "
     "hech narsa (telefon, passport, joylashuv SO'RALMAYDI).\n"
     "2. Maqsad: klub reyestri, davomat va faoliyat hujjatlari "
     "(Nizom, 8-bo'lim). Uchinchi shaxsga berilmaydi.\n"
     "3. Huquqlaringiz: /holat (ko'rish), /bekor (o'chirish) — istalgan payt, "
     "savolsiz.\n"
-    "4. Server: bot vaqtincha xorijiy hostingda (Render). Chorak yakunida "
+    "4. Server: bot vaqtincha xorijiy hostingda (Render), reyestr nusxasi — yopiq "
+    "(private) omborda. Chorak yakunida "
     "reyestr universitetdagi rasmiy saqlovga topshiriladi va bot bazasi "
     "tozalanadi (ZRU-547, 27-1-modda talabiga intilamiz).\n"
     "5. Hodisa bo'lsa (token/database ochilsa): 24 soat ichida kanalda ochiq "
@@ -162,30 +175,193 @@ HELP_MATN = (
     "/maxfiylik — ma'lumotlar siyosati\n"
     "/bekor — jarayonni bekor qilish / yozuvni o'chirish\n"
     "/help  — shu ro'yxat\n\n"
-    "Admin uchun: /statlar, /export (CSV+XLSX), /elon (kanalga e'lon)\n\n"
+    "Admin uchun: /statlar, /royxat (matnli ro'yxat), /export (Excel), /elon (kanalga e'lon)\n\n"
     "Klub faqat OCHIQ manbalar bilan ishlaydi. A'zolik BEPUL.\n"
     "📣 Kanal: t.me/Raqamli_tadqiqot\n"
     "🌐 Sayt: ailabs-tdiu.onrender.com"
 )
 
 # ─────────────────────────── DB ───────────────────────────
-def db_load():
+# Ishchi nusxa xotirada + lokal fayl; doimiy nusxa — yopiq GitHub ombori (GH_REPO/db.json).
+# Qoidalar: (1) GitHub'dan o'qilmaguncha unga HECH QACHON yozilmaydi (bo'sh baza bilan
+# ustiga yozib yuborish xavfi yo'q); (2) sha to'qnashuvi bo'lsa — birlashtirib qayta yoziladi;
+# (3) /bekor bilan o'chirilganlar "deleted" ro'yxatida turadi, birlashtirishda tirilmaydi.
+PERSIST = ("users", "state", "counter", "deleted")
+GH = {"sha": None, "synced": False, "last_ok": None, "err": "", "last_body": None}
+DB_LOCK = threading.RLock()
+_DB_REF = {"db": None}
+_DIRTY = threading.Event()
+
+def _bo_sh_db():
+    return {"users": {}, "state": {}, "counter": 0, "deleted": {}}
+
+def _norm(db):
+    for k, v in _bo_sh_db().items():
+        db.setdefault(k, v)
+    return db
+
+def _gh_req(method, url, data=None):
+    req = urllib.request.Request(url, method=method,
+        data=json.dumps(data).encode("utf-8") if data is not None else None,
+        headers={"Authorization": "Bearer " + GH_TOKEN, "User-Agent": "ailabs-bot",
+                 "Accept": "application/vnd.github+json", "Content-Type": "application/json"})
+    with urllib.request.urlopen(req, timeout=25) as r:
+        return json.loads(r.read().decode("utf-8"))
+
+def gh_fetch():
+    """(dict|None, sha|None). 404 → (None, None). Tarmoq xatosi → exception."""
+    url = "https://api.github.com/repos/%s/contents/%s" % (GH_REPO, GH_FILE)
+    try:
+        d = _gh_req("GET", url)
+    except urllib.error.HTTPError as e:
+        if e.code == 404:
+            return None, None
+        raise
+    raw = d.get("content") or ""
+    if not raw:   # >1 MB bo'lsa contents API kontentni bermaydi → blob
+        raw = _gh_req("GET", "https://api.github.com/repos/%s/git/blobs/%s"
+                      % (GH_REPO, d["sha"]))["content"]
+    return json.loads(base64.b64decode(raw).decode("utf-8")), d["sha"]
+
+def _ts(u):
+    return float(u.get("ts") or 0)
+
+def db_merge(local, remote):
+    """local ustun; ikkalasidagi a'zolar birlashadi; o'chirilganlar tirilmaydi."""
+    remote = _norm(dict(remote or {}))
+    dl = dict(remote.get("deleted", {}))
+    for k, v in local.get("deleted", {}).items():
+        dl[k] = max(float(v), float(dl.get(k, 0)))
+    users = dict(remote.get("users", {}))
+    for k, u in local.get("users", {}).items():
+        if k not in users or _ts(u) >= _ts(users[k]):
+            users[k] = u
+    for k, t in dl.items():
+        if k in users and _ts(users[k]) <= float(t):
+            del users[k]
+    local["users"] = users
+    local["deleted"] = dl
+    local["counter"] = max([int(local.get("counter", 0)), int(remote.get("counter", 0))] +
+                           [int(u.get("nomer", 0)) for u in users.values()])
+    st = dict(remote.get("state", {})); st.update(local.get("state", {}))
+    local["state"] = {k: v for k, v in st.items() if k not in users}
+    return local
+
+def _local_load():
     if os.path.exists(DB_PATH):
         try:
             with open(DB_PATH, encoding="utf-8") as f:
-                return json.load(f)
+                return _norm(json.load(f))
         except (ValueError, OSError):
-            log.warning("DB buzilgan, yangi boshlanmoqda: %s", DB_PATH)
-    return {"users": {}, "state": {}, "counter": 0}
+            log.warning("Lokal DB buzilgan: %s", DB_PATH)
+    return _bo_sh_db()
 
-DB_LOCK = threading.RLock()
+def _gh_sync_in(db):
+    """GitHub'dagi nusxani o'qib, xotiradagiga birlashtiradi. True = muvaffaqiyat."""
+    try:
+        remote, sha = gh_fetch()
+    except Exception as e:                          # noqa: BLE001
+        GH["err"] = "o'qish: %s" % e
+        return False
+    with DB_LOCK:
+        if remote is not None:
+            db_merge(db, remote)
+        GH["sha"], GH["synced"], GH["err"] = sha, True, ""
+    return True
+
+def db_load():
+    db = _local_load()
+    _DB_REF["db"] = db
+    if GH_REPO and GH_TOKEN:
+        for urinish in range(6):
+            if _gh_sync_in(db):
+                log.info("DB GitHub'dan yuklandi: %d a'zo (%s)", len(db["users"]), GH_REPO)
+                break
+            log.warning("GitHub o'qilmadi (%s), %d-urinish", GH["err"], urinish + 1)
+            time.sleep(2 + urinish * 3)
+        threading.Thread(target=_gh_writer, daemon=True).start()
+    return db
+
+def _snapshot(db):
+    with DB_LOCK:
+        return json.dumps({k: db.get(k) for k in PERSIST}, ensure_ascii=False,
+                          indent=1, sort_keys=True)
 
 def db_save(db):
+    _DB_REF["db"] = db
+    body = _snapshot(db)
     tmp = DB_PATH + ".tmp"
     with DB_LOCK:
         with open(tmp, "w", encoding="utf-8") as f:
-            json.dump(db, f, ensure_ascii=False, indent=1)
+            f.write(body)
         os.replace(tmp, DB_PATH)
+    if GH_REPO and GH_TOKEN and body != GH["last_body"]:
+        _DIRTY.set()
+
+def _gh_writer():
+    url = "https://api.github.com/repos/%s/contents/%s" % (GH_REPO, GH_FILE)
+    kutish = 2
+    while True:
+        _DIRTY.wait()
+        time.sleep(1.5)                              # debounce: ketma-ket o'zgarishlar bitta commit
+        db = _DB_REF["db"]
+        if not GH["synced"] and not _gh_sync_in(db):
+            time.sleep(min(kutish, 60)); kutish *= 2
+            continue                                  # o'qilmaguncha yozmaymiz
+        _DIRTY.clear()
+        body = _snapshot(db)
+        if body == GH["last_body"]:
+            continue
+        data = {"message": "db: %d a'zo" % len(db["users"]),
+                "content": base64.b64encode(body.encode("utf-8")).decode()}
+        if GH["sha"]:
+            data["sha"] = GH["sha"]
+        try:
+            r = _gh_req("PUT", url, data)
+            GH["sha"] = r["content"]["sha"]; GH["last_body"] = body
+            GH["last_ok"], GH["err"], kutish = time.time(), "", 2
+        except urllib.error.HTTPError as e:
+            GH["err"] = "yozish HTTP %s" % e.code
+            if e.code in (409, 422):                  # sha eskirgan → birlashtirib qayta
+                GH["synced"] = False
+            _DIRTY.set(); time.sleep(min(kutish, 60)); kutish *= 2
+        except Exception as e:                        # noqa: BLE001
+            GH["err"] = "yozish: %s" % e
+            _DIRTY.set(); time.sleep(min(kutish, 60)); kutish *= 2
+
+def baza_holati():
+    if not (GH_REPO and GH_TOKEN):
+        return "💾 Baza: faqat lokal fayl (⚠️ restartda o'chadi)"
+    if GH["err"]:
+        return "💾 Baza: ⚠️ GitHub xatosi — %s (lokal nusxa ishlayapti)" % GH["err"]
+    t = GH["last_ok"]
+    return "💾 Baza: yopiq GitHub ombori ✅" + (
+        " · oxirgi saqlash %s" % time.strftime("%H:%M", time.gmtime(t + TZ_SOAT * 3600)) if t else "")
+
+def mahalliy(sana_utc):
+    """'YYYY-MM-DD HH:MM' (UTC) → Toshkent vaqti."""
+    try:
+        import calendar
+        t = calendar.timegm(time.strptime(sana_utc, "%Y-%m-%d %H:%M"))
+        return time.strftime("%d.%m.%Y %H:%M", time.gmtime(t + TZ_SOAT * 3600))
+    except Exception:                                 # noqa: BLE001
+        return sana_utc
+
+def yangi_nomer(db, ism):
+    """Tiklangan (qisman) yozuv shu ism bilan bo'lsa — o'rniga o'tadi va raqamini saqlaydi."""
+    for k, u in list(db["users"].items()):
+        if u.get("manba") == "tiklangan" and u.get("ism", "").lower() == ism.strip().lower():
+            del db["users"][k]
+            return u["nomer"]
+    db["counter"] = int(db.get("counter", 0)) + 1
+    return db["counter"]
+
+def admin_xabar(y, uname, kanal=""):
+    q = ["🔔 Yangi a'zo%s: #%d" % (kanal, y["nomer"]), "👤 " + y["ism"],
+         "🏛 %s · %s-kurs" % (y["fakultet"], y["kurs"]), "📚 " + y["yonalish"]]
+    if uname:
+        q.append("💬 @" + uname)
+    return "\n".join(q)
 
 # ─────────────────────────── TELEGRAM API ───────────────────────────
 def tg(method, **kw):
@@ -274,30 +450,56 @@ def _col(i):
         s = chr(65 + r) + s
     return s
 
-def write_xlsx(path, header, rows):
-    """Minimal XLSX (Office Open XML) — faqat stdlib zipfile bilan."""
+def write_xlsx(path, header, rows, widths=None):
+    """XLSX (Office Open XML) — stdlib zipfile bilan: qalin sarlavha, ustun kengligi,
+    muzlatilgan 1-qator, avtofiltr. Excel, Google Sheets, WPS, telefon viewer'larida ochiladi."""
     data = [header] + rows
+    widths = widths or [max(8, min(45, max(len(str(r[i])) for r in data) + 2))
+                        for i in range(len(header))]
+    last = "%s%d" % (_col(len(header) - 1), len(data))
     out = ['<?xml version="1.0" encoding="UTF-8" standalone="yes"?>'
-           '<worksheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main"'
-           '><sheetData>']
+           '<worksheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main">'
+           '<sheetViews><sheetView workbookViewId="0"><pane ySplit="1" topLeftCell="A2" '
+           'activePane="bottomLeft" state="frozen"/></sheetView></sheetViews><cols>']
+    out += ['<col min="%d" max="%d" width="%s" customWidth="1"/>' % (i + 1, i + 1, w)
+            for i, w in enumerate(widths)]
+    out.append('</cols><sheetData>')
     for ri, row in enumerate(data, 1):
         out.append('<row r="%d">' % ri)
         for ci, val in enumerate(row):
             ref = "%s%d" % (_col(ci), ri)
-            if isinstance(val, int) or (isinstance(val, str) and val.isdigit()):
-                out.append('<c r="%s"><v>%s</v></c>' % (ref, val))
+            st = ' s="1"' if ri == 1 else ' s="2"'
+            if ri > 1 and isinstance(val, int):
+                out.append('<c r="%s"%s><v>%s</v></c>' % (ref, st, val))
             else:
-                out.append('<c r="%s" t="inlineStr"><is><t xml:space="preserve">%s</t>'
-                           '</is></c>' % (ref, _xml(val)))
+                out.append('<c r="%s"%s t="inlineStr"><is><t xml:space="preserve">%s</t>'
+                           '</is></c>' % (ref, st, _xml(val)))
         out.append('</row>')
-    out.append('</sheetData></worksheet>')
+    out.append('</sheetData><autoFilter ref="A1:%s"/></worksheet>' % last)
     sheet = "".join(out)
+    styles = ('<?xml version="1.0" encoding="UTF-8" standalone="yes"?>'
+              '<styleSheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main">'
+              '<fonts count="2"><font><sz val="11"/><name val="Calibri"/></font>'
+              '<font><b/><sz val="11"/><color rgb="FFFFFFFF"/><name val="Calibri"/></font></fonts>'
+              '<fills count="3"><fill><patternFill patternType="none"/></fill>'
+              '<fill><patternFill patternType="gray125"/></fill>'
+              '<fill><patternFill patternType="solid"><fgColor rgb="FF1F3864"/></patternFill></fill></fills>'
+              '<borders count="2"><border/><border><left style="thin"><color rgb="FFD0D7E2"/></left>'
+              '<right style="thin"><color rgb="FFD0D7E2"/></right><top style="thin"><color rgb="FFD0D7E2"/></top>'
+              '<bottom style="thin"><color rgb="FFD0D7E2"/></bottom></border></borders>'
+              '<cellStyleXfs count="1"><xf/></cellStyleXfs><cellXfs count="3"><xf/>'
+              '<xf fontId="1" fillId="2" borderId="1" applyFont="1" applyFill="1" applyBorder="1">'
+              '<alignment vertical="center"/></xf>'
+              '<xf borderId="1" applyBorder="1"><alignment vertical="center"/></xf></cellXfs>'
+              '<cellStyles count="1"><cellStyle name="Normal" xfId="0" builtinId="0"/></cellStyles>'
+              '</styleSheet>')
     ct = ('<?xml version="1.0" encoding="UTF-8" standalone="yes"?>'
           '<Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types">'
           '<Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/>'
           '<Default Extension="xml" ContentType="application/xml"/>'
           '<Override PartName="/xl/workbook.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet.main+xml"/>'
           '<Override PartName="/xl/worksheets/sheet1.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.worksheet+xml"/>'
+          '<Override PartName="/xl/styles.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.styles+xml"/>'
           '</Types>')
     rels = ('<?xml version="1.0" encoding="UTF-8" standalone="yes"?>'
             '<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">'
@@ -306,39 +508,62 @@ def write_xlsx(path, header, rows):
     wb = ('<?xml version="1.0" encoding="UTF-8" standalone="yes"?>'
           '<workbook xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main" '
           'xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships">'
-          '<sheets><sheet name="Royxat" sheetId="1" r:id="rId1"/></sheets></workbook>')
+          '<sheets><sheet name="Royxat" sheetId="1" r:id="rId1"/></sheets>'
+          '<definedNames><definedName name="_xlnm._FilterDatabase" localSheetId="0" hidden="1">'
+          'Royxat!$A$1:$%s$%d</definedName></definedNames></workbook>' % (_col(len(header) - 1), len(data)))
     wbrels = ('<?xml version="1.0" encoding="UTF-8" standalone="yes"?>'
               '<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">'
               '<Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/worksheet" Target="worksheets/sheet1.xml"/>'
+              '<Relationship Id="rId2" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/styles" Target="styles.xml"/>'
               '</Relationships>')
     with zipfile.ZipFile(path, "w", zipfile.ZIP_DEFLATED) as z:
         z.writestr("[Content_Types].xml", ct)
         z.writestr("_rels/.rels", rels)
         z.writestr("xl/workbook.xml", wb)
         z.writestr("xl/_rels/workbook.xml.rels", wbrels)
+        z.writestr("xl/styles.xml", styles)
         z.writestr("xl/worksheets/sheet1.xml", sheet)
     return path
 
 def royxat_qatorlari(db):
-    hdr = ["№", "Telegram ID", "Ism-familiya", "Fakultet", "Kurs", "Yo'nalish", "Sana (UTC)"]
+    hdr = ["№", "Ism-familiya", "Fakultet", "Kurs", "Yo'nalish", "Telegram",
+           "Telegram ID", "Manba", "Sana (Toshkent)"]
     rows = []
-    for i, (cid, u) in enumerate(sorted(db["users"].items(),
-                                        key=lambda kv: kv[1].get("nomer", 0)), 1):
-        rows.append([i, int(cid) if str(cid).isdigit() else cid, u.get("ism", ""),
-                     u.get("fakultet", ""), u.get("kurs", ""), u.get("yonalish", ""),
-                     u.get("sana", "")])
+    for cid, u in sorted(db["users"].items(), key=lambda kv: int(kv[1].get("nomer", 0))):
+        rows.append([int(u.get("nomer", 0)), u.get("ism", ""), u.get("fakultet", ""),
+                     u.get("kurs", ""), u.get("yonalish", ""),
+                     ("@" + u["username"]) if u.get("username") else "",
+                     int(cid) if str(cid).isdigit() else cid, u.get("manba", "bot"),
+                     mahalliy(u.get("sana", ""))])
     return hdr, rows
 
-def export_files(db):
+def export_files(db, csv_ham=False):
     hdr, rows = royxat_qatorlari(db)
-    csv_path = os.path.join(HERE, "aiindeksi_royxat.csv")
-    with open(csv_path, "w", newline="", encoding="utf-8-sig") as f:
-        w = csv.writer(f, delimiter=";", lineterminator="\n")
-        w.writerow(hdr)
-        w.writerows(rows)
-    xlsx_path = os.path.join(HERE, "aiindeksi_royxat.xlsx")
-    write_xlsx(xlsx_path, hdr, rows)
+    xlsx_path = os.path.join(HERE, "AI_Labs_royxat.xlsx")
+    write_xlsx(xlsx_path, hdr, rows, widths=[6, 32, 26, 8, 34, 18, 14, 10, 17])
+    csv_path = None
+    if csv_ham:                       # vergul bilan — Google Sheets / LibreOffice uchun
+        csv_path = os.path.join(HERE, "AI_Labs_royxat.csv")
+        with open(csv_path, "w", newline="", encoding="utf-8-sig") as f:
+            w = csv.writer(f, lineterminator="\n")
+            w.writerow(hdr)
+            w.writerows(rows)
     return csv_path, xlsx_path
+
+def royxat_matn(db):
+    """Telefonda tez ko'rish uchun matnli ro'yxat (bo'laklarga bo'lingan)."""
+    hdr, rows = royxat_qatorlari(db)
+    if not rows:
+        return ["Ro'yxat hozircha bo'sh."]
+    qator = ["%d. %s — %s, %s-kurs%s" % (r[0], r[1], r[2], r[3],
+             (" · " + r[5]) if r[5] else "") for r in rows]
+    bolak, joriy = [], "👥 A'ZOLAR: %d ta\n\n" % len(rows)
+    for q in qator:
+        if len(joriy) + len(q) > 3800:
+            bolak.append(joriy); joriy = ""
+        joriy += q + "\n"
+    bolak.append(joriy)
+    return bolak
 
 # ─────────────────────────── HANDLER ───────────────────────────
 def holat(chat_id, db):
@@ -353,6 +578,7 @@ def bekor(chat_id, db):
         return "🚫 Ro'yxatdan o'tish bekor qilindi.\nQayta boshlash: /start", KB_YOQ
     if str(chat_id) in db["users"]:
         del db["users"][str(chat_id)]
+        db.setdefault("deleted", {})[str(chat_id)] = time.time()
         db_save(db)
         return ("🗑 Yozuvingiz o'chirildi.\nQayta ro'yxatdan o'tish: /start", KB_YOQ)
     return "Bekor qilinadigan yozuv yo'q.\nBoshlash: /start", None
@@ -363,7 +589,8 @@ def statlar(db):
     for u in db["users"].values():
         fak[u.get("fakultet", "?")] = fak.get(u.get("fakultet", "?"), 0) + 1
         kurs[u.get("kurs", "?")] = kurs.get(u.get("kurs", "?"), 0) + 1
-    q = ["📊 STATISTIKA", "Jami a'zo: %d" % n, "Jarayonda (yarim): %d" % len(db["state"])]
+    q = ["📊 STATISTIKA", "Jami a'zo: %d" % n, "Jarayonda (yarim): %d" % len(db["state"]),
+         baza_holati()]
     if CHANNEL:
         cnt = tg("getChatMemberCount", chat_id=CHANNEL)
         q.append("Kanal a'zolari: %s" % (cnt if cnt is not None else "noma'lum"))
@@ -407,7 +634,7 @@ def handle(msg, db):
     st = db["state"].get(str(chat_id))
 
     if matn == "/start":
-        pref = ("🛡 Siz ADMIN sifatida tanildingiz: /statlar, /export, /elon faol.\n\n"
+        pref = ("🛡 Siz ADMIN sifatida tanildingiz: /statlar, /royxat, /export, /elon faol.\n\n"
                 if chat_id in ADMIN_IDS else "")
         if chat_id not in ADMIN_IDS and not kanal_azosi(chat_id):
             return ("Avval klub kanaliga a'zo bo'ling — e'lonlar va tadbir "
@@ -431,20 +658,26 @@ def handle(msg, db):
         return holat(chat_id, db)
     if matn in ("/bekor", "/cancel"):
         return bekor(chat_id, db)
-    if matn in ("/statlar", "/stats", "/export"):
+    if matn in ("/statlar", "/stats", "/export", "/export csv", "/royxat", "/list"):
         if chat_id not in ADMIN_IDS:
             return "⛭ Bu buyruq faqat klub administratori uchun.", None
-        if matn == "/export":
-            c, x = export_files(db)
+        if matn in ("/royxat", "/list"):
+            bolaklar = royxat_matn(db)
             if TOKEN:
-                send_doc(chat_id, c, "text/csv")
+                for b in bolaklar[:-1]:
+                    send(chat_id, b)
+            return bolaklar[-1], None
+        if matn.startswith("/export"):
+            c, x = export_files(db, csv_ham=(matn == "/export csv"))
+            if TOKEN:
                 send_doc(chat_id, x,
                          "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
-                return ("📎 CSV va XLSX yuborildi (%d ta yozuv). XLSX — Excel/Google Sheets'da "
-                        "kafolatli ochiladi." % len(db["users"]), None)
-            return ("📎 Fayllar tayyor: %s va %s (%d ta yozuv). Token yo'q — "
-                    "yuborilmadi." % (os.path.basename(c), os.path.basename(x),
-                                      len(db["users"])), None)
+                if c:
+                    send_doc(chat_id, c, "text/csv")
+            return ("📎 Ro'yxat yuborildi: %d ta a'zo.\n"
+                    "Excel jadvali — har bir ma'lumot alohida ustunda.\n"
+                    "Telefonda tez ko'rish: /royxat · CSV kerak bo'lsa: /export csv\n%s"
+                    % (len(db["users"]), baza_holati()), None)
         return statlar(db)
     if matn.startswith("/elon"):
         if chat_id not in ADMIN_IDS:
@@ -487,17 +720,17 @@ def handle(msg, db):
                KB_KURS if SAVOLAR[st["bosqich"]][0] == "kurs" else KB_YOQ)
         return SAVOLAR[st["bosqich"]][1], keyt
 
-    db["counter"] += 1
-    yozuv = {"nomer": db["counter"], "ism": javoblar["ism"],
+    uname = (msg.get("from") or {}).get("username", "")
+    yozuv = {"nomer": yangi_nomer(db, javoblar["ism"]), "ism": javoblar["ism"],
              "fakultet": javoblar["fakultet"], "kurs": javoblar["kurs"],
-             "yonalish": javoblar["yonalish"],
-             "sana": time.strftime("%Y-%m-%d %H:%M", time.gmtime())}
+             "yonalish": javoblar["yonalish"], "username": uname, "manba": "bot",
+             "sana": time.strftime("%Y-%m-%d %H:%M", time.gmtime()), "ts": time.time()}
     db["users"][str(chat_id)] = yozuv
+    db.get("deleted", {}).pop(str(chat_id), None)
     del db["state"][str(chat_id)]
     db_save(db)
     for aid in ADMIN_IDS:
-        send(aid, "🔔 Yangi a'zo: #%d %s (%s, %s-kurs)" % (
-            yozuv["nomer"], yozuv["ism"], yozuv["fakultet"], yozuv["kurs"]))
+        send(aid, admin_xabar(yozuv, uname) + "\n📊 Jami: %d" % len(db["users"]))
     return YAKUN.format(**yozuv), kanal_kb()
 
 
@@ -614,19 +847,20 @@ def make_server(get_db):
                     return self._json(200, {"ok": False,
                         "xato": "Siz allaqachon ro'yxatdan o'tgansiz (№ %s). Botda /holat bilan ko'rasiz."
                                 % db["users"][uid].get("nomer", "?")})
-                db["counter"] += 1
-                yozuv = {"nomer": db["counter"], "ism": ism, "fakultet": fak,
-                         "kurs": kurs, "yonalish": yon,
+                uname = _toza(user.get("username", ""), 40)
+                yozuv = {"nomer": yangi_nomer(db, ism), "ism": ism, "fakultet": fak,
+                         "kurs": kurs, "yonalish": yon, "username": uname,
                          "sana": time.strftime("%Y-%m-%d %H:%M", time.gmtime()),
-                         "manba": "miniapp"}
+                         "ts": time.time(), "manba": "miniapp"}
                 db["users"][uid] = yozuv
+                db.get("deleted", {}).pop(uid, None)
                 db["state"].pop(uid, None)
                 db_save(db)
             javob = {"ok": True, "nomer": yozuv["nomer"], "xabar": YAKUN.format(**yozuv)}
             self._json(200, javob)          # avval javob — keyin bildirishnomalar
             for aid in ADMIN_IDS:
-                send(aid, "🔔 Yangi a'zo (mini app): #%d %s (%s, %s-kurs)" % (
-                    yozuv["nomer"], ism, fak, kurs))
+                send(aid, admin_xabar(yozuv, uname, " (mini app)") +
+                     "\n📊 Jami: %d" % len(db["users"]))
             send(uid, YAKUN.format(**yozuv), kanal_kb())
 
     port = int(os.environ.get("PORT", "8000"))
@@ -709,7 +943,7 @@ def demo():
     print("\nDemo yakunlandi. Bazada %d ta yozuv (%s)." % (len(db["users"]), DB_PATH))
 
 def test():
-    db = {"users": {}, "state": {}, "counter": 0}
+    db = _bo_sh_db()
     ketma = ["/start", "Aliyeva Malika Rashidovna", "Boshqa",
              "Statistika fakulteti", "2", "Statistika va ma'lumotlar tahlili",
              "/holat", "/statlar", "/export"]
@@ -721,14 +955,21 @@ def test():
     assert u["ism"] == "Aliyeva Malika Rashidovna" and u["kurs"] == "2"
     assert u["fakultet"] == "Statistika fakulteti", "Boshqa→erkin matn ishlamadi"
     assert db["state"] == {}, "state tozalanmadi!"
-    c, x = os.path.join(HERE, "aiindeksi_royxat.csv"), os.path.join(HERE, "aiindeksi_royxat.xlsx")
-    assert os.path.exists(c) and os.path.exists(x), "CSV/XLSX yaratilmadi!"
-    lines = open(c, encoding="utf-8-sig").read().strip().split("\n")
-    assert len(lines) == 2, "CSV qatorlari xato: %d" % len(lines)
+    _, x = export_files(db)
+    assert os.path.exists(x), "XLSX yaratilmadi!"
     with zipfile.ZipFile(x) as z:
-        assert "xl/worksheets/sheet1.xml" in z.namelist(), "XLSX buzilgan"
+        sh = z.read("xl/worksheets/sheet1.xml").decode()
+        assert "xl/styles.xml" in z.namelist() and sh.count("<row ") == 2, "XLSX buzilgan"
+    c, _ = export_files(db, csv_ham=True)
+    lines = open(c, encoding="utf-8-sig").read().strip().split("\n")
+    assert len(lines) == 2 and lines[0].count(",") == 8, "CSV xato"
+    # birlashtirish: o'chirilgan yozuv tirilmasin, yangi yozuv yo'qolmasin
+    a = {"users": {"1": {"nomer": 1, "ts": 10}}, "deleted": {"2": 50}, "counter": 1, "state": {}}
+    b = {"users": {"2": {"nomer": 2, "ts": 20}, "3": {"nomer": 3, "ts": 30}}, "counter": 3}
+    m = db_merge(a, b)
+    assert set(m["users"]) == {"1", "3"} and m["counter"] == 3, m
     print("\n✅ TEST O'TDI: ro'yxat (Boshqa→erkin matn) → saqlash → holat → "
-          "statistika → CSV (qatorma-qator) + XLSX.")
+          "statistika → XLSX (uslubli) + CSV (vergul) → birlashtirish.")
 
 if __name__ == "__main__":
     if TEST:

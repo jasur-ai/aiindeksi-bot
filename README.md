@@ -10,6 +10,8 @@ o'lchov» klubi (ADRL / AAI-UZ) rasmiy ro'yxatdan o'tish va kanal boshqaruvi bot
 export AIINDEKSI_TOKEN="***"      # yoki token.txt
 export AIINDEKSI_ADMIN="chat_id"          # yoki admin.txt (@userinfobot dan)
 export AIINDEKSI_CHANNEL="@kanal"         # yoki channel.txt (ixtiyoriy)
+export AILABS_DB_REPO="owner/private-repo" # doimiy baza (db.json) — YOPIQ GitHub ombori
+export AILABS_DB_TOKEN="***"               # shu omborga yozish huquqli token
 python3 aiindeksi_bot.py
 ```
 Sinov: `python3 aiindeksi_bot.py --demo` · Avto-test: `python3 aiindeksi_bot.py --test`
@@ -26,6 +28,16 @@ Sinov: `python3 aiindeksi_bot.py --demo` · Avto-test: `python3 aiindeksi_bot.py
 1. GitHub repo'ni Render'ga ulang → **Background Worker** (yoki Web Service):
    start command `python3 aiindeksi_bot.py`, env: yuqoridagi 3 o'zgaruvchi.
 2. `miniapp/` papkasi uchun **Static Site**: build `echo ok`, publish dir `miniapp`.
+
+## Baza qayerda saqlanadi
+Render bepul tarifida disk vaqtinchalik — har deploy/restartda lokal fayl o'chadi.
+Shuning uchun ishchi nusxa xotirada, doimiy nusxa **yopiq GitHub omborida** (`db.json`,
+har o'zgarish = alohida commit → to'liq tarix va zaxira). Qoidalar: ombor o'qilmaguncha
+unga yozilmaydi; ikki nusxa to'qnashsa — birlashtiriladi; `/bekor` bilan o'chirilganlar
+qayta tirilmaydi. Holat: `/statlar` dagi «💾 Baza» qatori.
+
+Admin: `/statlar` · `/royxat` (telefonda matnli ro'yxat) · `/export` (Excel, har ustun alohida) ·
+`/export csv` (vergulli CSV) · `/elon <matn>`.
 
 ## Maxfiylik
 Bot faqat ism, fakultet, kurs, yo'nalish va Telegram ID saqlaydi; ma'lumotlar
