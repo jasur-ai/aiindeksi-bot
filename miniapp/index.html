@@ -98,8 +98,8 @@ body.nobg .bar{display:flex}
     <div class="pnote">O'zbekiston banklarining AI ochiqligi o'lchandi: <b>30 nuqta to'ldirilgan, 30 tasi bo'sh</b>. Bo'sh kataklarni birga to'ldiramiz.</div>
   </div>
 
-  <div class="shead">Jonli statistika</div>
-  <div class="sec">
+  <div class="shead" id="statHead" style="display:none">Jonli statistika</div>
+  <div class="sec" id="statSec" style="display:none">
     <div class="tiles">
       <div class="tile"><div class="n" id="mN">—</div><div class="l">a'zolar</div></div>
       <div class="tile"><div class="n" id="kN">—</div><div class="l">kurslar</div></div>
@@ -173,7 +173,13 @@ if (tg){
     }catch(e){ document.body.classList.add('nobg'); }
   } else document.body.classList.add('nobg');
 } else document.body.classList.add('nobg');
-fetch('stats.json').then(function(r){ return r.json(); }).then(function(d){
+var ADMIN_ID = 8004724563;
+var uid = null;
+try{ if (tg && tg.initDataUnsafe && tg.initDataUnsafe.user) uid = tg.initDataUnsafe.user.id; }catch(e){}
+if (uid === ADMIN_ID){
+  document.getElementById('statHead').style.display = '';
+  document.getElementById('statSec').style.display = '';
+  fetch('stats.json').then(function(r){ return r.json(); }).then(function(d){
   document.getElementById('mN').textContent = d.members;
   document.getElementById('kN').textContent = Object.keys(d.kurs||{}).length;
   document.getElementById('fN').textContent = Object.keys(d.fakultet||{}).length;
@@ -182,6 +188,7 @@ fetch('stats.json').then(function(r){ return r.json(); }).then(function(d){
 }).catch(function(){
   document.getElementById('upd').textContent = "statistika tez orada — birinchi a'zo sen bo'l!";
 });
+}
 </script>
 </body>
 </html>
