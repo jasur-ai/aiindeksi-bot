@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>AI Labs — sun'iy intellektni o'lchaymiz · TDIU</title>
 <meta name="description" content="AI Labs — TDIU talabalarining tadqiqot laboratoriyasi. Sun'iy intellekt O'zbekistonda qayerda ishlayotganini ochiq dalillar bilan o'lchaymiz.">
-<meta name="theme-color" content="#FBFCFE" id="metaTheme">
+<meta name="theme-color" content="#E8ECF1" id="metaTheme">
 <link rel="canonical" href="https://ailabs-tdiu.onrender.com/">
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
@@ -33,9 +33,9 @@
 
 :root{
   --navy:#1F3864;--navy2:#2E5490;--blue:#2F6FDB;--acc:#4DA3FF;--green:#1FA971;--amber:#E39B12;--violet:#7C5CF0;--orange:#EE7D2B;
-  --bg:#FBFCFE;--surf:#FFFFFF;--surf2:#F3F6FA;--ink:#0B1626;--ink2:#2A3A50;--muted:#5D6D84;--line:#E5EAF1;--line2:#D7DFEA;
-  --cellF:linear-gradient(135deg,#2E5490,#1F3864);--cellE:#EDF1F6;
-  --shadow:0 1px 2px rgba(11,22,38,.04),0 10px 30px -10px rgba(11,22,38,.12);
+  --bg:#E8ECF1;--surf:#F1F4F7;--surf2:#E1E6ED;--ink:#0E1A2B;--ink2:#2A3A50;--muted:#526175;--line:#D3DAE3;--line2:#C3CDD9;
+  --cellF:linear-gradient(135deg,#2E5490,#1F3864);--cellE:#D9E0E9;
+  --shadow:0 1px 2px rgba(11,22,38,.05),0 10px 30px -12px rgba(11,22,38,.16);
   --shadowL:0 2px 4px rgba(11,22,38,.04),0 24px 60px -20px rgba(31,56,100,.28);
   --pri:#1F3864;--priInk:#fff;--glow:rgba(77,163,255,.18);
   --r:18px;--ease:cubic-bezier(.2,.8,.2,1);
@@ -614,7 +614,7 @@ var C = 2*Math.PI*52;
 
 /* theme */
 var root=document.documentElement, mt=$('#metaTheme');
-function setMeta(){mt.setAttribute('content', root.getAttribute('data-theme')==='dark' ? '#080E18' : '#FBFCFE');}
+function setMeta(){mt.setAttribute('content', root.getAttribute('data-theme')==='dark' ? '#080E18' : '#E8ECF1');}
 setMeta();
 $('#tgl').addEventListener('click',function(){var t=root.getAttribute('data-theme')==='dark'?'light':'dark';root.setAttribute('data-theme',t);try{localStorage.setItem('theme',t)}catch(e){}setMeta();});
 
