@@ -103,14 +103,14 @@ START_MATN = (
     "va fanga hissa.\n\n"
     "Ro'yxatdan o'tish 4 savoldan iborat (≈40 soniya):\n"
     "  1) ism-familiya\n  2) fakultet\n  3) kurs\n  4) ta'lim yo'nalishi\n\n"
-    "Boshlaymizmi? Ism-familiangizni yozing ✍️\n\n"
+    "Boshlaymizmi? Ism-familiyangizni yozing ✍️\n\n"
     "⚖️ Maxfiylik: saqlanadigani faqat ism, fakultet, kurs, yo'nalish va "
     "Telegram ID/username — klub reyestri uchun (Nizom, 8-bo'lim). Ro'yxatdan o'tish "
     "orqali rozilik bildirasiz. Ko'rish: /holat · O'chirish: /bekor · "
     "Batafsil: /maxfiylik"
 )
 SAVOLAR = [
-    ("ism",      "1/4  ·  Ism-familiangizni yozing:\nMasalan: Aliyeva Malika Rashidovna"),
+    ("ism",      "1/4  ·  Ism-familiyangizni yozing:\nMasalan: Aliyeva Malika Rashidovna"),
     ("fakultet", "2/4  ·  Fakultetingizni tanlang yoki yozing:"),
     ("kurs",     "3/4  ·  Kursingizni tanlang:"),
     ("yonalish", "4/4  ·  Ta'lim yo'nalishingizni yozing:\nMasalan: Buxgalteriya hisobi va audit"),
@@ -136,26 +136,24 @@ YAKUN = (
 )
 FOYDA_MATN = (
     "🌱 Klub nima beradi? — 6 ta halol javob\n\n"
-    "1️⃣ XABARDORLIK: O'zbekistonda AI ning real manzarasini birinchi bo'lib "
-    "bilasan. Ochiq ma'lumot, haftalik digest, choraklik milliy hisobot — "
-    "hech kimda yo'q manzara.\n"
-    "2️⃣ JAMOA: 6+ fakultetdan fikrdoshlar, mentor va peer-review madaniyati. "
-    "Birinchi kurs ham joy topadi: kuzatuvchidan muallifgacha.\n"
-    "3️⃣ RIVOJLANISH: ma'ruzada berilmaydigan ko'nikmalar — manba qidirish va "
-    "tekshirish, indeks qurish, Excel/Python amaliyotda, yozish va himoya qilish.\n"
-    "4️⃣ HISSA: bitta bo'sh katakchani to'ldirsang — mamlakatda bitta yangi "
-    "bilim paydo bo'ladi. Isming milliy AAI-UZ hisoboti mualliflari qatorida.\n"
-    "5️⃣ TAN OLINISH: sertifikatda aniq yoziladi kim nima qilgani; 4 ta ichki "
-    "daraja, mualliflik, kurator tavsiyanomasi.\n"
-    "6️⃣ YON TA'SIR (va'dasiz): har bir ishing uchun tasdiqlovchi hujjat va "
-    "nashr yo'li uchun baza tayyorlanadi. Qaror "
-    "komissiyada, hujjat bizda.\n\n"
-    "Bizda halollik qoida: va'da bermaymiz — ko'rsatamiz. Ro'yxatdan o'tish: /start"
+    "1️⃣ XABARDORLIK: O'zbekistonda sun'iy intellektning real manzarasini birinchilardan "
+    "bo'lib ko'rasiz: ochiq ma'lumotlar, haftalik digest va choraklik hisobot.\n"
+    "2️⃣ JAMOA: turli fakultetlardan fikrdoshlar, mentor va o'zaro tekshiruv (peer-review) "
+    "madaniyati. Birinchi kurs talabasi ham o'z o'rnini topadi: kuzatuvchidan muallifgacha.\n"
+    "3️⃣ RIVOJLANISH: darsdagi bilimni real loyihada mustahkamlaysiz — manba qidirish va "
+    "tekshirish, indeks qurish, Excel/Python, ilmiy yozish va himoya.\n"
+    "4️⃣ HISSA: bo'sh katakni to'ldirsangiz, indeksga yangi tekshirilgan dalil qo'shiladi. "
+    "Real hissa hisobotda nom bilan ko'rsatiladi.\n"
+    "5️⃣ E'TIROF: bajarilgan ish tasdiqlovchi hujjatda aniq yoziladi — kim, nima qilgani; "
+    "4 ta ichki daraja va kurator tavsiyanomasi.\n"
+    "6️⃣ KELAJAK UCHUN BAZA (va'dasiz): ilmiy tezis va maqola uchun tayyor material. "
+    "Baholash qarorlarini tegishli komissiyalar qabul qiladi.\n\n"
+    "Biz va'da bermaymiz — natijani ko'rsatamiz. Ro'yxatdan o'tish: /start"
 )
 MAXFIYLIK_MATN = (
     "⚖️ MA'LUMOTLAR SIYOSATI (qisqa)\n\n"
     "1. Saqlanadi: ism, fakultet, kurs, yo'nalish, Telegram ID va username, sana. Boshqa "
-    "hech narsa (telefon, passport, joylashuv SO'RALMAYDI).\n"
+    "hech narsa (telefon, pasport, joylashuv SO'RALMAYDI).\n"
     "2. Maqsad: klub reyestri, davomat va faoliyat hujjatlari "
     "(Nizom, 8-bo'lim). Uchinchi shaxsga berilmaydi.\n"
     "3. Huquqlaringiz: /holat (ko'rish), /bekor (o'chirish) — istalgan payt, "
@@ -165,12 +163,12 @@ MAXFIYLIK_MATN = (
     "reyestr universitetdagi rasmiy saqlovga topshiriladi va bot bazasi "
     "tozalanadi (ZRU-547, 27-1-modda talabiga intilamiz).\n"
     "5. Hodisa bo'lsa (token/database ochilsa): 24 soat ichida kanalda ochiq "
-    "e'lon va parol almashtirish protsedurasi ishlaydi."
+    "e'lon qilinadi va barcha kalitlar almashtiriladi."
 )
 HELP_MATN = (
     "📘 Buyruqlar:\n"
     "/start — ro'yxatdan o'tishni boshlash\n"
-    "/foyda — menga nima beradi? (6 ta aniq foyda)\n"
+    "/foyda — klub nima beradi? (6 ta halol javob)\n"
     "/holat — mening yozuvim\n"
     "/maxfiylik — ma'lumotlar siyosati\n"
     "/bekor — jarayonni bekor qilish / yozuvni o'chirish\n"
@@ -627,8 +625,8 @@ def handle(msg, db):
         matn = bosh if bosh == "/start" else (bosh + (" " + qolgan if qolgan else ""))
     blok, jim = flood_guard(chat_id, db)
     if blok:
-        return (" Juda tez yozmoqdasiz — 10 daqiqa tanaffus. "
-                "Bot ham, operator ham odam 🙂", None)
+        return ("⏳ Juda tez yozyapsiz. Iltimos, 10 daqiqadan keyin "
+                "qayta urinib ko'ring.", None)
     if jim:
         return None, None
     st = db["state"].get(str(chat_id))
@@ -644,7 +642,7 @@ def handle(msg, db):
                                            "url": kanal_url() or "https://t.me/"}]]})
         if str(chat_id) in db["users"] and not st:
             return (pref + "Siz allaqachon ro'yxatdan o'tgansiz ✅\n"
-                    "Ma'lumotlaringiz: /holat\nYangi a'zo qo'shish uchun avval /bekor", None)
+                    "Ma'lumotlaringiz: /holat\nQayta kiritish uchun avval /bekor bilan o'chiring.", None)
         m_, k_ = (START_MATN + "\n\n" + SAVOLAR[0][1], None)
         db["state"][str(chat_id)] = {"bosqich": 0, "javoblar": {}}
         return pref + m_, k_
@@ -704,7 +702,7 @@ def handle(msg, db):
     kalit, _ = SAVOLAR[bosqich]
 
     if kalit == "ism" and len(matn) < 3:
-        return "Ism-familiya to'liq yozilsin (kamida 3 belgi).", None
+        return "Ism-familiyani to'liq yozing (kamida 3 belgi).", None
     if kalit == "fakultet" and matn == "Boshqa" and not st.get("boshqa"):
         st["boshqa"] = True
         return ("Fakultetingiz nomini to'liq yozing "
@@ -829,7 +827,7 @@ def make_server(get_db):
             kurs = _toza(body.get("kurs"), 20)
             yon = _toza(body.get("yonalish"))
             if len(ism) < 3:
-                return self._json(400, {"ok": False, "xato": "Ism-familiya to'liq yozilsin (kamida 3 belgi)."})
+                return self._json(400, {"ok": False, "xato": "Ism-familiyani to'liq yozing (kamida 3 belgi)."})
             if boshqa:
                 if len(fak) < 3:
                     return self._json(400, {"ok": False, "xato": "Fakultet nomini yozing."})
