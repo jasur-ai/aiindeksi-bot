@@ -15,7 +15,7 @@
  v2.0 YANGILIKLARI:
    • CSV endi HAR BIR YOZUV alohida qatorda (va qo'shimcha XLSX — Excel'da
      kafolatli ochiladi, chunki ba'zi telefon viewer'lari CSV ni buzadi).
-   • Fakultetlar klaviaturasi TDIU ning RASMIY 14 ta fakulteti (tsue.uz) +
+   • Fakultetlar klaviaturasi TDIU'ning RASMIY 14 ta fakulteti (tsue.uz) +
      «Boshqa» → erkin matn qadami.
    • Kurslar: 1–4 + Magistratura.
    • KANAL integratsiyasi (channel.txt / AIINDEKSI_CHANNEL):
