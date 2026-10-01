@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>AI INDEKSI — TDIU</title>
+<title>AI Labs</title>
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
 <style>
 :root{
@@ -77,6 +77,24 @@ body.nobg .bar{display:flex}
 .btn{flex:1;border:none;border-radius:12px;padding:13px 8px;font-size:14px;font-weight:700;cursor:pointer;text-align:center;text-decoration:none;font-family:inherit}
 .btn.main{background:var(--link);color:#fff}
 .btn.sec{background:var(--bg);color:var(--link)}
+
+/* ── ro'yxatdan o'tish formasi ── */
+.form{padding:14px 16px 16px}
+.fld{margin-bottom:11px}
+.fld label{display:block;font-size:12.5px;color:var(--hint);font-weight:600;margin-bottom:5px}
+.fld input,.fld select{width:100%;background:var(--bg);border:1px solid var(--sep);border-radius:10px;padding:11px 12px;font-size:14.5px;color:var(--text);font-family:inherit;outline:none}
+.fld select{appearance:none;-webkit-appearance:none;background-image:url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="%238a99ab" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>');background-repeat:no-repeat;background-position:right 12px center}
+.fld input:focus,.fld select:focus{border-color:var(--link)}
+.fld input:disabled,.fld select:disabled{opacity:.55}
+#fldFakB{display:none}
+.consent{display:flex;gap:9px;align-items:flex-start;font-size:12.5px;color:var(--hint);line-height:1.42;margin:2px 0 6px;cursor:pointer}
+.consent input{width:18px;height:18px;flex:0 0 18px;margin-top:1px;accent-color:#3390ec}
+.fmsg{font-size:13px;line-height:1.45;margin-top:8px;display:none}
+.fmsg.ok{display:block;color:#34B27B;font-weight:600}
+.fmsg.err{display:block;color:#D64545}
+.fbtn{display:block;width:100%;border:none;border-radius:12px;padding:13px;font-size:14.5px;font-weight:700;background:var(--link);color:#fff;cursor:pointer;font-family:inherit;margin-top:6px}
+.fbtn:disabled{opacity:.6}
+body.intg .fbtn{display:none}
 </style>
 </head>
 <body>
@@ -125,6 +143,27 @@ body.nobg .bar{display:flex}
     <div class="row"><span class="num">4</span><span class="step-t">Sertifikat + har bir ish uchun tasdiqlovchi hujjat + nashr yo'li uchun baza.</span></div>
   </div>
 
+  <div class="shead">Ro'yxatdan o'tish · 40 soniya</div>
+  <div class="sec form" id="regForm">
+    <div class="fld"><label for="fIsm">Ism-familiya</label><input id="fIsm" type="text" placeholder="Aliyeva Malika Rashidovna" maxlength="120"></div>
+    <div class="fld"><label for="fFak">Fakultet</label><select id="fFak">
+      <option value="">— tanlang —</option>
+      <option>Iqtisodiyot</option><option>Turizm</option><option>Raqamli iqtisodiyot va AT</option>
+      <option>Moliya</option><option>Buxgalteriya hisobi</option><option>Bank ishi</option>
+      <option>Menejment</option><option>Soliqlar va byudjet hisobi</option><option>Qo'shma ta'lim dasturlari</option>
+      <option>Kechki ta'lim va magistratura</option><option>Sirtqi ta'lim</option><option>Masofaviy va 2-oliy ta'lim</option>
+      <option>To'rtko'l</option><option>Andijon</option><option value="Boshqa">Boshqa</option>
+    </select></div>
+    <div class="fld" id="fldFakB"><label for="fFakB">Fakultet nomi</label><input id="fFakB" type="text" placeholder="Masalan: Statistika fakulteti" maxlength="120"></div>
+    <div class="fld"><label for="fKurs">Kurs</label><select id="fKurs">
+      <option value="">— tanlang —</option><option>1</option><option>2</option><option>3</option><option>4</option><option>Magistratura</option>
+    </select></div>
+    <div class="fld"><label for="fYon">Ta'lim yo'nalishi</label><input id="fYon" type="text" placeholder="Masalan: Buxgalteriya hisobi va audit" maxlength="120"></div>
+    <label class="consent"><input id="fRoz" type="checkbox"><span>Ism, fakultet, kurs, yo'nalish va Telegram ID klub reyestri uchun saqlanishiga roziman (Nizom, 8-bo'lim). Batafsil: botda /maxfiylik.</span></label>
+    <button class="fbtn" id="fBtn" type="button">Ro'yxatdan o'tish</button>
+    <div class="fmsg" id="fMsg"></div>
+  </div>
+
   <div class="shead">Savol-javob</div>
   <div class="sec">
     <details class="det"><summary><span class="rt"><b>Kafolat bormi?</b></span><span class="chev"><svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg></span></summary><div class="ans">Yo'q — va bu halollik. Biz imkoniyat va isbotlovchi hujjat beramiz; qaror komissiyalarda. Mezonlarni o'zing tekshir: VMQ 149-son.</div></details>
@@ -165,30 +204,82 @@ for (var i=0;i<clicks.length;i++){
 }
 if (tg){
   try{ tg.ready(); tg.expand(); }catch(e){}
+  document.body.classList.add('intg');
   if (tg.MainButton){
     try{
-      tg.MainButton.setText("RO'YYXATDAN O'TISH");
+      tg.MainButton.setText("RO'YXATDAN O'TISH");
       tg.MainButton.show();
-      tg.MainButton.onClick(function(){ openLink(BT); });
+      tg.MainButton.onClick(function(){ submitReg(); });
     }catch(e){ document.body.classList.add('nobg'); }
   } else document.body.classList.add('nobg');
 } else document.body.classList.add('nobg');
 var ADMIN_ID = 8004724563;
 var uid = null;
 try{ if (tg && tg.initDataUnsafe && tg.initDataUnsafe.user) uid = tg.initDataUnsafe.user.id; }catch(e){}
+function refreshStats(){
+  fetch('stats.json').then(function(r){ return r.json(); }).then(function(d){
+    document.getElementById('mN').textContent = d.members;
+    document.getElementById('kN').textContent = Object.keys(d.kurs||{}).length;
+    document.getElementById('fN').textContent = Object.keys(d.fakultet||{}).length;
+    var top = Object.keys(d.fakultet||{}).sort(function(a,b){return d.fakultet[b]-d.fakultet[a];})[0];
+    document.getElementById('upd').textContent = (top ? 'yetakchi: '+top+' · ' : '') + 'yangilangan: '+d.updated+' UTC';
+  }).catch(function(){
+    document.getElementById('upd').textContent = "statistika tez orada — birinchi a'zo sen bo'l!";
+  });
+}
 if (uid === ADMIN_ID){
   document.getElementById('statHead').style.display = '';
   document.getElementById('statSec').style.display = '';
-  fetch('stats.json').then(function(r){ return r.json(); }).then(function(d){
-  document.getElementById('mN').textContent = d.members;
-  document.getElementById('kN').textContent = Object.keys(d.kurs||{}).length;
-  document.getElementById('fN').textContent = Object.keys(d.fakultet||{}).length;
-  var top = Object.keys(d.fakultet||{}).sort(function(a,b){return d.fakultet[b]-d.fakultet[a];})[0];
-  document.getElementById('upd').textContent = (top ? 'yetakchi: '+top+' · ' : '') + 'yangilangan: '+d.updated+' UTC';
-}).catch(function(){
-  document.getElementById('upd').textContent = "statistika tez orada — birinchi a'zo sen bo'l!";
-});
+  refreshStats();
 }
+/* ── mini app ichida ro'yxatdan o'tish ── */
+document.getElementById('fFak').addEventListener('change', function(){
+  document.getElementById('fldFakB').style.display = this.value === 'Boshqa' ? '' : 'none';
+});
+function fmsg(cls, txt){ var m = document.getElementById('fMsg'); m.className = 'fmsg ' + cls; m.textContent = txt; }
+var regDone = false;
+function submitReg(){
+  if (regDone){ openLink(CH); return; }
+  var ism = document.getElementById('fIsm').value.trim();
+  var fak = document.getElementById('fFak').value;
+  var fakB = document.getElementById('fFakB').value.trim();
+  var kurs = document.getElementById('fKurs').value;
+  var yon = document.getElementById('fYon').value.trim();
+  var roz = document.getElementById('fRoz').checked;
+  if (ism.length < 3) return fmsg('err', "Ism-familiyani to'liq yozing (kamida 3 belgi).");
+  if (!fak) return fmsg('err', "Fakultetni tanlang.");
+  if (fak === 'Boshqa' && fakB.length < 3) return fmsg('err', "Fakultet nomini yozing.");
+  if (!kurs) return fmsg('err', "Kursni tanlang.");
+  if (yon.length < 3) return fmsg('err', "Ta'lim yo'nalishini yozing.");
+  if (!roz) return fmsg('err', "Rozilik belgisini qo'ying (Nizom, 8-bo'lim).");
+  var init = (tg && tg.initData) ? tg.initData : '';
+  if (!init) return fmsg('err', "Ro'yxatdan o'tish faqat Telegram ichida ishlaydi. Bot orqali: @aiindeksi_bot → /start");
+  if (tg && tg.MainButton){ try{ tg.MainButton.showProgress(); }catch(e){} }
+  var btn = document.getElementById('fBtn'); btn.disabled = true;
+  fetch('register', {method:'POST', headers:{'Content-Type':'application/json'},
+    body: JSON.stringify({initData: init, ism: ism, fakultet: (fak === 'Boshqa' ? fakB : fak),
+                          boshqa: fak === 'Boshqa', kurs: kurs, yonalish: yon, rozilik: true})})
+  .then(function(r){ return r.json(); })
+  .then(function(d){
+    if (tg && tg.MainButton){ try{ tg.MainButton.hideProgress(); }catch(e){} }
+    btn.disabled = false;
+    if (d.ok){
+      regDone = true;
+      fmsg('ok', "✅ Ro'yxatdan o'tdingiz! № " + d.nomer + " — tasdiq xabari botga ham keldi.");
+      try{ tg.HapticFeedback.notificationOccurred('success'); }catch(e){}
+      var els = document.getElementById('regForm').querySelectorAll('input,select,button');
+      for (var q=0;q<els.length;q++) els[q].disabled = true;
+      if (tg && tg.MainButton){ try{ tg.MainButton.setText("KANALGA ULANISH"); }catch(e){} }
+      if (uid === ADMIN_ID) refreshStats();
+    } else fmsg('err', d.xato || "Xatolik yuz berdi. Bot orqali urinib ko'ring: /start");
+  })
+  .catch(function(){
+    if (tg && tg.MainButton){ try{ tg.MainButton.hideProgress(); }catch(e){} }
+    btn.disabled = false;
+    fmsg('err', "Server bilan aloqa yo'q. Bot orqali: /start");
+  });
+}
+document.getElementById('fBtn').addEventListener('click', submitReg);
 </script>
 </body>
 </html>

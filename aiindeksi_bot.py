@@ -33,11 +33,14 @@
 """
 
 import csv
+import hashlib
+import hmac
 import io
 import json
 import os
 import re
 import sys
+import threading
 import time
 import logging
 import zipfile
@@ -173,11 +176,14 @@ def db_load():
             log.warning("DB buzilgan, yangi boshlanmoqda: %s", DB_PATH)
     return {"users": {}, "state": {}, "counter": 0}
 
+DB_LOCK = threading.RLock()
+
 def db_save(db):
     tmp = DB_PATH + ".tmp"
-    with open(tmp, "w", encoding="utf-8") as f:
-        json.dump(db, f, ensure_ascii=False, indent=1)
-    os.replace(tmp, DB_PATH)
+    with DB_LOCK:
+        with open(tmp, "w", encoding="utf-8") as f:
+            json.dump(db, f, ensure_ascii=False, indent=1)
+        os.replace(tmp, DB_PATH)
 
 # ─────────────────────────── TELEGRAM API ───────────────────────────
 def tg(method, **kw):
@@ -488,6 +494,29 @@ def handle(msg, db):
     return YAKUN.format(**yozuv), kanal_kb()
 
 
+# ─────────────── MINI APP RO'YXAT (WebApp initData HMAC tekshiruvi) ───────────────
+def _toza(s, limit=120):
+    s = re.sub(r"\s+", " ", str(s or "")).strip()
+    return s.replace("<", "").replace(">", "").replace("&", "")[:limit]
+
+def webapp_auth(init_data):
+    """Telegram WebApp initData imzosini tekshiradi; haqiqiy bo'lsa user dict."""
+    if not init_data or not TOKEN:
+        return None
+    try:
+        pairs = urllib.parse.parse_qsl(init_data, keep_blank_values=True)
+        d = dict(pairs)
+        check = "\n".join("%s=%s" % (k, v) for k, v in sorted(pairs) if k != "hash")
+        secret = hmac.new(b"WebAppData", TOKEN.encode(), hashlib.sha256).digest()
+        calc = hmac.new(secret, check.encode(), hashlib.sha256).hexdigest()
+        if not hmac.compare_digest(calc, d.get("hash", "")):
+            return None
+        if int(time.time()) - int(d.get("auth_date", "0")) > 3600:
+            return None
+        return json.loads(d.get("user", "{}"))
+    except Exception:
+        return None
+
 # ─────────────────── WEB QATLAM (Render free uchun) ───────────────────
 def make_server(get_db):
     """Mini app (/), health check (/healthz) va jonli statistika (/stats.json)."""
@@ -528,6 +557,70 @@ def make_server(get_db):
                     ensure_ascii=False), "application/json; charset=utf-8")
             else:
                 self._send(404, "not found", "text/plain")
+
+        def _json(self, code, obj):
+            self._send(code, json.dumps(obj, ensure_ascii=False),
+                       "application/json; charset=utf-8")
+
+        def do_POST(self):
+            if self.path.split("?")[0] != "/register":
+                return self._send(404, "not found", "text/plain")
+            try:
+                n = int(self.headers.get("Content-Length", "0"))
+                if not 0 < n <= 8192:
+                    raise ValueError("uzunlik")
+                body = json.loads(self.rfile.read(n).decode("utf-8"))
+            except Exception:
+                return self._json(400, {"ok": False, "xato": "So'rov formati xato."})
+            init = str(body.get("initData", ""))
+            user = webapp_auth(init)
+            if user is None and DEMO and init.startswith("demo:"):
+                try:
+                    user = {"id": int(init.split(":", 1)[1])}
+                except Exception:
+                    user = None
+            if not user or not user.get("id"):
+                return self._json(403, {"ok": False,
+                    "xato": "Ro'yxatdan o'tish faqat Telegram ichida ishlaydi. Botda /start bosing."})
+            uid = str(user["id"])
+            ism = _toza(body.get("ism"))
+            fak = _toza(body.get("fakultet"))
+            boshqa = bool(body.get("boshqa"))
+            kurs = _toza(body.get("kurs"), 20)
+            yon = _toza(body.get("yonalish"))
+            if len(ism) < 3:
+                return self._json(400, {"ok": False, "xato": "Ism-familiya to'liq yozilsin (kamida 3 belgi)."})
+            if boshqa:
+                if len(fak) < 3:
+                    return self._json(400, {"ok": False, "xato": "Fakultet nomini yozing."})
+            elif fak not in FAKULTETLAR:
+                return self._json(400, {"ok": False, "xato": "Fakultetni ro'yxatdan tanlang."})
+            if kurs not in KURSLAR:
+                return self._json(400, {"ok": False, "xato": "Kursni tanlang: 1, 2, 3, 4 yoki Magistratura."})
+            if len(yon) < 3:
+                return self._json(400, {"ok": False, "xato": "Ta'lim yo'nalishini yozing."})
+            if not body.get("rozilik"):
+                return self._json(400, {"ok": False, "xato": "Rozilik belgisi kerak (Nizom, 8-bo'lim)."})
+            db = get_db()
+            with DB_LOCK:
+                if uid in db["users"]:
+                    return self._json(200, {"ok": False,
+                        "xato": "Siz allaqachon ro'yxatdan o'tgansiz (№ %s). Botda /holat bilan ko'rasiz."
+                                % db["users"][uid].get("nomer", "?")})
+                db["counter"] += 1
+                yozuv = {"nomer": db["counter"], "ism": ism, "fakultet": fak,
+                         "kurs": kurs, "yonalish": yon,
+                         "sana": time.strftime("%Y-%m-%d %H:%M", time.gmtime()),
+                         "manba": "miniapp"}
+                db["users"][uid] = yozuv
+                db["state"].pop(uid, None)
+                db_save(db)
+            javob = {"ok": True, "nomer": yozuv["nomer"], "xabar": YAKUN.format(**yozuv)}
+            self._json(200, javob)          # avval javob — keyin bildirishnomalar
+            for aid in ADMIN_IDS:
+                send(aid, "🔔 Yangi a'zo (mini app): #%d %s (%s, %s-kurs)" % (
+                    yozuv["nomer"], ism, fak, kurs))
+            send(uid, YAKUN.format(**yozuv), kanal_kb())
 
     port = int(os.environ.get("PORT", "8000"))
     return ThreadingHTTPServer(("0.0.0.0", port), H)
