@@ -1,0 +1,9 @@
+# AI Labs rasmiy sayti — Cloudflare Workers (static assets) → https://ailabs.tdiu.workers.dev
+name = "ailabs"
+compatibility_date = "2025-09-01"
+workers_dev = true
+preview_urls = false
+
+[assets]
+directory = "../site"
+not_found_handling = "404-page"

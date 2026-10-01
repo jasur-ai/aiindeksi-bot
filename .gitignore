@@ -7,3 +7,5 @@ secrets.txt
 *.xlsx
 __pycache__/
 *.log
+node_modules/
+.wrangler/
