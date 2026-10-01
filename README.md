@@ -1,4 +1,4 @@
-# AI INDEKSI klubi boti (@aiindeksi_bot)
+# AI Labs klubi boti (@aiindeksi_bot)
 
 Toshkent davlat iqtisodiyot universiteti · «Sun'iy intellekt monitoringi va raqamli
 o'lchov» klubi (ADRL / AAI-UZ) rasmiy ro'yxatdan o'tish va kanal boshqaruvi boti.

@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 """
 ════════════════════════════════════════════════════════════════════════════
- AI INDEKSI klubi — Telegram ro'yxatdan o'tish boti   (@aiindeksi_bot)   v2.0
+ AI Labs klubi — Telegram ro'yxatdan o'tish boti   (@aiindeksi_bot)   v2.0
  «Sun'iy intellekt monitoringi va raqamli o'lchov» klubi (ADRL / AAI-UZ)
  Toshkent davlat iqtisodiyot universiteti
 ════════════════════════════════════════════════════════════════════════════
@@ -81,7 +81,7 @@ def kanal_url():
 # ─────────────────────────── MATNLAR ───────────────────────────
 START_MATN = (
     "Assalomu alaykum! 👋\n\n"
-    "Bu — «AI INDEKSI» klubi (TDIU) rasmiy ro'yxatdan o'tish boti.\n"
+    "Bu — «AI Labs» klubi (TDIU) rasmiy ro'yxatdan o'tish boti.\n"
     "Klub sun'iy intellektning O'zbekistonda qayerda ISHLAYOTGANINI va "
     "qayerda ISHLAMAYOTGANINI ochiq ma'lumotlar asosida o'lchaydi.\n\n"
     "📣 Kanal: t.me/Raqamli_tadqiqot — barcha e'lonlar va tadbir "
