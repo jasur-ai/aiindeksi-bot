@@ -85,7 +85,8 @@ START_MATN = (
     "Klub sun'iy intellektning O'zbekistonda qayerda ISHLAYOTGANINI va "
     "qayerda ISHLAMAYOTGANINI ochiq ma'lumotlar asosida o'lchaydi.\n\n"
     "📣 Kanal: t.me/Raqamli_tadqiqot — barcha e'lonlar va tadbir "
-    "chaqiruvlari shu yerda.\n\n"
+    "chaqiruvlari shu yerda.\n"
+    "🌐 Sayt: ailabs-tdiu.onrender.com — pilot natijasi, kalkulyator, test.\n\n"
     "Nega a'zo bo'lish kerak? /foyda — xabardorlik, jamoa, o'sish "
     "va fanga hissa.\n\n"
     "Ro'yxatdan o'tish 4 savoldan iborat (≈40 soniya):\n"
@@ -163,7 +164,8 @@ HELP_MATN = (
     "/help  — shu ro'yxat\n\n"
     "Admin uchun: /statlar, /export (CSV+XLSX), /elon (kanalga e'lon)\n\n"
     "Klub faqat OCHIQ manbalar bilan ishlaydi. A'zolik BEPUL.\n"
-    "📣 Kanal: t.me/Raqamli_tadqiqot"
+    "📣 Kanal: t.me/Raqamli_tadqiqot\n"
+    "🌐 Sayt: ailabs-tdiu.onrender.com"
 )
 
 # ─────────────────────────── DB ───────────────────────────

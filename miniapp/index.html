@@ -204,6 +204,7 @@ body{padding-bottom:calc(84px + env(safe-area-inset-bottom))}
 
   <div class="shead">Aloqa</div>
   <div class="sec">
+    <div class="row click" data-link="https://ailabs-tdiu.onrender.com"><span class="ico" style="background:#2E752E"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><line x1="3" y1="12" x2="21" y2="12"/><path d="M12 3a14 14 0 0 1 0 18a14 14 0 0 1 0-18z"/></svg></span><span class="rt"><b>Veb-sayt</b><span>ailabs-tdiu.onrender.com</span></span><span class="chev"><svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg></span></div>
     <div class="row click" data-link="https://t.me/Raqamli_tadqiqot"><span class="ico" style="background:#3390ec"><svg viewBox="0 0 24 24"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg></span><span class="rt"><b>Yangiliklar kanali</b><span>@Raqamli_tadqiqot</span></span><span class="chev"><svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg></span></div>
     <div class="row click" data-link="https://t.me/aiindeksi_bot?start=miniapp"><span class="ico" style="background:#1F3864"><svg viewBox="0 0 24 24"><rect x="4" y="8" width="16" height="12" rx="3"/><circle cx="9" cy="14" r="1.2" fill="#fff" stroke="none"/><circle cx="15" cy="14" r="1.2" fill="#fff" stroke="none"/><line x1="12" y1="8" x2="12" y2="4"/><circle cx="12" cy="3" r="1.2"/></svg></span><span class="rt"><b>Ro'yxatdan o'tish boti</b><span>@aiindeksi_bot</span></span><span class="chev"><svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg></span></div>
   </div>
@@ -222,7 +223,9 @@ body{padding-bottom:calc(84px + env(safe-area-inset-bottom))}
 var tg = window.Telegram && window.Telegram.WebApp;
 var CH = "https://t.me/Raqamli_tadqiqot", BT = "https://t.me/aiindeksi_bot?start=miniapp";
 function openLink(u){
-  if (tg && tg.openTelegramLink){ try{ tg.HapticFeedback.impactOccurred('light'); }catch(e){} tg.openTelegramLink(u); }
+  var isTg = /^https:\/\/t\.me\//.test(u);
+  if (tg && isTg && tg.openTelegramLink){ try{ tg.HapticFeedback.impactOccurred('light'); }catch(e){} tg.openTelegramLink(u); }
+  else if (tg && !isTg && tg.openLink){ try{ tg.HapticFeedback.impactOccurred('light'); }catch(e){} tg.openLink(u); }
   else location.href = u;
 }
 var clicks = document.querySelectorAll('[data-link]');
