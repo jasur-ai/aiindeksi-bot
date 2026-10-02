@@ -1,7 +1,8 @@
-# Eski manzillar ailabs.tdiu.workers.dev va raqamli.tdiu.workers.dev → raqamlab.tdiu.workers.dev (301)
-# Ikkinchi manzil uchun: wrangler deploy --name raqamli
+# Eski manzillar → https://raqamlab.pages.dev (301). Har bir eski nom uchun:
+#   wrangler deploy                 (ailabs)
+#   wrangler deploy --name raqamli
+#   wrangler deploy --name raqamlab
 name = "ailabs"
 main = "index.js"
 compatibility_date = "2025-09-01"
 workers_dev = true
-preview_urls = false

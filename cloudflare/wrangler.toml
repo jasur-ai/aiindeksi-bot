@@ -1,9 +1,5 @@
-# Raqamlab rasmiy sayti — Cloudflare Workers (static assets) → https://raqamlab.tdiu.workers.dev
+# Raqamlab rasmiy sayti — Cloudflare Pages: https://raqamlab.pages.dev
+# Deploy: wrangler pages deploy ../site --project-name raqamlab --branch main
 name = "raqamlab"
+pages_build_output_dir = "../site"
 compatibility_date = "2025-09-01"
-workers_dev = true
-preview_urls = false
-
-[assets]
-directory = "../site"
-not_found_handling = "404-page"

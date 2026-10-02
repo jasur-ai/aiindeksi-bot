@@ -23,6 +23,8 @@ Sinov: `python3 aiindeksi_bot.py --demo` · Avto-test: `python3 aiindeksi_bot.py
   `/elon <matn>` (kanalga e'lon)
 - Kanal: force-subscribe, «Kanalga a'zo bo'ling» tugmasi
 - `miniapp/` — Telegram Mini App (Render static site uchun tayyor)
+- `site/` — rasmiy sayt (https://raqamlab.pages.dev, Cloudflare Pages): `cd cloudflare && wrangler pages deploy ../site --project-name raqamlab --branch main`
+- `cloudflare/redirect/` — eski workers.dev manzillaridan saytga 301 yo'naltirish (ailabs, raqamli, raqamlab)
 
 ## Render'da doimiy ishlatish
 1. GitHub repo'ni Render'ga ulang → **Background Worker** (yoki Web Service):
