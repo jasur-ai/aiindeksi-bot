@@ -139,7 +139,7 @@ YAKUN = (
 FOYDA_MATN = (
     "🌱 Klub nima beradi? — 6 ta halol javob\n\n"
     "1️⃣ XABARDORLIK: O'zbekistonda sun'iy intellektning real manzarasini birinchilardan "
-    "bo'lib ko'rasiz: ochiq ma'lumotlar, haftalik digest va choraklik hisobot.\n"
+    "bo'lib ko'rasiz: ochiq ma'lumotlar, haftalik digest va sikl hisobotlari.\n"
     "2️⃣ JAMOA: turli fakultetlardan fikrdoshlar, mentor va o'zaro tekshiruv (peer-review) "
     "madaniyati. Birinchi kurs talabasi ham o'z o'rnini topadi: kuzatuvchidan muallifgacha.\n"
     "3️⃣ RIVOJLANISH: darsdagi bilimni real loyihada mustahkamlaysiz — manba qidirish va "
