@@ -1,7 +1,7 @@
-// Raqamli Radar: eski manzillardan (raqamlab/raqamli/ailabs.tdiu.workers.dev) asosiy saytga doimiy yo'naltirish
+// Raqamli Tadqiqot: eski manzillardan (raqamlab/raqamli/ailabs.tdiu.workers.dev) asosiy saytga doimiy yo'naltirish
 export default {
   fetch(req) {
     const u = new URL(req.url);
-    return Response.redirect("https://raqamliradar.pages.dev" + u.pathname + u.search, 301);
+    return Response.redirect("https://raqamlitadqiqot.pages.dev" + u.pathname + u.search, 301);
   },
 };

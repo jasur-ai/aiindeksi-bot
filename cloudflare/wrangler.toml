@@ -1,5 +1,5 @@
-# Raqamli Radar rasmiy sayti — Cloudflare Pages: https://raqamliradar.pages.dev
-# Deploy: wrangler pages deploy ../site --project-name raqamliradar --branch main
-name = "raqamliradar"
+# Raqamli Tadqiqot rasmiy sayti — Cloudflare Pages: https://raqamlitadqiqot.pages.dev
+# Deploy: wrangler pages deploy ../site --project-name raqamlitadqiqot --branch main
+name = "raqamlitadqiqot"
 pages_build_output_dir = "../site"
 compatibility_date = "2025-09-01"

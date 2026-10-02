@@ -1,3 +1,3 @@
 User-agent: *
 Allow: /
-Sitemap: https://raqamliradar.pages.dev/sitemap.xml
+Sitemap: https://raqamlitadqiqot.pages.dev/sitemap.xml
