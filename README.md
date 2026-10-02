@@ -1,7 +1,7 @@
-# AI Labs klubi boti (@aiindeksi_bot)
+# Raqamlab klubi boti (@aiindeksi_bot)
 
-Toshkent davlat iqtisodiyot universiteti · «Sun'iy intellekt monitoringi va raqamli
-o'lchov» klubi (ADRL / AAI-UZ) rasmiy ro'yxatdan o'tish va kanal boshqaruvi boti.
+Toshkent davlat iqtisodiyot universiteti · «Raqamli o'lchov va sun'iy intellekt
+monitoringi» klubi (ADRL / AAI-UZ) rasmiy ro'yxatdan o'tish va kanal boshqaruvi boti.
 
 **Talab:** faqat Python 3.8+ standart kutubxonasi. Hech qanday pip-paket kerak emas.
 
