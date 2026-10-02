@@ -1,0 +1,6 @@
+# Eski manzil ailabs.tdiu.workers.dev → yangi brend manzili raqamli.tdiu.workers.dev (301)
+name = "ailabs"
+main = "index.js"
+compatibility_date = "2025-09-01"
+workers_dev = true
+preview_urls = false

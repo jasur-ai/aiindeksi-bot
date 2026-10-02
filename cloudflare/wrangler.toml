@@ -1,5 +1,5 @@
-# AI Labs rasmiy sayti — Cloudflare Workers (static assets) → https://ailabs.tdiu.workers.dev
-name = "ailabs"
+# Raqamli AI Lab rasmiy sayti — Cloudflare Workers (static assets) → https://raqamli.tdiu.workers.dev
+name = "raqamli"
 compatibility_date = "2025-09-01"
 workers_dev = true
 preview_urls = false
