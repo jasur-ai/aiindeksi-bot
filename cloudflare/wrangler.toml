@@ -1,5 +1,5 @@
-# Raqamlab rasmiy sayti — Cloudflare Pages: https://raqamlab.pages.dev
-# Deploy: wrangler pages deploy ../site --project-name raqamlab --branch main
-name = "raqamlab"
+# Raqamli Radar rasmiy sayti — Cloudflare Pages: https://raqamliradar.pages.dev
+# Deploy: wrangler pages deploy ../site --project-name raqamliradar --branch main
+name = "raqamliradar"
 pages_build_output_dir = "../site"
 compatibility_date = "2025-09-01"

@@ -1,4 +1,4 @@
-# Raqamlab klubi boti (@aiindeksi_bot)
+# Raqamli Radar klubi boti (@aiindeksi_bot)
 
 Toshkent davlat iqtisodiyot universiteti · «Raqamli o'lchov va sun'iy intellekt
 monitoringi» klubi (ADRL / AAI-UZ) rasmiy ro'yxatdan o'tish va kanal boshqaruvi boti.
@@ -23,8 +23,9 @@ Sinov: `python3 aiindeksi_bot.py --demo` · Avto-test: `python3 aiindeksi_bot.py
   `/elon <matn>` (kanalga e'lon)
 - Kanal: force-subscribe, «Kanalga a'zo bo'ling» tugmasi
 - `miniapp/` — Telegram Mini App (Render static site uchun tayyor)
-- `site/` — rasmiy sayt (https://raqamlab.pages.dev, Cloudflare Pages): `cd cloudflare && wrangler pages deploy ../site --project-name raqamlab --branch main`
+- `site/` — rasmiy sayt (https://raqamliradar.pages.dev, Cloudflare Pages): `cd cloudflare && wrangler pages deploy ../site --project-name raqamliradar --branch main`
 - `cloudflare/redirect/` — eski workers.dev manzillaridan saytga 301 yo'naltirish (ailabs, raqamli, raqamlab)
+- `cloudflare/eski_pages/` — raqamlab.pages.dev → raqamliradar.pages.dev (301): `cd cloudflare/eski_pages && wrangler pages deploy . --project-name raqamlab --branch main`
 
 ## Render'da doimiy ishlatish
 1. GitHub repo'ni Render'ga ulang → **Background Worker** (yoki Web Service):

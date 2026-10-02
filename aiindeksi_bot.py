@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 """
 ════════════════════════════════════════════════════════════════════════════
- Raqamlab klubi — Telegram ro'yxatdan o'tish boti   (@aiindeksi_bot)   v2.2
+ Raqamli Radar klubi — Telegram ro'yxatdan o'tish boti   (@aiindeksi_bot)   v2.2
  «Raqamli o'lchov va sun'iy intellekt monitoringi» klubi (ADRL / AAI-UZ)
  Toshkent davlat iqtisodiyot universiteti
 ════════════════════════════════════════════════════════════════════════════
@@ -95,12 +95,12 @@ def kanal_url():
 # ─────────────────────────── MATNLAR ───────────────────────────
 START_MATN = (
     "Assalomu alaykum! 👋\n\n"
-    "Bu — «Raqamlab» klubi (TDIU) rasmiy ro'yxatdan o'tish boti.\n"
+    "Bu — «Raqamli Radar» klubi (TDIU) rasmiy ro'yxatdan o'tish boti.\n"
     "Klub sun'iy intellektning O'zbekistonda qayerda ISHLAYOTGANINI va "
     "qayerda ISHLAMAYOTGANINI ochiq ma'lumotlar asosida o'lchaydi.\n\n"
     "📣 Kanal: t.me/Raqamli_tadqiqot — barcha e'lonlar va tadbir "
     "chaqiruvlari shu yerda.\n"
-    "🌐 Sayt: raqamlab.pages.dev — pilot natijasi, kalkulyator, test.\n\n"
+    "🌐 Sayt: raqamliradar.pages.dev — pilot natijasi, kalkulyator, test.\n\n"
     "Nega a'zo bo'lish kerak? /foyda — xabardorlik, jamoa, o'sish "
     "va fanga hissa.\n\n"
     "Ro'yxatdan o'tish 4 savoldan iborat (≈40 soniya):\n"
@@ -178,7 +178,7 @@ HELP_MATN = (
     "Admin uchun: /statlar, /royxat (matnli ro'yxat), /export (Excel), /elon (kanalga e'lon)\n\n"
     "Klub faqat OCHIQ manbalar bilan ishlaydi. A'zolik BEPUL.\n"
     "📣 Kanal: t.me/Raqamli_tadqiqot\n"
-    "🌐 Sayt: raqamlab.pages.dev"
+    "🌐 Sayt: raqamliradar.pages.dev"
 )
 
 # ─────────────────────────── DB ───────────────────────────
@@ -215,7 +215,7 @@ def _norm(db):
 def _gh_req(method, url, data=None):
     req = urllib.request.Request(url, method=method,
         data=json.dumps(data).encode("utf-8") if data is not None else None,
-        headers={"Authorization": "Bearer " + GH_TOKEN, "User-Agent": "raqamlab-bot",
+        headers={"Authorization": "Bearer " + GH_TOKEN, "User-Agent": "raqamliradar-bot",
                  "Accept": "application/vnd.github+json", "Content-Type": "application/json"})
     with urllib.request.urlopen(req, timeout=25) as r:
         return json.loads(r.read().decode("utf-8"))
@@ -551,11 +551,11 @@ def royxat_qatorlari(db):
 
 def export_files(db, csv_ham=False):
     hdr, rows = royxat_qatorlari(db)
-    xlsx_path = os.path.join(HERE, "Raqamlab_royxat.xlsx")
+    xlsx_path = os.path.join(HERE, "Raqamli_Radar_royxat.xlsx")
     write_xlsx(xlsx_path, hdr, rows, widths=[6, 32, 26, 8, 34, 18, 14, 16, 17])
     csv_path = None
     if csv_ham:                       # vergul bilan — Google Sheets / LibreOffice uchun
-        csv_path = os.path.join(HERE, "Raqamlab_royxat.csv")
+        csv_path = os.path.join(HERE, "Raqamli_Radar_royxat.csv")
         with open(csv_path, "w", newline="", encoding="utf-8-sig") as f:
             w = csv.writer(f, lineterminator="\n")
             w.writerow(hdr)
