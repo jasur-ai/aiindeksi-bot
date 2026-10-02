@@ -2,11 +2,13 @@
 # -*- coding: utf-8 -*-
 """
 ════════════════════════════════════════════════════════════════════════════
- AI Labs klubi — Telegram ro'yxatdan o'tish boti   (@aiindeksi_bot)   v2.1
+ AI Labs klubi — Telegram ro'yxatdan o'tish boti   (@aiindeksi_bot)   v2.2
  «Sun'iy intellekt monitoringi va raqamli o'lchov» klubi (ADRL / AAI-UZ)
  Toshkent davlat iqtisodiyot universiteti
 ════════════════════════════════════════════════════════════════════════════
 
+ v2.2: MANBA O'LCHOVI — «/start KOD» (deep-link) kodi «Manba» ustuniga «bot:KOD» bo'lib yoziladi;
+   /statlar manbalar kesimini ko'rsatadi (27-hujjat, 5-bo'lim).
  v2.1: DOIMIY BAZA — yopiq GitHub ombori (AILABS_DB_REPO/AILABS_DB_TOKEN), Render restarti
    endi ma'lumotni o'chirmaydi; /export → uslubli XLSX (har ustun alohida, Toshkent vaqti),
    /export csv → vergulli CSV; /royxat → telefonda matnli ro'yxat; admin xabarida yo'nalish
@@ -145,7 +147,7 @@ FOYDA_MATN = (
     "4️⃣ HISSA: bo'sh katakni to'ldirsangiz, indeksga yangi tekshirilgan dalil qo'shiladi. "
     "Real hissa hisobotda nom bilan ko'rsatiladi.\n"
     "5️⃣ E'TIROF: bajarilgan ish tasdiqlovchi hujjatda aniq yoziladi — kim, nima qilgani; "
-    "4 ta ichki daraja va kurator tavsiyanomasi.\n"
+    "4 ta ichki daraja va ilmiy rahbar tavsiyanomasi.\n"
     "6️⃣ KELAJAK UCHUN BAZA (va'dasiz): ilmiy tezis va maqola uchun tayyor material. "
     "Baholash qarorlarini tegishli komissiyalar qabul qiladi.\n\n"
     "Biz va'da bermaymiz — natijani ko'rsatamiz. Ro'yxatdan o'tish: /start"
@@ -185,6 +187,18 @@ HELP_MATN = (
 # ustiga yozib yuborish xavfi yo'q); (2) sha to'qnashuvi bo'lsa — birlashtirib qayta yoziladi;
 # (3) /bekor bilan o'chirilganlar "deleted" ro'yxatida turadi, birlashtirishda tirilmaydi.
 PERSIST = ("users", "state", "counter", "deleted")
+REF = {}   # chat_id → (deep-link kodi, vaqt): «/start afisha» → manba «bot:afisha» (faqat xotirada, 24 soat)
+
+def ref_qoy(chat_id, kod):
+    kod = re.sub(r"[^a-z0-9_]", "", (kod or "").lower())[:24]
+    if kod:
+        if len(REF) > 5000:
+            REF.clear()
+        REF[str(chat_id)] = (kod, time.time())
+
+def ref_ol(chat_id, asos):
+    kod, ts = REF.pop(str(chat_id), ("", 0))
+    return asos + ":" + kod if kod and time.time() - ts < 86400 else asos
 GH = {"sha": None, "synced": False, "last_ok": None, "err": "", "last_body": None}
 DB_LOCK = threading.RLock()
 _DB_REF = {"db": None}
@@ -538,7 +552,7 @@ def royxat_qatorlari(db):
 def export_files(db, csv_ham=False):
     hdr, rows = royxat_qatorlari(db)
     xlsx_path = os.path.join(HERE, "AI_Labs_royxat.xlsx")
-    write_xlsx(xlsx_path, hdr, rows, widths=[6, 32, 26, 8, 34, 18, 14, 10, 17])
+    write_xlsx(xlsx_path, hdr, rows, widths=[6, 32, 26, 8, 34, 18, 14, 16, 17])
     csv_path = None
     if csv_ham:                       # vergul bilan — Google Sheets / LibreOffice uchun
         csv_path = os.path.join(HERE, "AI_Labs_royxat.csv")
@@ -583,8 +597,9 @@ def bekor(chat_id, db):
 
 def statlar(db):
     n = len(db["users"])
-    fak, kurs = {}, {}
+    fak, kurs, manba = {}, {}, {}
     for u in db["users"].values():
+        manba[u.get("manba", "bot")] = manba.get(u.get("manba", "bot"), 0) + 1
         fak[u.get("fakultet", "?")] = fak.get(u.get("fakultet", "?"), 0) + 1
         kurs[u.get("kurs", "?")] = kurs.get(u.get("kurs", "?"), 0) + 1
     q = ["📊 STATISTIKA", "Jami a'zo: %d" % n, "Jarayonda (yarim): %d" % len(db["state"]),
@@ -596,6 +611,8 @@ def statlar(db):
     q += ["  • %s — %d" % (k, v) for k, v in sorted(fak.items(), key=lambda kv: -kv[1])]
     q.append("Kurslar bo'yicha:")
     q += ["  • %s — %d" % (k, v) for k, v in sorted(kurs.items(), key=lambda kv: str(kv[0]))]
+    q.append("Manba bo'yicha (deep-link kodi):")
+    q += ["  • %s — %d" % (k, v) for k, v in sorted(manba.items(), key=lambda kv: -kv[1])]
     return "\n".join(q), None
 
 def flood_guard(chat_id, db):
@@ -622,6 +639,8 @@ def handle(msg, db):
         # «/start site», «/start miniapp» (deep-link) va «/buyruq@aiindeksi_bot» → toza buyruq
         bosh, _, qolgan = matn.partition(" ")
         bosh = bosh.split("@")[0]
+        if bosh == "/start" and qolgan:
+            ref_qoy(chat_id, qolgan.strip())
         matn = bosh if bosh == "/start" else (bosh + (" " + qolgan if qolgan else ""))
     blok, jim = flood_guard(chat_id, db)
     if blok:
@@ -721,7 +740,7 @@ def handle(msg, db):
     uname = (msg.get("from") or {}).get("username", "")
     yozuv = {"nomer": yangi_nomer(db, javoblar["ism"]), "ism": javoblar["ism"],
              "fakultet": javoblar["fakultet"], "kurs": javoblar["kurs"],
-             "yonalish": javoblar["yonalish"], "username": uname, "manba": "bot",
+             "yonalish": javoblar["yonalish"], "username": uname, "manba": ref_ol(chat_id, "bot"),
              "sana": time.strftime("%Y-%m-%d %H:%M", time.gmtime()), "ts": time.time()}
     db["users"][str(chat_id)] = yozuv
     db.get("deleted", {}).pop(str(chat_id), None)
@@ -849,7 +868,7 @@ def make_server(get_db):
                 yozuv = {"nomer": yangi_nomer(db, ism), "ism": ism, "fakultet": fak,
                          "kurs": kurs, "yonalish": yon, "username": uname,
                          "sana": time.strftime("%Y-%m-%d %H:%M", time.gmtime()),
-                         "ts": time.time(), "manba": "miniapp"}
+                         "ts": time.time(), "manba": ref_ol(uid, "miniapp")}
                 db["users"][uid] = yozuv
                 db.get("deleted", {}).pop(uid, None)
                 db["state"].pop(uid, None)
