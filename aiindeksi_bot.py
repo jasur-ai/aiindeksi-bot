@@ -12,7 +12,7 @@
    • /tadbir_boshlash N → admin QR ekrani (/qr/N): QR har 30 soniyada yangilanadi, ≤90 soniya amal qiladi;
      skanerlagan — davomatda; shu chatda tadbir suratlarini yuboradi → yopiq arxiv guruhi (har tadbir —
      alohida mavzu, havola hech kimga berilmaydi, qabul yakundan 1 soat o'tib yopiladi);
-   • rollar — faqat ichki boshqaruv (admin): /rollar, /rol N rol, /jamoa. Ommaga ko'rsatilmaydi (v3.1).
+   • rollar — faqat ICHKI vosita (tashkilotchilar): /rollar, /jamoa, /rol N rol. Oddiy a'zoga ko'rinmaydi.
  v2.2: MANBA O'LCHOVI — «/start KOD» (deep-link) kodi «Manba» ustuniga «bot:KOD» bo'lib yoziladi;
    /statlar manbalar kesimini ko'rsatadi (27-hujjat, 5-bo'lim).
  v2.1: DOIMIY BAZA — yopiq GitHub ombori (AILABS_DB_REPO/AILABS_DB_TOKEN), Render restarti
@@ -153,8 +153,7 @@ FOYDA_MATN = (
     "tekshirish, indeks qurish, Excel/Python, ilmiy yozish va himoya.\n"
     "4️⃣ HISSA: bo'sh katakni to'ldirsangiz, indeksga yangi tekshirilgan dalil qo'shiladi. "
     "Real hissa hisobotda nom bilan ko'rsatiladi.\n"
-    "5️⃣ E'TIROF: bajarilgan ish tasdiqlovchi hujjatda aniq yoziladi — kim, nima qilgani; "
-    "hujjat har bir ishtirokchiga beriladi.\n"
+    "5️⃣ E'TIROF: bajarilgan ish tasdiqlovchi hujjatda aniq yoziladi — kim, nima qilgani.\n"
     "6️⃣ KELAJAK UCHUN BAZA (va'dasiz): ilmiy tezis va maqola uchun tayyor material. "
     "Baholash qarorlarini tegishli komissiyalar qabul qiladi.\n\n"
     "Biz va'da bermaymiz — natijani ko'rsatamiz. Ro'yxatdan o'tish: /start"
@@ -173,9 +172,15 @@ MAXFIYLIK_MATN = (
     "tozalanadi (ZRU-547, 27-1-modda talabiga intilamiz).\n"
     "5. Tadbirlar: QR davomatda faqat qatnashganingiz qayd etiladi; yuborgan suratlaringiz yopiq "
     "arxivga tushadi va faqat klub foto-hisobotida ishlatilishi mumkin. Suratingiz ishlatilmasin desangiz — "
-    "botga yozing, olib tashlanadi.\n"
+    "klubga xabar bering (tadbirda yoki kanal orqali), olib tashlanadi.\n"
     "6. Hodisa bo'lsa (token/database ochilsa): 24 soat ichida kanalda ochiq "
     "e'lon qilinadi va barcha kalitlar almashtiriladi."
+)
+ADMIN_HELP = (
+    "\n\n🛡 Ichki buyruqlar: /statlar, /royxat, /export (Excel), /elon (kanalga e'lon), "
+    "/rollar (rollar va ariza), /jamoa (bandlik), /rol N rol (tayinlash)\n"
+    "Tadbirlar: kanalga #tadbir heshtegli post → a'zolarga avtomatik xabar; /tadbirlar, /tadbir N, "
+    "/tadbir_boshlash N (QR ekrani), /tadbir_yakun N, /tadbir_yangi Nomi"
 )
 HELP_MATN = (
     "📘 Buyruqlar:\n"
@@ -185,7 +190,6 @@ HELP_MATN = (
     "/maxfiylik — ma'lumotlar siyosati\n"
     "/bekor — jarayonni bekor qilish / yozuvni o'chirish\n"
     "/help  — shu ro'yxat\n\n"
-    "\n"
     "Klub faqat OCHIQ manbalar bilan ishlaydi. A'zolik BEPUL.\n"
     "📣 Kanal: t.me/Raqamli_tadqiqot\n"
     "🌐 Sayt: raqamlitadqiqot.pages.dev"
@@ -625,7 +629,7 @@ def holat(chat_id, db):
         return "Siz hali ro'yxatdan o'tmagansiz.\nBoshlash: /start", None
     rl = [ROL[k]["nom"] for k in db.get("roles", {}).get(str(chat_id), []) if k in ROL]
     return YAKUN.format(**u) + "\n\n(holat: ro'yxatdan o'tgan%s)" % (
-        "; rol: " + ", ".join(rl) if rl else ""), None
+        "; vazifa: " + ", ".join(rl) if rl else ""), None
 
 def bekor(chat_id, db):
     if str(chat_id) in db["state"]:
@@ -706,7 +710,9 @@ def handle(msg, db):
         return ("✅ «%s» ga yozildingiz (jami %d kishi). Tadbir kuni kirishda QR orqali davomat olinadi.%s"
                 % (esc(ev["nom"]), rsvp_soni(ev), "" if str(chat_id) in db["users"] else
                    "\n\nKlub a'zosi bo'lish uchun: /start"), rsvp_kb(ev, chat_id))
-    if matn == "/rollar" and tadbir_ruxsat(chat_id, db):      # rollar — faqat ichki boshqaruv
+    if matn == "/rollar":                                   # ICHKI: faqat tashkilotchilar
+        if not tadbir_ruxsat(chat_id, db):
+            return "Bunday buyruq yo'q. Buyruqlar ro'yxati: /help", None
         return rollar_matn(), rollar_kb()
     if matn.startswith(("/tadbirlar", "/tadbir_yangi", "/tadbir_boshlash", "/tadbir_yakun")) or \
             matn == "/tadbir" or matn.startswith("/tadbir "):
@@ -714,7 +720,7 @@ def handle(msg, db):
     if matn == "/jamoa" or matn.startswith("/rol "):
         if not tadbir_ruxsat(chat_id, db) or (matn.startswith("/rol ") and chat_id not in ADMIN_IDS
                                                and "koordinator" not in db.get("roles", {}).get(str(chat_id), [])):
-            return "⛭ Bu buyruq faqat administrator uchun.", None
+            return "Bunday buyruq yo'q. Buyruqlar ro'yxati: /help", None
         return (jamoa_matn(db), None) if matn == "/jamoa" else rol_tayinla(matn, db)
 
     if matn == "/start":
@@ -733,7 +739,7 @@ def handle(msg, db):
         db["state"][str(chat_id)] = {"bosqich": 0, "javoblar": {}}
         return pref + m_, k_
     if matn == "/help":
-        return HELP_MATN, None
+        return HELP_MATN + (ADMIN_HELP if tadbir_ruxsat(chat_id, db) else ""), None
     if matn in ("/foyda", "/benefit", "/foida"):
         return FOYDA_MATN, None
     if matn in ("/maxfiylik", "/privacy"):
@@ -1078,7 +1084,7 @@ def tadbir_tavsif(ev, toliq=False):
 def tadbir_buyruq(chat_id, matn, db):
     """/tadbirlar · /tadbir N · /tadbir_yangi NOM · /tadbir_boshlash N · /tadbir_yakun N"""
     if not tadbir_ruxsat(chat_id, db):
-        return "⛭ Bu buyruq faqat administrator uchun.", None
+        return "Bunday buyruq yo'q. Buyruqlar ro'yxati: /help", None
     _avto_yakun(db)
     bosh, _, arg = matn.partition(" ")
     arg = arg.strip()
@@ -1253,7 +1259,7 @@ def callback(cq, db):
                 tg("editMessageReplyMarkup", chat_id=m["chat"]["id"], message_id=m["message_id"],
                    reply_markup=json.dumps(rsvp_kb(ev, uid), ensure_ascii=False))
     elif data.startswith(("rol:", "ariza:", "rollar:")) and not tadbir_ruxsat(uid, db):
-        toast = "Bu tugma faol emas."                       # rollar — faqat ichki boshqaruv (v3.1)
+        toast = "Bu tugma endi faol emas."                   # rollar — ichki vosita
     elif data.startswith(("rol:", "ariza:")):
         toast, yangi, kb = rol_callback(uid, data, db)
     elif data.startswith("rollar:"):
@@ -1631,17 +1637,18 @@ def test_v3(db):
     assert "kelgan: 1" in j, j
     # 5) ruxsat: oddiy a'zo tadbir buyrug'ini ishlata olmaydi
     j, _ = handle({"chat": {"id": 300003}, "text": "/tadbir_boshlash 1"}, db)
-    assert "⛭" in j
+    assert "Bunday buyruq yo'q" in j
+    # 5b) rollar ommaga ko'rinmaydi: oddiy a'zoga /rollar yo'q, /help da ichki buyruqlar yo'q
+    j, _ = handle({"chat": {"id": 300003}, "text": "/rollar"}, db)
+    assert "Bunday buyruq yo'q" in j, j
+    j, _ = handle({"chat": {"id": 300003}, "text": "/help"}, db)
+    assert "/rollar" not in j and "/jamoa" not in j and "rol" not in j.lower().replace("ro'yxat", ""), j
     # 6) rollar: 16 ta, komissiya — 3 ovoz; ariza → tayinlash → jamoa → holat
     assert len(ROL) == 16 and sum(1 for r in ROL.values() if r.get("ovoz")) == 3, len(ROL)
     j, kb = handle({"chat": {"id": 100001}, "text": "/rollar"}, db)
     assert "Metodologiya komissiyasi" in j and kb["inline_keyboard"]
-    j, _ = handle({"chat": {"id": 300003}, "text": "/rollar"}, db)      # ommaga rollar ko'rinmaydi
-    assert "komissiya" not in (j or "") and "rol" not in (j or "").lower(), j
-    t, y, _ = callback({"data": "ariza:tahlilchi", "from": {"id": 300003}}, db)
-    assert t == "Bu tugma faol emas." and not y and "300003" not in db.get("rol_ariza", {})
-    t, y, _ = callback({"data": "rollar:", "from": {"id": 300003}}, db)
-    assert not y
+    t, _, _ = callback({"data": "ariza:tahlilchi", "from": {"id": 300003}}, db)
+    assert "faol emas" in t
     t, _, _ = callback({"data": "ariza:tahlilchi", "from": {"id": 100001}}, db)
     assert db["rol_ariza"]["100001"]["rol"] == "tahlilchi"
     nomer = db["users"]["100001"]["nomer"]
@@ -1650,7 +1657,7 @@ def test_v3(db):
     j, _ = handle({"chat": {"id": 100001}, "text": "/jamoa"}, db)
     assert "Tahlilchi — 1/4–6" in j, j
     j, _ = handle({"chat": {"id": 100001}, "text": "/holat"}, db)
-    assert "rol: Tahlilchi" in j
+    assert "vazifa: Tahlilchi" in j
     # 7) birlashtirish: holat orqaga qaytmaydi, davomat yo'qolmaydi, bekor qilingan yozilish tirilmaydi
     a = {"events": {"1": {"id": "1", "holat": "yakun", "upd": 5, "rsvp": {"9": -20}, "keldi": {"7": {}}, "suratlar": {"7": 2}}}}
     b = {"events": {"1": {"id": "1", "holat": "faol", "upd": 9, "rsvp": {"9": 10, "8": 3}, "keldi": {"6": {}}, "suratlar": {"7": 1}}}}
