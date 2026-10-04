@@ -12,7 +12,7 @@
    • /tadbir_boshlash N → admin QR ekrani (/qr/N): QR har 30 soniyada yangilanadi, ≤90 soniya amal qiladi;
      skanerlagan — davomatda; shu chatda tadbir suratlarini yuboradi → yopiq arxiv guruhi (har tadbir —
      alohida mavzu, havola hech kimga berilmaydi, qabul yakundan 1 soat o'tib yopiladi);
-   • /rollar — 16 rol (rollar.json), ariza bir tugma; admin: /rol N rol, /jamoa.
+   • rollar — faqat ichki boshqaruv (admin): /rollar, /rol N rol, /jamoa. Ommaga ko'rsatilmaydi (v3.1).
  v2.2: MANBA O'LCHOVI — «/start KOD» (deep-link) kodi «Manba» ustuniga «bot:KOD» bo'lib yoziladi;
    /statlar manbalar kesimini ko'rsatadi (27-hujjat, 5-bo'lim).
  v2.1: DOIMIY BAZA — yopiq GitHub ombori (AILABS_DB_REPO/AILABS_DB_TOKEN), Render restarti
@@ -141,7 +141,6 @@ YAKUN = (
     "📚 {yonalish}\n\n"
     "Har bir tadbir e'lon qilinganda shu bot orqali xabar beramiz — «✅ Boraman» "
     "tugmasi bilan. Klubga xush kelibsiz! 🎉\n\n"
-    "Klubdagi rollar va ariza: /rollar\n"
     "Ma'lumotlaringizni ko'rish: /holat   ·   O'chirish: /bekor"
 )
 FOYDA_MATN = (
@@ -149,13 +148,13 @@ FOYDA_MATN = (
     "1️⃣ XABARDORLIK: O'zbekistonda sun'iy intellektning real manzarasini birinchilardan "
     "bo'lib ko'rasiz: ochiq ma'lumotlar, haftalik digest va sikl hisobotlari.\n"
     "2️⃣ JAMOA: turli fakultetlardan fikrdoshlar, mentor va o'zaro tekshiruv (peer-review) "
-    "madaniyati. Birinchi kurs talabasi ham o'z o'rnini topadi: kuzatuvchidan muallifgacha.\n"
+    "madaniyati. Birinchi kurs talabasi ham o'z o'rnini topadi.\n"
     "3️⃣ RIVOJLANISH: darsdagi bilimni real loyihada mustahkamlaysiz — manba qidirish va "
     "tekshirish, indeks qurish, Excel/Python, ilmiy yozish va himoya.\n"
     "4️⃣ HISSA: bo'sh katakni to'ldirsangiz, indeksga yangi tekshirilgan dalil qo'shiladi. "
     "Real hissa hisobotda nom bilan ko'rsatiladi.\n"
     "5️⃣ E'TIROF: bajarilgan ish tasdiqlovchi hujjatda aniq yoziladi — kim, nima qilgani; "
-    "4 ta ichki daraja va ilmiy rahbar tavsiyanomasi.\n"
+    "hujjat har bir ishtirokchiga beriladi.\n"
     "6️⃣ KELAJAK UCHUN BAZA (va'dasiz): ilmiy tezis va maqola uchun tayyor material. "
     "Baholash qarorlarini tegishli komissiyalar qabul qiladi.\n\n"
     "Biz va'da bermaymiz — natijani ko'rsatamiz. Ro'yxatdan o'tish: /start"
@@ -174,7 +173,7 @@ MAXFIYLIK_MATN = (
     "tozalanadi (ZRU-547, 27-1-modda talabiga intilamiz).\n"
     "5. Tadbirlar: QR davomatda faqat qatnashganingiz qayd etiladi; yuborgan suratlaringiz yopiq "
     "arxivga tushadi va faqat klub foto-hisobotida ishlatilishi mumkin. Suratingiz ishlatilmasin desangiz — "
-    "Koordinatorga yozing, olib tashlanadi.\n"
+    "botga yozing, olib tashlanadi.\n"
     "6. Hodisa bo'lsa (token/database ochilsa): 24 soat ichida kanalda ochiq "
     "e'lon qilinadi va barcha kalitlar almashtiriladi."
 )
@@ -183,14 +182,10 @@ HELP_MATN = (
     "/start — ro'yxatdan o'tishni boshlash\n"
     "/foyda — klub nima beradi? (6 ta halol javob)\n"
     "/holat — mening yozuvim\n"
-    "/rollar — klubdagi 16 rol, talablar va ariza\n"
     "/maxfiylik — ma'lumotlar siyosati\n"
     "/bekor — jarayonni bekor qilish / yozuvni o'chirish\n"
     "/help  — shu ro'yxat\n\n"
-    "Admin uchun: /statlar, /royxat (matnli ro'yxat), /export (Excel), /elon (kanalga e'lon), "
-    "/jamoa (rollar bandligi), /rol N rol (tayinlash)\n"
-    "Tadbirlar: kanalga #tadbir heshtegli post → a'zolarga avtomatik xabar; /tadbirlar, /tadbir N, "
-    "/tadbir_boshlash N (QR ekrani), /tadbir_yakun N, /tadbir_yangi Nomi\n\n"
+    "\n"
     "Klub faqat OCHIQ manbalar bilan ishlaydi. A'zolik BEPUL.\n"
     "📣 Kanal: t.me/Raqamli_tadqiqot\n"
     "🌐 Sayt: raqamlitadqiqot.pages.dev"
@@ -630,7 +625,7 @@ def holat(chat_id, db):
         return "Siz hali ro'yxatdan o'tmagansiz.\nBoshlash: /start", None
     rl = [ROL[k]["nom"] for k in db.get("roles", {}).get(str(chat_id), []) if k in ROL]
     return YAKUN.format(**u) + "\n\n(holat: ro'yxatdan o'tgan%s)" % (
-        "; rol: " + ", ".join(rl) if rl else "; rol tanlash: /rollar"), None
+        "; rol: " + ", ".join(rl) if rl else ""), None
 
 def bekor(chat_id, db):
     if str(chat_id) in db["state"]:
@@ -711,9 +706,7 @@ def handle(msg, db):
         return ("✅ «%s» ga yozildingiz (jami %d kishi). Tadbir kuni kirishda QR orqali davomat olinadi.%s"
                 % (esc(ev["nom"]), rsvp_soni(ev), "" if str(chat_id) in db["users"] else
                    "\n\nKlub a'zosi bo'lish uchun: /start"), rsvp_kb(ev, chat_id))
-    if matn == "/start" and deep.startswith("rollar") and not st:
-        matn = "/rollar"
-    if matn == "/rollar":
+    if matn == "/rollar" and tadbir_ruxsat(chat_id, db):      # rollar — faqat ichki boshqaruv
         return rollar_matn(), rollar_kb()
     if matn.startswith(("/tadbirlar", "/tadbir_yangi", "/tadbir_boshlash", "/tadbir_yakun")) or \
             matn == "/tadbir" or matn.startswith("/tadbir "):
@@ -721,7 +714,7 @@ def handle(msg, db):
     if matn == "/jamoa" or matn.startswith("/rol "):
         if not tadbir_ruxsat(chat_id, db) or (matn.startswith("/rol ") and chat_id not in ADMIN_IDS
                                                and "koordinator" not in db.get("roles", {}).get(str(chat_id), [])):
-            return "⛭ Bu buyruq Koordinator va administrator uchun.", None
+            return "⛭ Bu buyruq faqat administrator uchun.", None
         return (jamoa_matn(db), None) if matn == "/jamoa" else rol_tayinla(matn, db)
 
     if matn == "/start":
@@ -1085,7 +1078,7 @@ def tadbir_tavsif(ev, toliq=False):
 def tadbir_buyruq(chat_id, matn, db):
     """/tadbirlar · /tadbir N · /tadbir_yangi NOM · /tadbir_boshlash N · /tadbir_yakun N"""
     if not tadbir_ruxsat(chat_id, db):
-        return "⛭ Tadbir buyruqlari Koordinator, o'rinbosar, Kotib va Tashkiliy yo'nalish rahbari uchun.", None
+        return "⛭ Bu buyruq faqat administrator uchun.", None
     _avto_yakun(db)
     bosh, _, arg = matn.partition(" ")
     arg = arg.strip()
@@ -1155,7 +1148,6 @@ def rollar_kb():
     t = [r for r in ROLLAR.get("rollar", []) if r.get("ariza")]
     rows = [[{"text": ("⭐ " if r.get("ovoz") else "") + r["nom"], "callback_data": "rol:" + r["key"]}
              for r in t[i:i + 2]] for i in range(0, len(t), 2)]
-    rows.append([{"text": "🌐 Rollar saytda", "url": "https://raqamlitadqiqot.pages.dev/#rollar"}])
     return {"inline_keyboard": rows}
 
 def rol_karta(r):
@@ -1260,6 +1252,8 @@ def callback(cq, db):
             if m and TOKEN:
                 tg("editMessageReplyMarkup", chat_id=m["chat"]["id"], message_id=m["message_id"],
                    reply_markup=json.dumps(rsvp_kb(ev, uid), ensure_ascii=False))
+    elif data.startswith(("rol:", "ariza:", "rollar:")) and not tadbir_ruxsat(uid, db):
+        toast = "Bu tugma faol emas."                       # rollar — faqat ichki boshqaruv (v3.1)
     elif data.startswith(("rol:", "ariza:")):
         toast, yangi, kb = rol_callback(uid, data, db)
     elif data.startswith("rollar:"):
@@ -1322,8 +1316,6 @@ def make_server(get_db):
                     self._send(404, "miniapp topilmadi", "text/plain")
             elif p == "/healthz":
                 self._send(200, '{"ok":true}', "application/json")
-            elif p == "/rollar.json":
-                self._send(200, json.dumps(ROLLAR, ensure_ascii=False), "application/json; charset=utf-8")
             elif p.startswith("/qr/"):
                 q = urllib.parse.parse_qs(self.path.partition("?")[2])
                 qism = p.strip("/").split("/")
@@ -1644,8 +1636,12 @@ def test_v3(db):
     assert len(ROL) == 16 and sum(1 for r in ROL.values() if r.get("ovoz")) == 3, len(ROL)
     j, kb = handle({"chat": {"id": 100001}, "text": "/rollar"}, db)
     assert "Metodologiya komissiyasi" in j and kb["inline_keyboard"]
-    t, _, _ = callback({"data": "ariza:tahlilchi", "from": {"id": 300003}}, db)
-    assert "ro'yxatdan" in t
+    j, _ = handle({"chat": {"id": 300003}, "text": "/rollar"}, db)      # ommaga rollar ko'rinmaydi
+    assert "komissiya" not in (j or "") and "rol" not in (j or "").lower(), j
+    t, y, _ = callback({"data": "ariza:tahlilchi", "from": {"id": 300003}}, db)
+    assert t == "Bu tugma faol emas." and not y and "300003" not in db.get("rol_ariza", {})
+    t, y, _ = callback({"data": "rollar:", "from": {"id": 300003}}, db)
+    assert not y
     t, _, _ = callback({"data": "ariza:tahlilchi", "from": {"id": 100001}}, db)
     assert db["rol_ariza"]["100001"]["rol"] == "tahlilchi"
     nomer = db["users"]["100001"]["nomer"]
