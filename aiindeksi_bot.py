@@ -1643,8 +1643,8 @@ def test_v3(db):
     assert "Bunday buyruq yo'q" in j, j
     j, _ = handle({"chat": {"id": 300003}, "text": "/help"}, db)
     assert "/rollar" not in j and "/jamoa" not in j and "rol" not in j.lower().replace("ro'yxat", ""), j
-    # 6) rollar: 16 ta, komissiya — 3 ovoz; ariza → tayinlash → jamoa → holat
-    assert len(ROL) == 16 and sum(1 for r in ROL.values() if r.get("ovoz")) == 3, len(ROL)
+    # 6) rollar: 17 ta, komissiya — 3 ovoz; ariza → tayinlash → jamoa → holat
+    assert len(ROL) == 17 and sum(1 for r in ROL.values() if r.get("ovoz")) == 3, len(ROL)
     j, kb = handle({"chat": {"id": 100001}, "text": "/rollar"}, db)
     assert "Metodologiya komissiyasi" in j and kb["inline_keyboard"]
     t, _, _ = callback({"data": "ariza:tahlilchi", "from": {"id": 300003}}, db)

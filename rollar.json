@@ -1,5 +1,5 @@
 {
- "versiya": "v12 · 04.10.2026",
+ "versiya": "v14 · 05.10.2026",
  "manba": "Nizom 3.3, 4.2–4.7, 5; 23-hujjat. Bot, Mini App, sayt va 23-hujjat shu fayldan o'qiydi.",
  "guruhlar": [
   {
@@ -14,8 +14,8 @@
   },
   {
    "key": "keyin",
-   "nom": "Keyin tayinlanadi (2–3-oy)",
-   "izoh": "Startda bu vazifalarni Koordinator, o'rinbosar va Kotib bajaradi"
+   "nom": "Yo'nalishlar",
+   "izoh": "Koordinator tayinlaydi; bo'sh o'rin vazifasini Koordinator, o'rinbosar va Kotib bajaradi"
   }
  ],
  "komissiya": {
@@ -350,7 +350,7 @@
    "max": 1,
    "ovoz": false,
    "ariza": true,
-   "daraja": "2–3-oyda Koordinator tayinlaydi",
+   "daraja": "Koordinator tayinlaydi",
    "vaqt": "4 soat/hafta",
    "qisqa": "Kanal, poster va dizayn; tayyor post konveyeri bilan ishlaydi.",
    "vazifalar": [
@@ -377,7 +377,7 @@
    "max": 1,
    "ovoz": false,
    "ariza": true,
-   "daraja": "2–3-oyda Koordinator tayinlaydi",
+   "daraja": "Koordinator tayinlaydi",
    "vaqt": "4 soat/hafta",
    "qisqa": "A'zo jalb qilish voronkasi va fakultet elchilari.",
    "vazifalar": [
@@ -404,13 +404,14 @@
    "max": 1,
    "ovoz": false,
    "ariza": true,
-   "daraja": "2–3-oyda Koordinator tayinlaydi",
+   "daraja": "Koordinator tayinlaydi",
    "vaqt": "3 soat/hafta",
    "qisqa": "Tadbir, xona, ruxsat; bot QR davomati.",
    "vazifalar": [
     "Tadbirni 5 ish kuni oldin kelishish (Nizom 6.2)",
     "Botda tadbirni ochish va QR davomatni yuritish",
-    "Mehmon va hamkorlar bilan ishlash"
+    "Mehmon va hamkorlar bilan ishlash",
+    "Ijtimoiy yetakchi va volontyorlar ishini yo'naltirish"
    ],
    "talab_min": "Tashabbuskor, muddatga rioya",
    "talab_max": "Tadbir tashkil qilgan",
@@ -422,6 +423,35 @@
    "hisobot": "Koordinator"
   },
   {
+   "key": "ijtimoiy",
+   "nom": "Ijtimoiy yetakchi",
+   "guruh": "keyin",
+   "start": false,
+   "min": 1,
+   "max": 1,
+   "ovoz": false,
+   "ariza": true,
+   "daraja": "Koordinator tayinlaydi",
+   "vaqt": "3 soat/hafta; tadbir haftasida 5 soatgacha",
+   "qisqa": "Tadbir muhiti va volontyorlar: coffee break, kutib olish, ishtirokchilar qulayligi. Klub o'sgani sari umumiy volontyorlikni boshqaradi va Tashkiliy yo'nalish rahbariga tashkiliy ishlarda yordam beradi.",
+   "vazifalar": [
+    "Har tadbirda coffee break, kutib olish va ro'yxat stoli, tanaffus va ishtirokchilar qulayligini tashkil qilish",
+    "Tadbirdan 3 kun oldin ehtiyojlar ro'yxati (suv, choy, stakan, stul, nishon) va mas'ullar taqsimoti; tadbirdan keyin xonani tartibda topshirish",
+    "Volontyorlar ro'yxatini yuritish; a'zolar soni oshganda volontyorlar jamoasiga rahbarlik qilish",
+    "Tashkiliy ishlarda Tashkiliy yo'nalish rahbariga yordam berish (rahbar tayinlanguncha — Koordinator o'rinbosariga)",
+    "Jamiyat yo'nalishidagi tadbirlarda (mahalla, maktab, «Fanda qizlar») ishtirokchilar bilan ishlash"
+   ],
+   "talab_min": "Muloqotga ochiq, mas'uliyatli; tadbir kunlari 2–3 soat vaqt ajrata oladi",
+   "talab_max": "Volontyorlik yoki tadbir tashkil qilish tajribasi bor",
+   "beramiz": [
+    "Tadbirlar reyestrida tashkilotchi sifatida ism",
+    "Volontyorlik soatlari hisobi va e'tirof hujjati",
+    "Jamoani boshqarish tajribasi"
+   ],
+   "kpi": "Har tadbirda coffee break va kutib olish tayyor; ishtirokchilar bahosi ≥4,2; volontyorlar ro'yxati yangilangan",
+   "hisobot": "Tashkiliy yo'nalish rahbari (tayinlanguncha — Koordinator o'rinbosari)"
+  },
+  {
    "key": "texnika",
    "nom": "Texnika va ma'lumotlar yo'nalishi rahbari",
    "guruh": "keyin",
@@ -430,7 +460,7 @@
    "max": 1,
    "ovoz": false,
    "ariza": true,
-   "daraja": "2–3-oyda Koordinator tayinlaydi",
+   "daraja": "Koordinator tayinlaydi",
    "vaqt": "3 soat/hafta",
    "qisqa": "Bot, sayt, zaxira nusxa va ma'lumotlar xavfsizligi.",
    "vazifalar": [
@@ -471,7 +501,7 @@
     "Klub tadbirlarida birinchi navbat"
    ],
    "kpi": "Har oy fakultetdan ≥3 yangi a'zo",
-   "hisobot": "Marketing yo'nalishi rahbari"
+   "hisobot": "Marketing yo'nalishi rahbari (tayinlanguncha — Koordinator)"
   }
  ]
 }
