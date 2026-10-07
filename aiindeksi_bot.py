@@ -1506,8 +1506,17 @@ def update_ishla(up, db):
         return
     tur = (msg.get("chat") or {}).get("type", "private")
     uid = (msg.get("from") or {}).get("id")
-    if tur != "private":                                # guruhlarda faqat /arxiv_shu (admin)
-        if (msg.get("text") or "").split("@")[0].strip() == "/arxiv_shu" and uid in ADMIN_IDS:
+    if tur != "private":                                # guruhlarda faqat /arxiv_shu va /ulash (admin)
+        buyruq = (msg.get("text") or "").split("@")[0].strip()
+        if buyruq == "/ulash" and uid in ADMIN_IDS:      # ishchi guruh ID sini qayd etish (sozlash uchun)
+            cid = msg["chat"]["id"]
+            tg("deleteMessage", chat_id=cid, message_id=msg.get("message_id"))
+            r = send(cid, "✅ Guruh ulandi.") or {}
+            db.setdefault("cfg", {}).setdefault("guruhlar", {})[str(cid)] = {
+                "nom": msg["chat"].get("title", ""), "tur": tur, "javob": r.get("message_id")}
+            db_save(db)
+            return
+        if buyruq == "/arxiv_shu" and uid in ADMIN_IDS:
             db.setdefault("cfg", {})["arxiv"] = msg["chat"]["id"]
             db_save(db)
             send(msg["chat"]["id"], "✅ Bu guruh tadbir suratlari arxivi qilib belgilandi. Guruh yopiq qolsin "
