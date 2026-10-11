@@ -147,3 +147,4 @@ Ro'yxat: /royxat
         return text, kb
     else:
         return "Noma'lum buyruq", None
+# admin panel v2 - Sun Oct 11 16:08:12 UTC 2026
