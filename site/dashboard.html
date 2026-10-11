@@ -1,0 +1,186 @@
+
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RT Monitor — Dashboard</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Inter', sans-serif; background: #0a0f1a; color: #e0e6ed; }
+        .container { max-width: 1200px; margin: 0 auto; padding: 20px; }
+        .header { text-align: center; padding: 40px 0; }
+        .header h1 { font-size: 2.5rem; background: linear-gradient(135deg, #3498db, #2ecc71); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .header p { color: #7f8c8d; margin-top: 10px; }
+        .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; margin: 30px 0; }
+        .stat-card { background: #1a2332; border-radius: 15px; padding: 25px; text-align: center; border: 1px solid #2c3e50; }
+        .stat-card h3 { font-size: 2rem; color: #3498db; }
+        .stat-card p { color: #7f8c8d; margin-top: 5px; }
+        .table-container { background: #1a2332; border-radius: 15px; padding: 25px; margin: 30px 0; border: 1px solid #2c3e50; }
+        table { width: 100%; border-collapse: collapse; }
+        th, td { padding: 15px; text-align: left; border-bottom: 1px solid #2c3e50; }
+        th { color: #3498db; font-weight: 600; }
+        .score { padding: 5px 15px; border-radius: 20px; color: white; font-weight: 600; }
+        .status { padding: 5px 15px; border-radius: 20px; font-size: 0.9rem; }
+        .yetarli { background: #2ecc7120; color: #2ecc71; }
+        .qisman { background: #f39c1220; color: #f39c12; }
+        .yetarli_emas { background: #e74c3c20; color: #e74c3c; }
+        .methodology { background: #1a2332; border-radius: 15px; padding: 25px; margin: 30px 0; border: 1px solid #2c3e50; }
+        .methodology h2 { color: #3498db; margin-bottom: 20px; }
+        .dimension { display: flex; align-items: center; padding: 15px; border-bottom: 1px solid #2c3e50; }
+        .dimension:last-child { border-bottom: none; }
+        .dim-code { background: #3498db; color: white; padding: 5px 10px; border-radius: 5px; margin-right: 15px; font-weight: 600; }
+        .dim-name { flex: 1; }
+        .dim-weight { color: #3498db; font-weight: 600; }
+        .security { background: #1a2332; border-radius: 15px; padding: 25px; margin: 30px 0; border: 1px solid #2c3e50; }
+        .security h2 { color: #2ecc71; margin-bottom: 20px; }
+        .security-item { display: flex; align-items: center; padding: 10px 0; }
+        .security-icon { color: #2ecc71; margin-right: 10px; }
+        .footer { text-align: center; padding: 40px 0; color: #7f8c8d; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>RT Monitor</h1>
+            <p>Tashkilotlarda sun'iy intellektni dalil bilan baholaydigan monitoring platformasi</p>
+        </div>
+        
+        <div class="stats">
+            <div class="stat-card">
+                <h3>10</h3>
+                <p>Banklar</p>
+            </div>
+            <div class="stat-card">
+                <h3>6</h3>
+                <p>O'lchov yo'nalishi</p>
+            </div>
+            <div class="stat-card">
+                <h3>30/60</h3>
+                <p>Dalil topildi</p>
+            </div>
+            <div class="stat-card">
+                <h3>32.6</h3>
+                <p>Sektor indeksi</p>
+            </div>
+        </div>
+        
+        <div class="table-container">
+            <h2>Banklar natijalari</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Bank</th>
+                        <th>Ball</th>
+                        <th>O'lchov</th>
+                        <th>Holat</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    
+        <tr>
+            <td>TBC Bank</td>
+            <td><span class="score" style="background:#2ecc71">100</span></td>
+            <td>6/6</td>
+            <td><span class="status yetarli">Yetarli</span></td>
+        </tr>
+        
+        <tr>
+            <td>SQB</td>
+            <td><span class="score" style="background:#2ecc71">70.0</span></td>
+            <td>5/6</td>
+            <td><span class="status yetarli">Yetarli</span></td>
+        </tr>
+        
+        <tr>
+            <td>NBU</td>
+            <td><span class="score" style="background:#f39c12">59.5</span></td>
+            <td>4/6</td>
+            <td><span class="status yetarli">Yetarli</span></td>
+        </tr>
+        
+        <tr>
+            <td>Anorbank</td>
+            <td><span class="score" style="background:#f39c12">33.3</span></td>
+            <td>3/6</td>
+            <td><span class="status qisman">Qisman</span></td>
+        </tr>
+        
+        <tr>
+            <td>Uzum Bank</td>
+            <td><span class="score" style="background:#f39c12">33.3</span></td>
+            <td>3/6</td>
+            <td><span class="status qisman">Qisman</span></td>
+        </tr>
+        
+        <tr>
+            <td>Agrobank</td>
+            <td><span class="score" style="background:#e74c3c">15.2</span></td>
+            <td>2/6</td>
+            <td><span class="status qisman">Qisman</span></td>
+        </tr>
+        
+        <tr>
+            <td>Kapitalbank</td>
+            <td><span class="score" style="background:#e74c3c">15.2</span></td>
+            <td>2/6</td>
+            <td><span class="status qisman">Qisman</span></td>
+        </tr>
+        
+        <tr>
+            <td>Xalq Banki</td>
+            <td><span class="score" style="background:#e74c3c">0</span></td>
+            <td>0/6</td>
+            <td><span class="status yetarli_emas">Yetarli emas</span></td>
+        </tr>
+        
+        <tr>
+            <td>Ipak Yo'li</td>
+            <td><span class="score" style="background:#e74c3c">0</span></td>
+            <td>0/6</td>
+            <td><span class="status yetarli_emas">Yetarli emas</span></td>
+        </tr>
+        
+        <tr>
+            <td>Ziraat Bank</td>
+            <td><span class="score" style="background:#e74c3c">0</span></td>
+            <td>0/6</td>
+            <td><span class="status yetarli_emas">Yetarli emas</span></td>
+        </tr>
+        
+                </tbody>
+            </table>
+        </div>
+        
+        <div class="methodology">
+            <h2>Metodika</h2>
+            <div class="dimension"><span class="dim-code">D1</span><span class="dim-name">Strategiya</span><span class="dim-weight">15%</span></div><div class="dimension"><span class="dim-code">D2</span><span class="dim-name">Ma'lumot infratuzilmasi</span><span class="dim-weight">15%</span></div><div class="dimension"><span class="dim-code">D3</span><span class="dim-name">Amaliy joriy etish</span><span class="dim-weight">30%</span></div><div class="dimension"><span class="dim-code">D4</span><span class="dim-name">Kadrlar</span><span class="dim-weight">15%</span></div><div class="dimension"><span class="dim-code">D5</span><span class="dim-name">Regulyatorik muvofiqlik</span><span class="dim-weight">15%</span></div><div class="dimension"><span class="dim-code">D6</span><span class="dim-name">Oshkoralik</span><span class="dim-weight">10%</span></div>
+        </div>
+        
+        <div class="security">
+            <h2>Xavfsizlik standartlari</h2>
+            <div class="security-item">
+                <span class="security-icon">✅</span>
+                <span>ISO 27001:2022 — Muvofiqlik</span>
+            </div>
+            <div class="security-item">
+                <span class="security-icon">✅</span>
+                <span>GDPR — Muvofiqlik</span>
+            </div>
+            <div class="security-item">
+                <span class="security-icon">🔐</span>
+                <span>Shifrlash: AES-256 (saqlash) / TLS 1.3 (uzatish)</span>
+            </div>
+            <div class="security-item">
+                <span class="security-icon">#️⃣</span>
+                <span>Xesh: SHA-256</span>
+            </div>
+        </div>
+        
+        <div class="footer">
+            <p>© 2026 Raqamli Tadqiqot — TDIU</p>
+            <p>raqamlitadqiqot.pages.dev | @aiindeksi_bot</p>
+        </div>
+    </div>
+</body>
+</html>

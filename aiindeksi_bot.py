@@ -1,3 +1,6 @@
+# Admin panel funksiyalari
+from admin_functions import _admin_main_menu, _admin_panel_callback
+
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
@@ -723,6 +726,10 @@ def handle(msg, db):
             return "Bunday buyruq yo'q. Buyruqlar ro'yxati: /help", None
         return (jamoa_matn(db), None) if matn == "/jamoa" else rol_tayinla(matn, db)
 
+    # ═════ ADMIN PANEL BUYRUG'I ═════
+    if matn in ("/admin", "/panel", "/admin_panel") and chat_id in ADMIN_IDS:
+        return _admin_main_menu()
+    
     if matn == "/start":
         pref = ("🛡 Siz ADMIN sifatida tanildingiz: /statlar, /royxat, /export, /elon, /tadbirlar, /jamoa faol.\n\n"
                 if chat_id in ADMIN_IDS else "")
@@ -1264,6 +1271,9 @@ def callback(cq, db):
         toast, yangi, kb = rol_callback(uid, data, db)
     elif data.startswith("rollar:"):
         yangi, kb = rollar_matn(), rollar_kb()
+    # ═════ ADMIN PANEL CALLBACKS ═════
+    elif data.startswith("admin:") and uid in ADMIN_IDS:
+        yangi, kb = _admin_panel_callback(uid, data[6:], db)
     if TOKEN and cq.get("id"):
         tg("answerCallbackQuery", callback_query_id=cq["id"], text=toast[:190])
     if yangi and TOKEN and uid:
@@ -1692,3 +1702,51 @@ if __name__ == "__main__":
         make_server(lambda: db).serve_forever()
     else:
         poll()
+
+# ═════ PROFESSIONAL ADMIN PANEL ═════
+# admin_panel.py dan import
+try:
+    from admin_panel import handle_admin_command, get_admin_stats, get_pilot_results, get_security_status
+    ADMIN_PANEL_AVAILABLE = True
+except ImportError:
+    ADMIN_PANEL_AVAILABLE = False
+
+def admin_panel_handler(chat_id, matn, db):
+    """Admin panel buyruqlarini boshqarish."""
+    if chat_id not in ADMIN_IDS:
+        return "⛔ Sizda ruxsat yo'q.", None
+    
+    if not ADMIN_PANEL_AVAILABLE:
+        return "⚠️ Admin panel moduli yuklanmadi.", None
+    
+    if matn == "/admin_panel":
+        return handle_admin_command("/admin_panel", db, chat_id), None
+    
+    elif matn == "/admin_stats":
+        return handle_admin_command("/admin_stats", db, chat_id), None
+    
+    elif matn == "/admin_pilot":
+        return handle_admin_command("/admin_pilot", db, chat_id), None
+    
+    elif matn == "/admin_security":
+        return handle_admin_command("/admin_security", db, chat_id), None
+    
+    elif matn == "/admin_audit":
+        return handle_admin_command("/admin_audit", db, chat_id), None
+    
+    elif matn == "/admin_partnership":
+        return handle_admin_command("/admin_partnership", db, chat_id), None
+    
+    elif matn == "/admin_realtime":
+        from admin_panel import RealTimeMonitor, format_realtime_status
+        monitor = RealTimeMonitor()
+        # Simulate some metrics
+        monitor.update("cpu", 45)
+        monitor.update("memory", 62)
+        monitor.update("requests", 1250)
+        monitor.update("errors", 2)
+        monitor.update("uptime", 168)
+        return format_realtime_status(monitor), None
+    
+    else:
+        return None, None  # Not handled
