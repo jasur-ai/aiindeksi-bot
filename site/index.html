@@ -597,8 +597,7 @@ footer{padding:56px 0 40px;border-top:1px solid var(--line);margin-top:110px;fon
     <h2>Bo'sh katak seni kutyapti.</h2>
     <p>To'ldir — sun'iy intellekt haqidagi ochiq va tekshiriladigan ma'lumotga o'z hissangni qo'sh.</p>
     <div class="cta"><a class="btn p" href="https://t.me/aiindeksi_bot?start=site" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M21.9 4.3 18.7 19.4c-.2 1.1-.9 1.3-1.8.8l-4.9-3.6-2.4 2.3c-.3.3-.5.5-1 .5l.4-5 9.1-8.2c.4-.4-.1-.6-.6-.2L6.2 13 1.4 11.5c-1-.3-1.1-1 .2-1.5L20.6 2.8c.9-.3 1.6.2 1.3 1.5z"/></svg>Qo'shilish</a><a class="btn s" href="https://t.me/Raqamli_tadqiqot" target="_blank" rel="noopener">Kanalga obuna</a>
-    <a class="btn s" href="https://t.me/aiindeksi_bot?start=app" target="_blank" rel="noopener" style="font-size:14px"><svg viewBox="0 0 24 24" fill="currentColor" width="16" height="16" style="margin-right:6px;vertical-align:-2px"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>Ilovani yuklab olish</a>
-    <a class="btn s" href="https://t.me/aiindeksi_bot?start=app" target="_blank" rel="noopener" style="font-size:14px"><svg viewBox="0 0 24 24" fill="currentColor" width="16" height="16" style="margin-right:6px;vertical-align:-2px"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>Ilovani yuklab olish</a></div>
+    <a class="btn s" href="https://t.me/aiindeksi_bot?start=app" target="_blank" rel="noopener">Ilovani yuklab olish</a></div>
   </div>
 </div></section>
 </main>
@@ -767,9 +766,7 @@ $('#road').innerHTML=DATA.road.map(function(m,i){return '<div class="ms'+(i===0?
 $('#faqL').innerHTML=DATA.faq.map(function(f,i){return '<div class="fq rv" style="--i:'+(i%2)+'"><button aria-expanded="false" id="fq'+i+'" aria-controls="fa'+i+'">'+f[0]+'<span class="pm"></span></button><div class="fa" id="fa'+i+'" role="region" aria-labelledby="fq'+i+'"><div><p>'+f[1]+'</p></div></div></div>'}).join('');
 $$('.fq').forEach(function(f){io.observe(f);var b=$('button',f);b.addEventListener('click',function(){
   var isOpen=f.classList.contains('open');
-  // Boshqa barcha ochiq FAQ larni yopish
-  $$('.fq.open').forEach(function(other){other.classList.remove('open');other.querySelector('button').setAttribute('aria-expanded','false')});
-  // Hozirgini toggle qilish
+  $$('.fq.open').forEach(function(o){o.classList.remove('open');o.querySelector('button').setAttribute('aria-expanded','false')});
   if(!isOpen){f.classList.add('open');b.setAttribute('aria-expanded','true')}
 })});
 
@@ -786,12 +783,11 @@ $('#share').addEventListener('click',function(){var u=location.origin+location.p
 })();
 </script>
 
-<!-- Kirish modali -->
-<div id="kirModal" style="display:none;position:fixed;inset:0;z-index:200;background:rgba(0,0,0,.5);backdrop-filter:blur(8px);align-items:center;justify-content:center">
+<div id="kirModal" style="display:none;position:fixed;inset:0;z-index:200;background:rgba(0,0,0,.5);backdrop-filter:blur(8px);align-items:center;justify-content:center" onclick="if(event.target===this)this.style.display='none'">
   <div style="background:var(--surf);border:1px solid var(--line);border-radius:20px;padding:32px;max-width:360px;width:90%;box-shadow:0 24px 60px rgba(0,0,0,.3);position:relative">
     <button onclick="document.getElementById('kirModal').style.display='none'" style="position:absolute;top:14px;right:14px;background:none;border:none;font-size:20px;color:var(--muted);cursor:pointer;line-height:1">&times;</button>
     <h3 style="font-size:19px;font-weight:800;margin-bottom:6px">Kirish</h3>
-    <p style="font-size:13.5px;color:var(--muted);margin-bottom:18px">Admin tomonidan berilgan login va parolni kiriting.</p>
+    <p style="font-size:13.5px;color:var(--muted);margin-bottom:18px">Admin tomonidan berilgan login va parol.</p>
     <input id="kirU" type="text" placeholder="Login" style="width:100%;padding:11px 14px;border:1px solid var(--line);border-radius:10px;font-size:14px;background:var(--bg);color:var(--ink);margin-bottom:10px;outline:none;font-family:inherit" onfocus="this.style.borderColor='var(--blue)'" onblur="this.style.borderColor='var(--line)'">
     <input id="kirP" type="password" placeholder="Parol" style="width:100%;padding:11px 14px;border:1px solid var(--line);border-radius:10px;font-size:14px;background:var(--bg);color:var(--ink);margin-bottom:14px;outline:none;font-family:inherit" onfocus="this.style.borderColor='var(--blue)'" onblur="this.style.borderColor='var(--line)'">
     <button onclick="kirLogin()" style="width:100%;padding:12px;border-radius:10px;background:var(--pri);color:#fff;font-size:15px;font-weight:700;border:none;cursor:pointer;font-family:inherit">Kirish</button>
@@ -810,7 +806,6 @@ function kirLogin(){
   }).catch(function(){e.textContent="Server xatolik";e.style.display="block"})
 }
 document.addEventListener("keydown",function(ev){if(ev.key=="Escape")document.getElementById("kirModal").style.display="none"});
-document.getElementById("kirModal").addEventListener("click",function(ev){if(ev.target===this)this.style.display="none"});
 </script>
 </body>
 </html>
