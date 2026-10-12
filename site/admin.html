@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="uz" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Admin Panel — RT Monitor</title>
+<meta name="theme-color" content="#E8ECF1" id="metaTheme">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<style>
+@font-face{font-family:Inter;src:url(fonts/inter-regular.woff2) format("woff2");font-weight:400;font-display:swap}
+@font-face{font-family:Inter;src:url(fonts/inter-medium.woff2) format("woff2");font-weight:500;font-display:swap}
+@font-face{font-family:Inter;src:url(fonts/inter-semibold.woff2) format("woff2");font-weight:600;font-display:swap}
+@font-face{font-family:Inter;src:url(fonts/inter-bold.woff2) format("woff2");font-weight:700;font-display:swap}
+@font-face{font-family:Inter;src:url(fonts/inter-extrabold.woff2) format("woff2");font-weight:800;font-display:swap}
+:root{--navy:#1F3864;--blue:#2F6FDB;--acc:#4DA3FF;--bg:#E8ECF1;--surf:#F1F4F7;--ink:#0E1A2B;--muted:#526175;--line:#D3DAE3;--green:#2ecc71;--amber:#f39c12;--red:#e74c3c}
+[data-theme="dark"]{--bg:#080E18;--surf:#0F1826;--ink:#EAF1FA;--muted:#8D9EB5;--line:#1C2A3E;--blue:#5AA6FF;--green:#4DA3FF}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:Inter,-apple-system,sans-serif;background:var(--bg);color:var(--ink);font-size:16px;line-height:1.55}
+.container{max-width:1200px;margin:0 auto;padding:20px}
+.header{display:flex;align-items:center;justify-content:space-between;padding:20px 0;border-bottom:1px solid var(--line);margin-bottom:30px}
+.header h1{font-size:24px;font-weight:800}
+.header .logout{padding:8px 16px;border-radius:10px;background:var(--surf);border:1px solid var(--line);color:var(--ink);font-weight:600;cursor:pointer}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px;margin-bottom:30px}
+.stat{background:var(--surf);border:1px solid var(--line);border-radius:16px;padding:20px;text-align:center}
+.stat h3{font-size:32px;font-weight:800;color:var(--blue)}
+.stat p{font-size:14px;color:var(--muted);margin-top:4px}
+.table{background:var(--surf);border:1px solid var(--line);border-radius:16px;padding:20px;margin-bottom:30px;overflow-x:auto}
+.table h2{font-size:18px;font-weight:700;margin-bottom:16px}
+table{width:100%;border-collapse:collapse}
+th,td{padding:12px 16px;text-align:left;border-bottom:1px solid var(--line);font-size:14px}
+th{font-weight:700;color:var(--blue);font-size:12px;text-transform:uppercase;letter-spacing:.5px}
+.badge{display:inline-block;padding:3px 10px;border-radius:20px;font-size:12px;font-weight:700}
+.badge.ok{background:rgba(46,204,113,.15);color:var(--green)}
+.badge.mid{background:rgba(243,156,18,.15);color:var(--amber)}
+.badge.no{background:rgba(231,76,60,.15);color:var(--red)}
+</style>
+</head>
+<body>
+<div class="container">
+  <div class="header">
+    <h1>🛡 Admin Panel — RT Monitor</h1>
+    <button class="logout" onclick="localStorage.removeItem('adm_token');location.href='/'">Chiqish</button>
+  </div>
+  <div class="stats" id="stats"></div>
+  <div class="table">
+    <h2>👥 Foydalanuvchilar</h2>
+    <table><thead><tr><th>#</th><th>Ism</th><th>Fakultet</th><th>Kurs</th><th>Sana</th></tr></thead><tbody id="users"></tbody></table>
+  </div>
+</div>
+<script>
+var T=localStorage.getItem('adm_token');
+if(!T)location.href='/';
+fetch('/api/admin/stats?token='+T).then(function(r){return r.json()}).then(function(d){
+  if(!d.ok){localStorage.removeItem('adm_token');location.href='/';return}
+  var s=document.getElementById('stats');
+  s.innerHTML='<div class="stat"><h3>'+d.members+'</h3><p>A\'zolar</p></div>'+
+    '<div class="stat"><h3>'+d.fakultet_count+'</h3><p>Fakultetlar</p></div>'+
+    '<div class="stat"><h3>'+d.today+'</h3><p>Bugun</p></div>';
+});
+fetch('/api/admin/users?token='+T).then(function(r){return r.json()}).then(function(d){
+  if(!d.ok)return;
+  var tb=document.getElementById('users');
+  d.users.forEach(function(u,i){
+    tb.innerHTML+='<tr><td>'+(i+1)+'</td><td>'+u.ism+'</td><td>'+u.fakultet+'</td><td>'+u.kurs+'</td><td>'+u.sana+'</td></tr>';
+  });
+});
+</script>
+</body>
+</html>

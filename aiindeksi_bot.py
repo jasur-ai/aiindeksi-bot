@@ -1330,6 +1330,33 @@ def make_server(get_db):
                         self._send(200, f.read(), "text/html; charset=utf-8")
                 except OSError:
                     self._send(404, "miniapp topilmadi", "text/plain")
+            elif p == "/admin.html":
+                try:
+                    with open(os.path.join(HERE, "site", "admin.html"), encoding="utf-8") as f:
+                        self._send(200, f.read(), "text/html; charset=utf-8")
+                except OSError:
+                    self._send(404, "admin sahifa topilmadi", "text/plain")
+            elif p.startswith("/api/admin"):
+                # Admin API — token tekshirish
+                q = urllib.parse.parse_qs(self.path.partition("?")[2])
+                token = (q.get("token") or [""])[0]
+                import hashlib
+                expected = hashlib.sha256(("rt_admin_" + str(ADMIN_IDS)).encode()).hexdigest()[:32]
+                if not token or token != expected:
+                    return self._send(403, '{"ok":false,"error":"Ruxsat yo'q"}', "application/json")
+                db = get_db()
+                users = db.get("users", {})
+                if p == "/api/admin/stats":
+                    from datetime import datetime, timezone, timedelta
+                    now = datetime.now(timezone(timedelta(hours=5)))
+                    today_count = sum(1 for u in users.values() if u.get("sana","").startswith(now.strftime("%Y-%m-%d")))
+                    faks = set(u.get("fakultet","?") for u in users.values())
+                    self._send(200, json.dumps({"ok":True,"members":len(users),"fakultet_count":len(faks),"today":today_count}, ensure_ascii=False), "application/json")
+                elif p == "/api/admin/users":
+                    ul = [{"ism":u.get("ism","?"),"fakultet":u.get("fakultet","?"),"kurs":u.get("kurs","?"),"sana":u.get("sana","?")} for u in users.values()]
+                    self._send(200, json.dumps({"ok":True,"users":ul}, ensure_ascii=False), "application/json")
+                else:
+                    self._send(404, '{"ok":false}', "application/json")
             elif p == "/healthz":
                 self._send(200, '{"ok":true}', "application/json")
             elif p.startswith("/qr/"):
@@ -1367,6 +1394,28 @@ def make_server(get_db):
                        "application/json; charset=utf-8")
 
         def do_POST(self):
+            if self.path.split("?")[0] == "/api/auth":
+                try:
+                    n = int(self.headers.get("Content-Length", "0"))
+                    body = json.loads(self.rfile.read(n).decode("utf-8"))
+                except:
+                    return self._json(400, {"ok":False,"error":"Xato so'rov"})
+                login = body.get("login","")
+                password = body.get("password","")
+                # Admin credentials — bot orqali o'zgartiriladi
+                import hashlib, json as _json
+                creds_file = os.path.join(HERE, "admin_creds.json")
+                if os.path.exists(creds_file):
+                    creds = _json.load(open(creds_file))
+                else:
+                    creds = {"login":"admin","password_hash":hashlib.sha256("rtmonitor2026".encode()).hexdigest()}
+                    _json.dump(creds, open(creds_file,"w"))
+                pwd_hash = hashlib.sha256(password.encode()).hexdigest()
+                if login == creds["login"] and pwd_hash == creds["password_hash"]:
+                    token = hashlib.sha256(("rt_admin_" + str(ADMIN_IDS)).encode()).hexdigest()[:32]
+                    return self._json(200, {"ok":True,"token":token})
+                else:
+                    return self._json(401, {"ok":False,"error":"Xato login yoki parol"})
             if self.path.split("?")[0] != "/register":
                 return self._send(404, "not found", "text/plain")
             try:
