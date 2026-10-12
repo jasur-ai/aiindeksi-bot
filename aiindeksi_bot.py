@@ -1343,7 +1343,7 @@ def make_server(get_db):
                 import hashlib
                 expected = hashlib.sha256(("rt_admin_" + str(ADMIN_IDS)).encode()).hexdigest()[:32]
                 if not token or token != expected:
-                    return self._send(403, '{"ok":false,"error":"Ruxsat yo'q"}', "application/json")
+                    return self._send(403, '{"ok":false,"error":"Ruxsat yo\'q"}', "application/json")
                 db = get_db()
                 users = db.get("users", {})
                 if p == "/api/admin/stats":
