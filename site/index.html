@@ -444,7 +444,8 @@ footer{padding:56px 0 40px;border-top:1px solid var(--line);margin-top:110px;fon
   <a class="btn p sm" href="https://t.me/aiindeksi_bot?start=site" target="_blank" rel="noopener" style="margin-left:8px">Qo'shilish</a>
   <button class="iconbtn" id="admBtn" aria-label="Admin" title="Admin" style="margin-left:4px;font-size:18px;line-height:1" onclick="document.getElementById('admModal').classList.toggle('open')">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="19" height="19"><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/><circle cx="5" cy="12" r="1"/></svg></button>
-<button class="iconbtn burger" id="burger" aria-label="Menyu" aria-expanded="false" style="margin-left:8px">
+<button class="iconbtn dots-btn" id="dotsBtn" aria-label="Admin kirish" title="Admin kirish" style="margin-left:8px" onclick="document.getElementById('adminModal').style.display='flex'"><svg viewBox="0 0 24 24" fill="currentColor" width="20" height="20"><circle cx="12" cy="5" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="12" cy="19" r="2"/></svg></button>
+  <button class="iconbtn burger" id="burger" aria-label="Menyu" aria-expanded="false" style="margin-left:8px">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 8h16M4 16h16"/></svg>
   </button>
 </div></header>
@@ -836,5 +837,36 @@ $('#share').addEventListener('click',function(){var u=location.origin+location.p
   </div>
 </div>
 <style>#admModal.open{display:flex}</style>
+
+<!-- ═════ ADMIN LOGIN MODAL ═════ -->
+<div id="adminModal" style="display:none;position:fixed;inset:0;z-index:200;background:rgba(0,0,0,.55);backdrop-filter:blur(6px);align-items:center;justify-content:center">
+<div style="background:var(--surf);border:1px solid var(--line);border-radius:24px;padding:36px 32px;max-width:380px;width:90%;box-shadow:0 24px 60px -20px rgba(0,0,0,.4);position:relative">
+<button onclick="document.getElementById('adminModal').style.display='none'" style="position:absolute;top:14px;right:14px;background:none;border:none;font-size:22px;color:var(--muted);cursor:pointer;line-height:1">&times;</button>
+<div style="text-align:center;margin-bottom:24px">
+<svg viewBox="0 0 48 48" width="48" height="48" fill="none" stroke="var(--blue)" stroke-width="2" stroke-linecap="round" style="margin-bottom:10px"><rect x="8" y="20" width="32" height="22" rx="4"/><path d="M14 20V14a10 10 0 0 1 20 0v6"/><circle cx="24" cy="32" r="3"/></svg>
+<h3 style="font-size:20px;font-weight:700;letter-spacing:-.5px;margin:0">Admin kirish</h3>
+<p style="font-size:13.5px;color:var(--muted);margin-top:6px">Login va parolni kiriting</p>
+</div>
+<div style="display:flex;flex-direction:column;gap:12px">
+<input id="aLg" type="text" placeholder="Login" style="padding:12px 16px;border-radius:12px;border:1px solid var(--line);background:var(--bg);color:var(--ink);font-size:15px;font-family:inherit;outline:none" onfocus="this.style.borderColor='var(--blue)'" onblur="this.style.borderColor='var(--line)'">
+<input id="aPw" type="password" placeholder="Parol" style="padding:12px 16px;border-radius:12px;border:1px solid var(--line);background:var(--bg);color:var(--ink);font-size:15px;font-family:inherit;outline:none" onfocus="this.style.borderColor='var(--blue)'" onblur="this.style.borderColor='var(--line)'">
+<button onclick="doAL()" style="padding:13px;border-radius:12px;background:linear-gradient(135deg,var(--navy2),var(--navy));color:#fff;font-size:15px;font-weight:700;border:none;cursor:pointer;font-family:inherit">Kirish</button>
+<p id="aEr" style="text-align:center;font-size:13px;color:#e74c3c;margin:0;display:none"></p>
+</div>
+</div>
+</div>
+<script>
+function doAL(){
+var l=document.getElementById("aLg").value,p=document.getElementById("aPw").value,e=document.getElementById("aEr");
+if(!l||!p){e.textContent="Login va parolni kiriting";e.style.display="block";return}
+e.style.display="none";
+fetch("https://aiindeksi-bot.onrender.com/api/auth",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({login:l,password:p})})
+.then(function(r){return r.json()}).then(function(d){
+if(d.ok)window.location.href="/admin.html?token="+d.token;
+else{e.textContent="Login yoki parol notogri";e.style.display="block"}
+}).catch(function(){e.textContent="Server bilan boglanib bolmadi";e.style.display="block"})
+}
+document.addEventListener("keydown",function(ev){if(ev.key=="Escape")document.getElementById("adminModal").style.display="none"});
+</script>
 </body>
 </html>

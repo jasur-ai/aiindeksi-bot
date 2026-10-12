@@ -1,69 +1,140 @@
 <!DOCTYPE html>
-<html lang="uz" data-theme="light">
+<html lang="uz">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Admin Panel — RT Monitor</title>
-<meta name="theme-color" content="#E8ECF1" id="metaTheme">
-<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Admin Panel — Raqamli Tadqiqot</title>
+<meta name="robots" content="noindex, nofollow">
 <style>
-@font-face{font-family:Inter;src:url(fonts/inter-regular.woff2) format("woff2");font-weight:400;font-display:swap}
-@font-face{font-family:Inter;src:url(fonts/inter-medium.woff2) format("woff2");font-weight:500;font-display:swap}
-@font-face{font-family:Inter;src:url(fonts/inter-semibold.woff2) format("woff2");font-weight:600;font-display:swap}
-@font-face{font-family:Inter;src:url(fonts/inter-bold.woff2) format("woff2");font-weight:700;font-display:swap}
-@font-face{font-family:Inter;src:url(fonts/inter-extrabold.woff2) format("woff2");font-weight:800;font-display:swap}
-:root{--navy:#1F3864;--blue:#2F6FDB;--acc:#4DA3FF;--bg:#E8ECF1;--surf:#F1F4F7;--ink:#0E1A2B;--muted:#526175;--line:#D3DAE3;--green:#2ecc71;--amber:#f39c12;--red:#e74c3c}
-[data-theme="dark"]{--bg:#080E18;--surf:#0F1826;--ink:#EAF1FA;--muted:#8D9EB5;--line:#1C2A3E;--blue:#5AA6FF;--green:#4DA3FF}
 *{box-sizing:border-box;margin:0;padding:0}
-body{font-family:Inter,-apple-system,sans-serif;background:var(--bg);color:var(--ink);font-size:16px;line-height:1.55}
-.container{max-width:1200px;margin:0 auto;padding:20px}
-.header{display:flex;align-items:center;justify-content:space-between;padding:20px 0;border-bottom:1px solid var(--line);margin-bottom:30px}
-.header h1{font-size:24px;font-weight:800}
-.header .logout{padding:8px 16px;border-radius:10px;background:var(--surf);border:1px solid var(--line);color:var(--ink);font-weight:600;cursor:pointer}
-.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px;margin-bottom:30px}
-.stat{background:var(--surf);border:1px solid var(--line);border-radius:16px;padding:20px;text-align:center}
-.stat h3{font-size:32px;font-weight:800;color:var(--blue)}
-.stat p{font-size:14px;color:var(--muted);margin-top:4px}
-.table{background:var(--surf);border:1px solid var(--line);border-radius:16px;padding:20px;margin-bottom:30px;overflow-x:auto}
-.table h2{font-size:18px;font-weight:700;margin-bottom:16px}
+:root{--navy:#1F3864;--navy2:#2E5490;--blue:#2F6FDB;--acc:#4DA3FF;--bg:#F1F4F7;--surf:#fff;--surf2:#E8ECF1;--ink:#0E1A2B;--ink2:#2A3A50;--muted:#526175;--line:#D3DAE3;--green:#1FA971;--red:#E74C3C;--r:14px;--shadow:0 1px 3px rgba(0,0,0,.08),0 8px 24px -8px rgba(0,0,0,.12)}
+body{font-family:Inter,-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:var(--bg);color:var(--ink);min-height:100vh;-webkit-font-smoothing:antialiased}
+.wrap{max-width:960px;margin:0 auto;padding:24px 20px}
+header{display:flex;justify-content:space-between;align-items:center;padding:16px 0;border-bottom:1px solid var(--line);margin-bottom:32px}
+header h1{font-size:20px;font-weight:700;display:flex;align-items:center;gap:10px}
+.back{font-size:14px;color:var(--blue);text-decoration:none;font-weight:600}
+.back:hover{text-decoration:underline}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px;margin-bottom:32px}
+.stat{background:var(--surf);border:1px solid var(--line);border-radius:var(--r);padding:20px;box-shadow:var(--shadow)}
+.stat b{display:block;font-size:32px;font-weight:800;letter-spacing:-1px;line-height:1;font-variant-numeric:tabular-nums}
+.stat span{font-size:13px;color:var(--muted);margin-top:4px;display:block}
+.card{background:var(--surf);border:1px solid var(--line);border-radius:var(--r);padding:24px;box-shadow:var(--shadow);margin-bottom:20px}
+.card h2{font-size:17px;font-weight:700;margin-bottom:16px;display:flex;align-items:center;gap:10px}
 table{width:100%;border-collapse:collapse}
-th,td{padding:12px 16px;text-align:left;border-bottom:1px solid var(--line);font-size:14px}
-th{font-weight:700;color:var(--blue);font-size:12px;text-transform:uppercase;letter-spacing:.5px}
-.badge{display:inline-block;padding:3px 10px;border-radius:20px;font-size:12px;font-weight:700}
-.badge.ok{background:rgba(46,204,113,.15);color:var(--green)}
-.badge.mid{background:rgba(243,156,18,.15);color:var(--amber)}
-.badge.no{background:rgba(231,76,60,.15);color:var(--red)}
+th,td{padding:10px 14px;text-align:left;font-size:14px;border-bottom:1px solid var(--line)}
+th{font-size:12px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.8px}
+td{color:var(--ink2)}
+.badge{display:inline-block;font-size:11px;font-weight:700;padding:3px 8px;border-radius:6px;background:color-mix(in srgb,var(--green) 15%,transparent);color:var(--green)}
+.badge.admin{background:color-mix(in srgb,var(--blue) 15%,transparent);color:var(--blue)}
+.add-form{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:20px}
+.add-form input{padding:10px 14px;border-radius:10px;border:1px solid var(--line);font-size:14px;font-family:inherit;outline:none;background:var(--surf);color:var(--ink);flex:1;min-width:140px}
+.add-form input:focus{border-color:var(--blue)}
+.btn{padding:10px 20px;border-radius:10px;font-size:14px;font-weight:700;border:none;cursor:pointer;font-family:inherit;transition:transform .15s}
+.btn:hover{transform:translateY(-1px)}
+.btn.p{background:var(--navy);color:#fff}
+.btn.d{background:color-mix(in srgb,var(--red) 12%,transparent);color:var(--red);font-weight:600}
+.btn.sm{padding:7px 12px;font-size:12px}
+.msg{padding:12px 16px;border-radius:10px;font-size:14px;margin-bottom:16px;display:none}
+.msg.ok{background:color-mix(in srgb,var(--green) 12%,transparent);color:var(--green);display:block}
+.msg.err{background:color-mix(in srgb,var(--red) 12%,transparent);color:var(--red);display:block}
+.empty{text-align:center;padding:40px;color:var(--muted);font-size:15px}
+.docs-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:14px;margin-top:12px}
+.doc-tile{background:var(--surf2);border:1px solid var(--line);border-radius:14px;padding:18px;font-size:14px}
+.doc-tile b{display:block;font-size:15px;font-weight:700;margin-bottom:4px}
+.doc-tile span{font-size:13px;color:var(--muted)}
+@media(max-width:600px){.add-form{flex-direction:column}.stats{grid-template-columns:1fr 1fr}}
 </style>
 </head>
 <body>
-<div class="container">
-  <div class="header">
-    <h1>🛡 Admin Panel — RT Monitor</h1>
-    <button class="logout" onclick="localStorage.removeItem('adm_token');location.href='/'">Chiqish</button>
-  </div>
-  <div class="stats" id="stats"></div>
-  <div class="table">
-    <h2>👥 Foydalanuvchilar</h2>
-    <table><thead><tr><th>#</th><th>Ism</th><th>Fakultet</th><th>Kurs</th><th>Sana</th></tr></thead><tbody id="users"></tbody></table>
-  </div>
+<div class="wrap">
+<header>
+<h1>🔐 Admin Panel</h1>
+<a href="/" class="back">← Saytga qaytish</a>
+</header>
+
+<div id="msg" class="msg"></div>
+
+<div class="stats">
+<div class="stat"><b id="sUsers">—</b><span>Foydalanuvchilar</span></div>
+<div class="stat"><b>6</b><span>Hujjatlar</span></div>
+<div class="stat"><b id="sActive">—</b><span>Faol sessiyalar</span></div>
 </div>
+
+<div class="card">
+<h2>👤 Foydalanuvchi qo'shish</h2>
+<p style="font-size:13.5px;color:var(--muted);margin-bottom:14px">Yangi foydalanuvchi login va parolini kiriting. Ular shu login/parol bilan saytga kirib, hujjatlarni ko'radi.</p>
+<div class="add-form">
+<input id="newLogin" placeholder="Login (masalan: ali)">
+<input id="newPass" placeholder="Parol">
+<button class="btn p" onclick="addUser()">+ Qo'shish</button>
+</div>
+</div>
+
+<div class="card">
+<h2>👥 Foydalanuvchilar ro'yxati</h2>
+<div id="usersTable"><div class="empty">Yuklanmoqda...</div></div>
+</div>
+
+<div class="card">
+<h2>📄 Hujjatlar (faqat kirgandan keyin ko'rinadi)</h2>
+<div class="docs-grid">
+<div class="doc-tile"><b>Nizom</b><span>Klub nizomi — maqsad, vazifalar, a'zolik</span></div>
+<div class="doc-tile"><b>Pilot hisoboti</b><span>10 ta bank × 6 o'lchov natijalari</span></div>
+<div class="doc-tile"><b>Metodika</b><span>Indeks hisoblash usuli va mezonlar</span></div>
+<div class="doc-tile"><b>Ariza shakli</b><span>A'zolik uchun ariza namunasi</span></div>
+<div class="doc-tile"><b>Hamkorlik taklifi</b><span>Tashkilotlar uchun hamkorlik shartlari</span></div>
+<div class="doc-tile"><b>Yo'l xaritasi</b><span>2026–2027 rejalari</span></div>
+</div>
+</div>
+</div>
+
 <script>
-var T=localStorage.getItem('adm_token');
-if(!T)location.href='/';
-fetch('/api/admin/stats?token='+T).then(function(r){return r.json()}).then(function(d){
-  if(!d.ok){localStorage.removeItem('adm_token');location.href='/';return}
-  var s=document.getElementById('stats');
-  s.innerHTML='<div class="stat"><h3>'+d.members+'</h3><p>A\'zolar</p></div>'+
-    '<div class="stat"><h3>'+d.fakultet_count+'</h3><p>Fakultetlar</p></div>'+
-    '<div class="stat"><h3>'+d.today+'</h3><p>Bugun</p></div>';
+var TOKEN=new URLSearchParams(location.search).get('token');
+if(!TOKEN){location.href='/'}
+
+function msg(t,type){var m=document.getElementById('msg');m.textContent=t;m.className='msg '+(type||'ok');setTimeout(function(){m.style.display='none'},4000)}
+
+function loadUsers(){
+fetch('https://aiindeksi-bot.onrender.com/api/admin/users?token='+TOKEN)
+.then(function(r){return r.json()})
+.then(function(d){
+if(!d.ok){msg('Token yaroqsiz — qayta kiring','err');setTimeout(function(){location.href='/'},2000);return}
+document.getElementById('sUsers').textContent=d.users.length;
+var h='<table><tr><th>Login</th><th>Holat</th><th>Amal</th></tr>';
+d.users.forEach(function(u){
+h+='<tr><td><strong>'+u.login+'</strong></td><td><span class="badge'+(u.is_admin?' admin':'')+'">'+(u.is_admin?'Admin':'Foydalanuvchi')+'</span></td>';
+h+='<td>'+(u.is_admin?'<span style="color:var(--muted);font-size:12px">—</span>':'<button class="btn d sm" onclick="delUser(\''+u.login+'\')">O\'chirish</button>')+'</td></tr>';
 });
-fetch('/api/admin/users?token='+T).then(function(r){return r.json()}).then(function(d){
-  if(!d.ok)return;
-  var tb=document.getElementById('users');
-  d.users.forEach(function(u,i){
-    tb.innerHTML+='<tr><td>'+(i+1)+'</td><td>'+u.ism+'</td><td>'+u.fakultet+'</td><td>'+u.kurs+'</td><td>'+u.sana+'</td></tr>';
-  });
-});
+h+='</table>';
+document.getElementById('usersTable').innerHTML=h;
+}).catch(function(){msg('Server bilan boglanib bolmadi','err')})
+}
+
+function addUser(){
+var l=document.getElementById('newLogin').value.trim();
+var p=document.getElementById('newPass').value.trim();
+if(!l||!p){msg('Login va parolni kiriting','err');return}
+fetch('https://aiindeksi-bot.onrender.com/api/admin/add_user',{
+method:'POST',headers:{'Content-Type':'application/json'},
+body:JSON.stringify({token:TOKEN,login:l,password:p})
+}).then(function(r){return r.json()}).then(function(d){
+if(d.ok){msg(l+' muvaffaqiyatli qo\'shildi ✓');document.getElementById('newLogin').value='';document.getElementById('newPass').value='';loadUsers()}
+else{msg(d.error||'Xatolik','err')}
+}).catch(function(){msg('Server xatoligi','err')})
+}
+
+function delUser(login){
+if(!confirm(login+' ni o\'chirasizmi?'))return;
+fetch('https://aiindeksi-bot.onrender.com/api/admin/del_user',{
+method:'POST',headers:{'Content-Type':'application/json'},
+body:JSON.stringify({token:TOKEN,login:login})
+}).then(function(r){return r.json()}).then(function(d){
+if(d.ok){msg(login+' o\'chirildi ✓');loadUsers()}
+else{msg(d.error||'Xatolik','err')}
+}).catch(function(){msg('Server xatoligi','err')})
+}
+
+loadUsers();
 </script>
 </body>
 </html>

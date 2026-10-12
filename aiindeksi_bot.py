@@ -1353,7 +1353,15 @@ def make_server(get_db):
                     faks = set(u.get("fakultet","?") for u in users.values())
                     self._send(200, json.dumps({"ok":True,"members":len(users),"fakultet_count":len(faks),"today":today_count}, ensure_ascii=False), "application/json")
                 elif p == "/api/admin/users":
-                    ul = [{"ism":u.get("ism","?"),"fakultet":u.get("fakultet","?"),"kurs":u.get("kurs","?"),"sana":u.get("sana","?")} for u in users.values()]
+                    # Site admin panel uchun — login/parol bilan
+                    import hashlib
+                    creds_file = os.path.join(HERE, "site_creds.json")
+                    if os.path.exists(creds_file):
+                        creds = json.load(open(creds_file))
+                    else:
+                        creds = [{"login":"admin","is_admin":True}]
+                        json.dump(creds, open(creds_file,"w"))
+                    ul = [{"login":c.get("login","?"),"is_admin":c.get("is_admin",False)} for c in creds]
                     self._send(200, json.dumps({"ok":True,"users":ul}, ensure_ascii=False), "application/json")
                 else:
                     self._send(404, '{"ok":false}', "application/json")
@@ -1394,6 +1402,86 @@ def make_server(get_db):
                        "application/json; charset=utf-8")
 
         def do_POST(self):
+            if self.path.split("?")[0] == "/api/admin/add_user":
+                try:
+                    n = int(self.headers.get("Content-Length", "0"))
+                    body = json.loads(self.rfile.read(n).decode("utf-8"))
+                except:
+                    return self._json(400, {"ok":False,"error":"Xato so'rov"})
+                import hashlib
+                q = urllib.parse.parse_qs(self.path.partition("?")[2])
+                token = (q.get("token") or [""])[0]
+                expected = hashlib.sha256(("rt_admin_" + str(ADMIN_IDS)).encode()).hexdigest()[:32]
+                if not token or token != expected:
+                    return self._json(403, {"ok":False,"error":"Ruxsat yo'q"})
+                login = body.get("login","").strip()
+                password = body.get("password","").strip()
+                if not login or not password:
+                    return self._json(400, {"ok":False,"error":"Login va parol kerak"})
+                creds_file = os.path.join(HERE, "site_creds.json")
+                if os.path.exists(creds_file):
+                    creds = json.load(open(creds_file))
+                else:
+                    creds = [{"login":"admin","is_admin":True}]
+                if any(c["login"]==login for c in creds):
+                    return self._json(409, {"ok":False,"error":"Bu login allaqachon bor"})
+                creds.append({"login":login,"password_hash":hashlib.sha256(password.encode()).hexdigest(),"is_admin":False})
+                json.dump(creds, open(creds_file,"w"))
+                return self._json(200, {"ok":True})
+            if self.path.split("?")[0] == "/api/admin/del_user":
+                try:
+                    n = int(self.headers.get("Content-Length", "0"))
+                    body = json.loads(self.rfile.read(n).decode("utf-8"))
+                except:
+                    return self._json(400, {"ok":False,"error":"Xato so'rov"})
+                import hashlib
+                q = urllib.parse.parse_qs(self.path.partition("?")[2])
+                token = (q.get("token") or [""])[0]
+                expected = hashlib.sha256(("rt_admin_" + str(ADMIN_IDS)).encode()).hexdigest()[:32]
+                if not token or token != expected:
+                    return self._json(403, {"ok":False,"error":"Ruxsat yo'q"})
+                login = body.get("login","").strip()
+                creds_file = os.path.join(HERE, "site_creds.json")
+                if os.path.exists(creds_file):
+                    creds = json.load(open(creds_file))
+                else:
+                    return self._json(404, {"ok":False,"error":"Foydalanuvchi topilmadi"})
+                new_creds = [c for c in creds if c.get("login")!=login or c.get("is_admin")]
+                if len(new_creds)==len(creds):
+                    return self._json(404, {"ok":False,"error":"Foydalanuvchi topilmadi"})
+                json.dump(new_creds, open(creds_file,"w"))
+                return self._json(200, {"ok":True})
+            if self.path.split("?")[0] == "/api/admin/change_pass":
+                try:
+                    n = int(self.headers.get("Content-Length", "0"))
+                    body = json.loads(self.rfile.read(n).decode("utf-8"))
+                except:
+                    return self._json(400, {"ok":False,"error":"Xato so'rov"})
+                import hashlib
+                q = urllib.parse.parse_qs(self.path.partition("?")[2])
+                token = (q.get("token") or [""])[0]
+                expected = hashlib.sha256(("rt_admin_" + str(ADMIN_IDS)).encode()).hexdigest()[:32]
+                if not token or token != expected:
+                    return self._json(403, {"ok":False,"error":"Ruxsat yo'q"})
+                login = body.get("login","").strip()
+                new_pass = body.get("new_password","").strip()
+                if not login or not new_pass:
+                    return self._json(400, {"ok":False,"error":"Login va yangi parol kerak"})
+                creds_file = os.path.join(HERE, "site_creds.json")
+                if os.path.exists(creds_file):
+                    creds = json.load(open(creds_file))
+                else:
+                    return self._json(404, {"ok":False,"error":"Foydalanuvchi topilmadi"})
+                found = False
+                for c in creds:
+                    if c.get("login")==login and not c.get("is_admin"):
+                        c["password_hash"] = hashlib.sha256(new_pass.encode()).hexdigest()
+                        found = True
+                        break
+                if not found:
+                    return self._json(404, {"ok":False,"error":"Foydalanuvchi topilmadi"})
+                json.dump(creds, open(creds_file,"w"))
+                return self._json(200, {"ok":True})
             if self.path.split("?")[0] == "/api/auth":
                 try:
                     n = int(self.headers.get("Content-Length", "0"))
@@ -1411,11 +1499,26 @@ def make_server(get_db):
                     creds = {"login":"admin","password_hash":hashlib.sha256("rtmonitor2026".encode()).hexdigest()}
                     _json.dump(creds, open(creds_file,"w"))
                 pwd_hash = hashlib.sha256(password.encode()).hexdigest()
-                if login == creds["login"] and pwd_hash == creds["password_hash"]:
-                    token = hashlib.sha256(("rt_admin_" + str(ADMIN_IDS)).encode()).hexdigest()[:32]
-                    return self._json(200, {"ok":True,"token":token})
+                # site_creds.json dan tekshirish
+                site_creds_file = os.path.join(HERE, "site_creds.json")
+                if os.path.exists(site_creds_file):
+                    site_creds = json.load(open(site_creds_file))
                 else:
-                    return self._json(401, {"ok":False,"error":"Xato login yoki parol"})
+                    site_creds = [{"login":"admin","password_hash":hashlib.sha256("rtmonitor2026".encode()).hexdigest(),"is_admin":True}]
+                    json.dump(site_creds, open(site_creds_file,"w"))
+                found_user = None
+                for sc in site_creds:
+                    if sc.get("login")==login and sc.get("password_hash")==pwd_hash:
+                        found_user = sc
+                        break
+                if found_user:
+                    token = hashlib.sha256(("rt_admin_" + str(ADMIN_IDS)).encode()).hexdigest()[:32]
+                    return self._json(200, {"ok":True,"token":token,"is_admin":found_user.get("is_admin",False)})
+                # Eski admin_creds.json dan ham tekshirish
+                if login == creds.get("login","") and pwd_hash == creds.get("password_hash",""):
+                    token = hashlib.sha256(("rt_admin_" + str(ADMIN_IDS)).encode()).hexdigest()[:32]
+                    return self._json(200, {"ok":True,"token":token,"is_admin":True})
+                return self._json(401, {"ok":False,"error":"Xato login yoki parol"})
             if self.path.split("?")[0] != "/register":
                 return self._send(404, "not found", "text/plain")
             try:
