@@ -1934,5 +1934,77 @@ def admin_panel_handler(chat_id, matn, db):
         monitor.update("uptime", 168)
         return format_realtime_status(monitor), None
     
+    # === SAYT LOGIN/PAROL BOSHQARUV ===
+    elif matn == "/loginlar":
+        import json as _json, hashlib, os as _os
+        creds_file = _os.path.join(HERE, "site_creds.json")
+        if _os.path.exists(creds_file):
+            creds = _json.load(open(creds_file))
+        else:
+            creds = [{"login":"admin","password_hash":hashlib.sha256("rtmonitor2026".encode()).hexdigest(),"is_admin":True}]
+            _json.dump(creds, open(creds_file,"w"))
+        if not creds:
+            return "📋 Hech qanday login yo'q.", None
+        text = "📋 **Sayt loginlari:**\n\n"
+        for c in creds:
+            role = "🔑 Admin" if c.get("is_admin") else "👤 A'zo"
+            text += f"• `{c['login']}` — {role}\n"
+        text += "\n➕ Yangi qo'shish: `/qosh login parol`\n✏️ Parol o'zgartirish: `/parol login yangi_parol`\n❌ O'chirish: `/ochir login`"
+        return text, None
+    
+    elif matn.startswith("/qosh ") and chat_id in ADMIN_IDS:
+        parts = matn.split(maxsplit=2)
+        if len(parts) < 3:
+            return "❌ Format: `/qosh login parol`", None
+        login, password = parts[1].strip(), parts[2].strip()
+        import json as _json, hashlib, os as _os
+        creds_file = _os.path.join(HERE, "site_creds.json")
+        if _os.path.exists(creds_file):
+            creds = _json.load(open(creds_file))
+        else:
+            creds = [{"login":"admin","password_hash":hashlib.sha256("rtmonitor2026".encode()).hexdigest(),"is_admin":True}]
+        if any(c["login"]==login for c in creds):
+            return f"❌ `{login}` allaqachon mavjud.", None
+        creds.append({"login":login,"password_hash":hashlib.sha256(password.encode()).hexdigest(),"is_admin":False})
+        _json.dump(creds, open(creds_file,"w"))
+        return f"✅ `{login}` qo'shildi.\nLogin: `{login}`\nParol: `{password}`", None
+    
+    elif matn.startswith("/ochir ") and chat_id in ADMIN_IDS:
+        parts = matn.split(maxsplit=1)
+        if len(parts) < 2:
+            return "❌ Format: `/ochir login`", None
+        login = parts[1].strip()
+        import json as _json, hashlib, os as _os
+        creds_file = _os.path.join(HERE, "site_creds.json")
+        if not _os.path.exists(creds_file):
+            return "❌ Login topilmadi.", None
+        creds = _json.load(open(creds_file))
+        new_creds = [c for c in creds if c.get("login")!=login or c.get("is_admin")]
+        if len(new_creds)==len(creds):
+            return f"❌ `{login}` topilmadi yoki adminni o'chirib bo'lmaydi.", None
+        _json.dump(new_creds, open(creds_file,"w"))
+        return f"✅ `{login}` o'chirildi.", None
+    
+    elif matn.startswith("/parol ") and chat_id in ADMIN_IDS:
+        parts = matn.split(maxsplit=2)
+        if len(parts) < 3:
+            return "❌ Format: `/parol login yangi_parol`", None
+        login, new_pass = parts[1].strip(), parts[2].strip()
+        import json as _json, hashlib, os as _os
+        creds_file = _os.path.join(HERE, "site_creds.json")
+        if not _os.path.exists(creds_file):
+            return "❌ Login topilmadi.", None
+        creds = _json.load(open(creds_file))
+        found = False
+        for c in creds:
+            if c.get("login")==login and not c.get("is_admin"):
+                c["password_hash"] = hashlib.sha256(new_pass.encode()).hexdigest()
+                found = True
+                break
+        if not found:
+            return f"❌ `{login}` topilmadi yoki admin parolini `/parol` emas, admin paneldan o'zgartiring.", None
+        _json.dump(creds, open(creds_file,"w"))
+        return f"✅ `{login}` paroli o'zgartirildi.\nYangi parol: `{new_pass}`", None
+
     else:
         return None, None  # Not handled
