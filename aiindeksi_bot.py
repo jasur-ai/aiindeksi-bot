@@ -1402,6 +1402,40 @@ def make_server(get_db):
                        "application/json; charset=utf-8")
 
         def do_POST(self):
+            if self.path.split("?")[0] == "/api/admin/change_admin_pass":
+                try:
+                    n = int(self.headers.get("Content-Length", "0"))
+                    body = json.loads(self.rfile.read(n).decode("utf-8"))
+                except:
+                    return self._json(400, {"ok":False,"error":"Xato so'rov"})
+                import hashlib
+                q = urllib.parse.parse_qs(self.path.partition("?")[2])
+                token = (q.get("token") or [""])[0]
+                expected = hashlib.sha256(("rt_admin_" + str(ADMIN_IDS)).encode()).hexdigest()[:32]
+                if not token or token != expected:
+                    return self._json(403, {"ok":False,"error":"Ruxsat yo'q"})
+                old_pass = body.get("old_password","")
+                new_pass = body.get("new_password","")
+                if not old_pass or not new_pass:
+                    return self._json(400, {"ok":False,"error":"Joriy va yangi parol kerak"})
+                creds_file = os.path.join(HERE, "site_creds.json")
+                if os.path.exists(creds_file):
+                    creds = json.load(open(creds_file))
+                else:
+                    creds = [{"login":"admin","password_hash":hashlib.sha256("rtmonitor2026".encode()).hexdigest(),"is_admin":True}]
+                # Admin parolini tekshirish
+                admin_user = next((c for c in creds if c.get("is_admin")), None)
+                if not admin_user:
+                    return self._json(404, {"ok":False,"error":"Admin topilmadi"})
+                if admin_user["password_hash"] != hashlib.sha256(old_pass.encode()).hexdigest():
+                    return self._json(401, {"ok":False,"error":"Joriy parol notogri"})
+                admin_user["password_hash"] = hashlib.sha256(new_pass.encode()).hexdigest()
+                json.dump(creds, open(creds_file,"w"))
+                # admin_creds.json ni ham yangilash
+                admin_creds_file = os.path.join(HERE, "admin_creds.json")
+                admin_creds = {"login":"admin","password_hash":hashlib.sha256(new_pass.encode()).hexdigest()}
+                json.dump(admin_creds, open(admin_creds_file,"w"))
+                return self._json(200, {"ok":True})
             if self.path.split("?")[0] == "/api/admin/add_user":
                 try:
                     n = int(self.headers.get("Content-Length", "0"))
