@@ -2,6 +2,8 @@ token.txt
 admin.txt
 channel.txt
 secrets.txt
+site_session_secret.txt
+private_docs/
 *.json
 *.csv
 *.xlsx
@@ -10,3 +12,14 @@ __pycache__/
 node_modules/
 .wrangler/
 !rollar.json
+
+# Credentials, runtime data and internal handoff material must never be published.
+.env
+.env.*
+!.env.example
+ghtoken.txt
+ghrepo.txt
+*.pem
+*.key
+*.zip
+.wrangler/

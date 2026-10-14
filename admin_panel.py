@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 """
-RT Monitor — Professional Admin Panel
-Faqat ADMIN_IDS dagi userlarga ko'rinadi.
-Xalqaro standartlar: ISO 27001, GDPR muvofiqlik.
+RT Monitor — legacy admin-panel moduli
+Faqat vakolatli admin uchun mo'ljallangan; bu fayl jonli tizim holatini isbotlamaydi.
+ISO/GDPR/WCAG/OWASP bo'yicha sertifikat yoki audit tasdiqlanmagan.
 """
 import json
 import os
@@ -13,28 +13,13 @@ TASHKENT = timezone(timedelta(hours=5))
 
 # ─── Admin Panel Commands ───
 ADMIN_PANEL_HELP = """
-🛡 <b>ADMIN PANEL — RT Monitor</b>
+⚠️ <b>Legacy admin-panel moduli</b>
 
-📊 <b>Statistika:</b>
-/admin_stats — Umumiy statistika
-/admin_users — Foydalanuvchilar ro'yxati
-/admin_pilot — Pilot natijalari
-/admin_audit — Audit jurnali
+Ushbu modul joriy bot routeriga ulanmagan va undagi buyruqlar ishlab turgan deb hisoblanmasin.
+Standartlar yoki production monitoring holatini tasdiqlamaydi.
 
-📋 <b>Boshqaruv:</b>
-/admin_export — Ma'lumotlarni eksport
-/admin_broadcast — Xabar yuborish
-/admin_settings — Sozlamalar
-
-🔒 <b>Xavfsizlik:</b>
-/admin_security — Xavfsizlik holati
-/admin_logs — Tizim loglari
-/admin_backup — Zaxira nusxa
-
-📈 <b>Monitoring:</b>
-/admin_realtime — Real-time monitoring
-/admin_alerts — Ogohlantirishlar
-/admin_report — Hisobot yaratish
+Sayt hisoblarini boshqarish uchun vakolatli adminning shaxsiy chatida:
+/loginlar · /qosh login parol · /sayt_admin login parol · /parol login yangi_parol · /ochir login · /sayt_audit
 """
 
 def get_admin_stats(db):
@@ -78,7 +63,7 @@ def format_admin_stats(stats):
 ⏰ <b>Vaqt:</b> {stats['vaqt']}
 
 ━━━━━━━━━━━━━━━━━━━━━━━
-🔐 ISO 27001 muvofiqlik: ✅
+⚠️ Ushbu modul mustaqil xavfsizlik auditi yoki sertifikat xulosasi emas.
 """
 
 def get_pilot_results():
@@ -89,93 +74,78 @@ def get_pilot_results():
         "kataklar": 60,
         "dalil_topildi": 30,
         "manbalar": 32,
-        "xatolar_tuzatildi": 6,
-        "sektor_indeksi": 32.6,
+        "xatolar_tuzatildi": None,
+        "sektor_indeksi": "Manba bilan tasdiqlanmagan",
         "sana": "29.09.2026",
-        "holat": "Tugallangan"
+        "holat": "Loyiha ichki hisoboti; mustaqil tasdiqlanmagan"
     }
 
 def format_pilot_results(pilot):
-    """Pilot natijalarini formatlash."""
+    """Loyiha ichki ko'rsatkichlarini tasdiqlanmagan deb aniq belgilab chiqarish."""
     return f"""
-📈 <b>PILOT NATIJALARI — Batafsil</b>
+📈 <b>PILOT — LOYIHA BILDIRGAN QIYMATLAR</b>
 ━━━━━━━━━━━━━━━━━━━━━━━
 
-🏦 <b>Banklar:</b> {pilot['banklar']} ta
-📊 <b>O'lchovlar:</b> {pilot['olchovlar']} ta yo'nalish
-📋 <b>Kataklar:</b> {pilot['kataklar']} ta
-✅ <b>Dalil topildi:</b> {pilot['dalil_topildi']} ta ({pilot['dalil_topildi']/pilot['kataklar']*100:.0f}%)
-📚 <b>Manbalar:</b> {pilot['manbalar']} ta
-🔧 <b>Xatolar tuzatildi:</b> {pilot['xatolar_tuzatildi']} ta
+🏦 <b>Namuna:</b> {pilot['banklar']} bank
+📊 <b>O'lchovlar:</b> {pilot['olchovlar']} yo'nalish
+📋 <b>Kataklar:</b> {pilot['kataklar']}
+📌 <b>Loyiha bildirgan dalil:</b> {pilot['dalil_topildi']}/{pilot['kataklar']}
+📚 <b>Loyiha bildirgan manba:</b> {pilot['manbalar']}
+📅 <b>Hisobot sanasi:</b> {pilot['sana']}
 
-📊 <b>Sektor indeksi:</b> {pilot['sektor_indeksi']}/100
-📅 <b>Sana:</b> {pilot['sana']}
-🟢 <b>Holat:</b> {pilot['holat']}
+⚠️ <b>Holat:</b> {pilot['holat']}
+Sektor indeksi va banklar kesimidagi reyting mustaqil manba-arxiv bilan tasdiqlanmagan.
 
 ━━━━━━━━━━━━━━━━━━━━━━━
-🔒 Ma'lumotlar SHA-256 bilan himoyalangan
 """
 
 def get_security_status():
-    """Xavfsizlik holati — ISO 27001."""
+    """Kod darajasidagi ko'rinadigan choralar; mustaqil audit holati emas."""
     return {
-        "encryption": "AES-256",
-        "hash": "SHA-256",
-        "backup": "Avtomatik (har 6 soat)",
-        "access_control": "RBAC (Role-Based)",
-        "audit_log": "Faol",
-        "gdpr_compliance": "To'liq",
-        "last_audit": datetime.now(TASHKENT).strftime("%d.%m.%Y"),
-        "status": "✅ Faol"
+        "password_hashing": "PBKDF2-HMAC-SHA256, salt bilan (sayt hisoblari)",
+        "session": "HMAC imzoli, 12 soatgacha",
+        "access_control": "Himoyalangan admin API da rol tekshiruvi",
+        "audit_log": "Sayt hisoblariga oid amallar qayd etiladi; parollar yozilmaydi",
+        "at_rest": "Ilova darajasida shifrlash tasdiqlanmagan",
+        "certifications": "ISO 27001/GDPR/OWASP/WCAG sertifikat yoki audit tasdiqlanmagan",
+        "status": "Mustaqil tekshiruv talab etiladi"
     }
 
 def format_security_status(sec):
-    """Xavfsizlik holatini formatlash."""
+    """Tekshirilgan kod xususiyatlari va noma'lum jihatlarni ajratish."""
     return f"""
-🔒 <b>XAVFSIZLIK HOLATI — ISO 27001</b>
+🔒 <b>XAVFSIZLIK — KODDA KO'RINGAN CHORALAR</b>
 ━━━━━━━━━━━━━━━━━━━━━━━
 
-🔐 <b>Shifrlash:</b> {sec['encryption']}
-#️⃣ <b>Xesh:</b> {sec['hash']}
-💾 <b>Zaxira:</b> {sec['backup']}
-👥 <b>Kirish nazorati:</b> {sec['access_control']}
-📋 <b>Audit jurnali:</b> {sec['audit_log']}
-🇪🇺 <b>GDPR:</b> {sec['gdpr_compliance']}
+🔑 <b>Sayt parollari:</b> {sec['password_hashing']}
+🪪 <b>Sessiya:</b> {sec['session']}
+👥 <b>Ruxsat:</b> {sec['access_control']}
+📋 <b>Hisob auditi:</b> {sec['audit_log']}
+💾 <b>Ma'lumotlar bazasini shifrlash:</b> {sec['at_rest']}
 
-📅 <b>Oxirgi audit:</b> {sec['last_audit']}
-🟢 <b>Holat:</b> {sec['status']}
+⚠️ <b>Tasdiqlanmagan:</b> {sec['certifications']}
+Holat: {sec['status']}. Bu ma'lumot mustaqil audit xulosasi emas.
 
 ━━━━━━━━━━━━━━━━━━━━━━━
 """
 
 def generate_audit_report(db):
-    """Audit hisoboti yaratish."""
+    """Faqat mavjud hisob/audit sonlarini chiqaradi; sertifikat xulosasi bermaydi."""
     stats = get_admin_stats(db)
-    pilot = get_pilot_results()
-    security = get_security_status()
-    
+    events = db.get("site_audit", [])
     return f"""
-📋 <b>RT Monitor — AUDIT HISOBOTI</b>
+📋 <b>RT Monitor — ICHKI HISOBOT</b>
 ━━━━━━━━━━━━━━━━━━━━━━━
 📅 Sana: {datetime.now(TASHKENT).strftime("%d.%m.%Y %H:%M")}
 
-<b>1. TIZIM HOLATI</b>
-• Foydalanuvchilar: {stats['jami_users']}
-• Faol (30 kun): {stats['faol_30_kun']}
-• Tadbirlar: {stats['tadbirlar']}
+👥 Bot foydalanuvchilari: {stats['jami_users']}
+🔑 Sayt hisoblari: {len(db.get('site_users', {}))}
+🧾 Hisob audit yozuvlari: {len(events)}
 
-<b>2. PILOT NATIJALARI</b>
-• Banklar: {pilot['banklar']}
-• Dalil: {pilot['dalil_topildi']}/{pilot['kataklar']}
-• Indeks: {pilot['sektor_indeksi']}/100
-
-<b>3. XAVFSIZLIK</b>
-• Shifrlash: {security['encryption']}
-• GDPR: {security['gdpr_compliance']}
-• Holat: {security['status']}
+⚠️ ISO 27001, GDPR, OWASP yoki WCAG muvofiqligi tasdiqlanmagan.
+Mustaqil audit va sertifikat mavjudligi ushbu hisobot bilan isbotlanmaydi.
 
 ━━━━━━━━━━━━━━━━━━━━━━━
-🔐 ISO 27001:2022 muvofiqlik tasdiqlandi
 """
 
 # ─── Real-time Monitoring ───
@@ -232,8 +202,10 @@ def format_realtime_status(monitor):
             alerts_text += f"  • {alert['time']}: {alert['message']}\n"
     
     return f"""
-📡 <b>REAL-TIME MONITORING</b>
+📡 <b>DEMO MONITORING KO'RSATKICHLARI</b>
 ━━━━━━━━━━━━━━━━━━━━━━━
+
+⚠️ Bu moduldagi qiymatlar production telemetry emas; namuna/sinov ma'lumoti bo'lishi mumkin.
 
 💻 <b>Tizim:</b>
   • CPU: {metrics['cpu']}%
@@ -261,15 +233,15 @@ RT Monitor — tashkilotlarda sun'iy intellekt va raqamli
 xizmatlarni dalil bilan baholaydigan monitoring platformasi.
 
 <b>2. TAKLIF</b>
-• Sizning tashkilotingizda AI monitoring
-• Bepul pilot (1 oy)
-• Batafsil hisobot va tavsiyalar
-• Maxfiylik kafolati
+• Tashkilot bilan kelishilgan qamrovda AI bo'yicha ochiq manbalarni tahlil qilish
+• Pilot narxi, muddati va hisobot tarkibi oldindan kelishiladi
+• Amaliy tavsiyalar — ma'lumotlar yetarli bo'lsa
+• Ma'lumotlarni qayta ishlash shartlari yozma ravishda kelishiladi
 
 <b>3. NATIJALAR</b>
-• AI joriy etish holati baholash
-• Xalqaro standartlar bo'yicha tahlil
-• Amaliy tavsiyalar
+• Ochiq dalillarni kelishilgan mezonlar asosida ko'rib chiqish
+• Standartlar haqida ma'lumot berish mumkin; muvofiqlik/sertifikat tasdiqlanmaydi
+• Xulosalar va cheklovlar aniq ajratiladi
 
 <b>4. KEYINGI QADAMLAR</b>
 1. Niyat xati imzolash

@@ -1,0 +1,20 @@
+<!doctype html>
+<html lang="uz"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="referrer" content="no-referrer"><meta name="robots" content="noindex,nofollow"><title>Parol o‘rnatish — Raqamli Tadqiqot</title><link rel="icon" href="/favicon.svg"><style>
+:root{color-scheme:light;font-family:system-ui,sans-serif;color:#132b38;background:#f4f7f9}*{box-sizing:border-box}body{margin:0;min-height:100vh;display:grid;place-items:center;padding:24px}main{width:100%;max-width:470px;padding:36px;border:1px solid #dce6e9;background:white;border-radius:24px;box-shadow:0 16px 50px #102b3910}.brand{font-weight:750;font-size:13px;letter-spacing:.12em;color:#077d86}h1{font-size:30px;line-height:1.2;margin:24px 0 14px}p{line-height:1.65;color:#526571}label{display:block;margin:22px 0 8px;font-weight:600;font-size:14px}input{font:inherit;padding:13px;width:100%;border:1px solid #abbcc5;border-radius:10px}input:focus{outline:3px solid #a7e6e8;border-color:#057b84}button{width:100%;padding:14px;margin-top:24px;border:0;border-radius:10px;background:#086e77;color:white;font:600 16px system-ui;cursor:pointer}button:disabled{opacity:.55;cursor:wait}a{color:#076c77}#status{padding:12px 0;font-size:14px;min-height:40px}.note{font-size:13px;margin-top:22px}footer{margin-top:20px;font-size:14px}
+</style></head><body><main><div class="brand">RAQAMLI TADQIQOT</div><h1>Parolingizni o‘rnating</h1><p>Hisobingiz vakolatli admin tomonidan ochilgan. Parolni faqat shu sahifada kiriting — Telegram orqali yubormang.</p><form id="activationForm"><label for="password">Yangi parol</label><input id="password" type="password" minlength="10" maxlength="1024" autocomplete="new-password" required><label for="confirm">Parolni takrorlang</label><input id="confirm" type="password" minlength="10" maxlength="1024" autocomplete="new-password" required><button id="submit" type="submit">Parolni saqlash</button></form><div id="status" role="status" aria-live="polite"></div><p class="note">Havola bir marta ishlaydi va 30 daqiqadan so‘ng eskiradi. Uni boshqa kishiga bermang. Kamida 10 belgili, boshqa joyda ishlatilmagan parol tanlang.</p><footer><a href="/">← Saytga qaytish</a></footer></main><script>
+(function(){'use strict';
+var token=new URLSearchParams(location.hash.slice(1)).get('token')||'';
+history.replaceState(null,'',location.pathname);
+var form=document.getElementById('activationForm'),button=document.getElementById('submit'),status=document.getElementById('status');
+if(!token){status.textContent='Havola yetishmayapti. Admindan yangi havola so‘rang.';form.hidden=true;return;}
+form.addEventListener('submit',async function(event){event.preventDefault();
+var password=document.getElementById('password').value,confirm=document.getElementById('confirm').value;
+if(password!==confirm){status.textContent='Parollar mos kelmadi.';return;}
+button.disabled=true;status.textContent='Saqlanmoqda…';
+try{var response=await fetch('https://aiindeksi-bot.onrender.com/api/activate',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({token:token,password:password}),cache:'no-store'});var result=await response.json();
+if(!response.ok||!result.ok){status.textContent=result.error||'So‘rov bajarilmadi. Qayta urinib ko‘ring.';return;}
+token='';form.reset();form.hidden=true;status.textContent='Parol saqlandi. Endi saytning “Kirish” tugmasi orqali hisobingizga kiring.';
+}catch(_){status.textContent='Server bilan ulanish amalga oshmadi. Qayta urinib ko‘ring.';}finally{button.disabled=false;}
+});
+})();
+</script></body></html>

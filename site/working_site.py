@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 """
-RT Monitor — Ishchi Sayt (Working Site)
-Real ma'lumotlar, dashboard, API endpointlar.
-Xalqaro standartlar: ISO 27001, GDPR.
+RT Monitor — arxivlangan dashboard prototipi.
+Bu skript live API emas. Pilot qiymatlari loyiha bildirgan va mustaqil tekshirilmagan.
+ISO 27001/GDPR bo'yicha muvofiqlik yoki sertifikat tasdiqlanmagan.
 """
 import json
 import os
@@ -21,34 +21,20 @@ API_ENDPOINTS = {
     "/api/health": "Tizim holati",
 }
 
-# ─── Pilot Data (Real) ───
+# ─── Pilot Data — loyiha bildirgan qiymatlar, mustaqil tasdiqlanmagan ───
 PILOT_DATA = {
-    "banks": [
-        {"name": "TBC Bank", "score": 100, "dimensions": 6, "status": "Yetarli"},
-        {"name": "SQB", "score": 70.0, "dimensions": 5, "status": "Yetarli"},
-        {"name": "NBU", "score": 59.5, "dimensions": 4, "status": "Yetarli"},
-        {"name": "Anorbank", "score": 33.3, "dimensions": 3, "status": "Qisman"},
-        {"name": "Uzum Bank", "score": 33.3, "dimensions": 3, "status": "Qisman"},
-        {"name": "Agrobank", "score": 15.2, "dimensions": 2, "status": "Qisman"},
-        {"name": "Kapitalbank", "score": 15.2, "dimensions": 2, "status": "Qisman"},
-        {"name": "Xalq Banki", "score": 0, "dimensions": 0, "status": "Yetarli emas"},
-        {"name": "Ipak Yo'li", "score": 0, "dimensions": 0, "status": "Yetarli emas"},
-        {"name": "Ziraat Bank", "score": 0, "dimensions": 0, "status": "Yetarli emas"},
-    ],
+    # Manba-arxiv va mustaqil qayta hisoblash mavjud bo'lmagani uchun bank nomlari/ballari e'lon qilinmaydi.
+    "banks": [],
     "summary": {
         "total_banks": 10,
         "total_dimensions": 6,
         "total_cells": 60,
         "filled_cells": 30,
         "sources_checked": 32,
-        "errors_corrected": 6,
-        "sector_index": 32.6,
+        "errors_corrected": None,
+        "sector_index": "Mustaqil qayta hisoblanmagan",
         "data_date": "29.09.2026",
-        "confidence_levels": {
-            "yetarli": 3,
-            "qisman": 4,
-            "yetarli_emas": 3
-        }
+        "verification": "Loyiha ichki hisoboti; mustaqil tashqi audit bilan tasdiqlanmagan"
     }
 }
 
@@ -74,7 +60,7 @@ METHODOLOGY = {
     "quality_control": {
         "independent_reviewers": 2,
         "min_kappa": 0.6,
-        "source_archiving": "SHA-256",
+        "source_archiving": "Talab; amaldagi checksum/arxiv jarayoni tasdiqlanmagan",
         "negative_conclusion": "Ikkinchi tasdiq talab qilinadi"
     }
 }
@@ -82,41 +68,18 @@ METHODOLOGY = {
 # ─── Security Standards ───
 SECURITY_STANDARDS = {
     "iso27001": {
-        "status": "Muvofiqlik",
-        "controls": [
-            "A.5 — Siyosatlar va tartiblar",
-            "A.6 — Tashkiliy xavfsizlik",
-            "A.7 — Jismoniy xavfsizlik",
-            "A.8 — Tizimlar ishlab chiqish",
-            "A.9 — Kirish nazorati",
-            "A.10 — Kriptografiya",
-            "A.11 — Fizik va muhit xavfsizligi",
-            "A.12 — Operatsion xavfsizlik",
-            "A.13 — Aloqa xavfsizligi",
-            "A.14 — Tizimlarni olish, ishlab chiqish va saqlash",
-            "A.15 — Ta'minotchi munosabatlari",
-            "A.16 — Hodisalarni boshqarish",
-            "A.17 — Uzluksizlikni boshqarish",
-            "A.18 — Muvoofiqlik",
-        ]
+        "status": "Sertifikat yoki mustaqil audit tasdiqlanmagan",
+        "controls": []
     },
     "gdpr": {
-        "status": "Muvofiqlik",
-        "principles": [
-            "Qonuniylik, adolatlilik, shaffoflik",
-            "Maqsadni cheklash",
-            "Ma'lumotlarni kamaytirish",
-            "Aniqlik",
-            "Saqlash muddatini cheklash",
-            "Yaxlitlik va maxfiylik",
-            "Mas'uliyat",
-        ]
+        "status": "Mustaqil huquqiy baholash tasdiqlanmagan",
+        "principles": []
     },
     "encryption": {
-        "at_rest": "AES-256",
-        "in_transit": "TLS 1.3",
-        "hashing": "SHA-256",
-        "key_management": "Automated rotation"
+        "at_rest": "Ilova darajasida shifrlash tasdiqlanmagan",
+        "in_transit": "Production TLS sozlamasi alohida tekshirilishi kerak",
+        "hashing": "Sayt parollari: PBKDF2-HMAC-SHA256, salt bilan",
+        "key_management": "Sessiya siri hostingda alohida saqlanishi kerak; rotatsiya tekshirilmagan"
     }
 }
 
@@ -151,12 +114,12 @@ PARTNERSHIP_KIT = {
         }
     ],
     "advantages": [
-        "Xalqaro standartlar (ISO 27001, GDPR)",
-        "Mustaqil va ob'ektiv baholash",
+        "Standart talablari bo'yicha o'rganish; muvofiqlik sertifikati tasdiqlanmagan",
+        "Ochiq manbaga tayangan tahlil; tashqi audit emas",
         "Dalilga asoslangan yondashuv",
-        "Maxfiylik kafolati",
-        "Arzon narxlar",
-        "Tez natijalar"
+        "Ma'lumotlarni minimallashtirish ko'zda tutiladi; alohida huquqiy baho talab etiladi",
+        "Narx, qamrov va muddat oldindan kelishiladi",
+        "Natija va muddat ma'lumotlar mavjudligiga bog'liq"
     ],
     "contact": {
         "email": "aloqa@raqamlitadqiqot.pages.dev",
@@ -183,6 +146,8 @@ def generate_dashboard_html():
             <td><span class="status {bank['status'].lower().replace(' ', '_')}">{bank['status']}</span></td>
         </tr>
         """
+    if not banks:
+        banks_html = "<tr><td colspan='4'>Banklar kesimidagi nom va ballar mustaqil manba-arxiv bilan tasdiqlanmagani uchun e'lon qilinmaydi.</td></tr>"
     
     return f"""
 <!DOCTYPE html>
@@ -250,9 +215,10 @@ def generate_dashboard_html():
                 <p>Sektor indeksi</p>
             </div>
         </div>
+        <p>{pilot['verification']} ({pilot['data_date']}). Bu qiymatlar mustaqil audit xulosasi emas.</p>
         
         <div class="table-container">
-            <h2>Banklar natijalari</h2>
+            <h2>Banklar kesimi</h2>
             <table>
                 <thead>
                     <tr>
@@ -274,23 +240,24 @@ def generate_dashboard_html():
         </div>
         
         <div class="security">
-            <h2>Xavfsizlik standartlari</h2>
+            <h2>Xavfsizlik va standartlar — tasdiqlanmagan jihatlar</h2>
             <div class="security-item">
-                <span class="security-icon">✅</span>
+                <span class="security-icon">⚠️</span>
                 <span>ISO 27001:2022 — {SECURITY_STANDARDS['iso27001']['status']}</span>
             </div>
             <div class="security-item">
-                <span class="security-icon">✅</span>
+                <span class="security-icon">⚠️</span>
                 <span>GDPR — {SECURITY_STANDARDS['gdpr']['status']}</span>
             </div>
             <div class="security-item">
-                <span class="security-icon">🔐</span>
-                <span>Shifrlash: {SECURITY_STANDARDS['encryption']['at_rest']} (saqlash) / {SECURITY_STANDARDS['encryption']['in_transit']} (uzatish)</span>
+                <span class="security-icon">ℹ️</span>
+                <span>Saqlash/uzatish himoyasi: {SECURITY_STANDARDS['encryption']['at_rest']} / {SECURITY_STANDARDS['encryption']['in_transit']}</span>
             </div>
             <div class="security-item">
-                <span class="security-icon">#️⃣</span>
-                <span>Xesh: {SECURITY_STANDARDS['encryption']['hashing']}</span>
+                <span class="security-icon">ℹ️</span>
+                <span>{SECURITY_STANDARDS['encryption']['hashing']}</span>
             </div>
+            <p>Ushbu yozuv mustaqil sertifikat yoki xavfsizlik auditi o'rnini bosmaydi.</p>
         </div>
         
         <div class="footer">
@@ -303,54 +270,61 @@ def generate_dashboard_html():
 """
 
 def generate_api_response(endpoint):
-    """API javobini yaratish."""
+    """Arxivlangan prototip namunasi; haqiqiy HTTP API yoki live health-check emas."""
     if endpoint == "/api/stats":
         return {
-            "status": "success",
+            "status": "prototype",
+            "note": "Arxivlangan demo ma'lumoti; live API yoki audit dalili emas.",
             "data": PILOT_DATA["summary"],
             "timestamp": datetime.now(TASHKENT).isoformat()
         }
     
     elif endpoint == "/api/pilot":
         return {
-            "status": "success",
+            "status": "prototype",
+            "note": "Arxivlangan demo ma'lumoti; live API yoki audit dalili emas.",
             "data": PILOT_DATA,
             "timestamp": datetime.now(TASHKENT).isoformat()
         }
     
     elif endpoint == "/api/banks":
         return {
-            "status": "success",
+            "status": "prototype",
+            "note": "Arxivlangan demo ma'lumoti; live API yoki audit dalili emas.",
             "data": PILOT_DATA["banks"],
             "timestamp": datetime.now(TASHKENT).isoformat()
         }
     
     elif endpoint == "/api/methodology":
         return {
-            "status": "success",
+            "status": "prototype",
+            "note": "Arxivlangan demo ma'lumoti; live API yoki audit dalili emas.",
             "data": METHODOLOGY,
             "timestamp": datetime.now(TASHKENT).isoformat()
         }
     
     elif endpoint == "/api/security":
         return {
-            "status": "success",
+            "status": "prototype",
+            "note": "Arxivlangan demo ma'lumoti; live API yoki audit dalili emas.",
             "data": SECURITY_STANDARDS,
             "timestamp": datetime.now(TASHKENT).isoformat()
         }
     
     elif endpoint == "/api/partnership":
         return {
-            "status": "success",
+            "status": "prototype",
+            "note": "Arxivlangan demo ma'lumoti; live API yoki audit dalili emas.",
             "data": PARTNERSHIP_KIT,
             "timestamp": datetime.now(TASHKENT).isoformat()
         }
     
     elif endpoint == "/api/health":
         return {
-            "status": "healthy",
-            "uptime": "168 soat",
-            "version": "1.0.0",
+            "status": "prototype",
+            "uptime": None,
+            "version": "demo; production tasdiqlanmagan",
+            "note": "Bu skript HTTP servis ishga tushirmaydi.",
             "timestamp": datetime.now(TASHKENT).isoformat()
         }
     

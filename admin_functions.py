@@ -9,7 +9,7 @@ Kerakli bo'limni tanlang:
 
 📊 <b>Statistika</b> — umumiy ma'lumotlar
 📈 <b>Pilot</b> — pilot natijalari
-🔒 <b>Xavfsizlik</b> — ISO 27001, GDPR
+🔒 <b>Xavfsizlik</b> — joriy holat
 👥 <b>Foydalanuvchilar</b> — ro'yxat
 📋 <b>Audit</b> — hisobot
 🤝 <b>Hamkorlik</b> — taklif
@@ -55,12 +55,11 @@ def _admin_panel_callback(uid, action, db):
 🏦 Banklar: 10 ta
 📊 O'lchov: 6 ta yo'nalish
 📋 Kataklar: 60 ta
-✅ Dalil: 30 ta (50%)
-📚 Manbalar: 32 ta
-🔧 Xatolar: 6 ta tuzatildi
-
-📊 Sektor indeksi: 32.6/100
+📌 Loyiha bildirgan dalil: 30 ta (50%)
+📚 Loyiha bildirgan ochiq manba: 32 ta
 📅 Sana: 29.09.2026
+
+⚠️ Bu qiymatlar loyihaning ichki ma'lumoti; mustaqil tekshiruv dalillari bilan tasdiqlanmagan.
 
 ━━━━━━━━━━━━━━━━━━━━━━━"""
         kb = {"inline_keyboard": [
@@ -68,15 +67,18 @@ def _admin_panel_callback(uid, action, db):
         ]}
         return text, kb
     elif action == "security":
-        text = """🔒 <b>XAVFSIZLIK — ISO 27001</b>
+        text = """🔒 <b>XAVFSIZLIK — TEKSHIRILGAN HOLAT</b>
 ━━━━━━━━━━━━━━━━━━━━━━━
 
-🔐 Shifrlash: AES-256
-#️⃣ Xesh: SHA-256
-💾 Zaxira: Har 6 soat
-👥 Kirish: RBAC
-📋 Audit: Faol
-🇪🇺 GDPR: Muvofiqlik
+🔑 Sayt parollari: alohida salt bilan PBKDF2-HMAC-SHA256
+🪪 Sessiya: imzolangan, 12 soatlik; admin API rol bo'yicha tekshiriladi
+📋 Hisob o'zgarishlari: audit jurnalida; parol qiymatlari yozilmaydi
+🌐 CORS: ruxsat etilgan sayt manzili bilan cheklangan
+
+⚠️ ISO 27001 sertifikati, GDPR bo'yicha huquqiy baholash,
+OWASP pentest yoki WCAG auditi mavjudligi tasdiqlanmagan.
+Ilova darajasida ma'lumotlar bazasining AES shifrlanishi ham
+tekshirilmagan. Bu ro'yxat mustaqil audit o'rnini bosmaydi.
 
 ━━━━━━━━━━━━━━━━━━━━━━━"""
         kb = {"inline_keyboard": [
@@ -100,16 +102,17 @@ Export: /export
         ]}
         return text, kb
     elif action == "audit":
-        users = db.get("users", {})
-        text = f"""📋 <b>AUDIT HISOBOTI</b>
+        accounts = db.get("site_users", {})
+        events = db.get("site_audit", [])
+        text = f"""📋 <b>HISOBLAR AUDITI</b>
 ━━━━━━━━━━━━━━━━━━━━━━━
 
-📅 Sana: {datetime.datetime.now(datetime.timezone(datetime.timedelta(hours=5))).strftime('%d.%m.%Y %H:%M')}
-👥 Foydalanuvchilar: {len(users)}
+🔑 Sayt hisoblari: {len(accounts)}
+🧾 Qayd etilgan amallar: {len(events)}
+🔒 Parol qiymatlari auditga kiritilmaydi.
 
-✅ ISO 27001: Muvofiqlik
-✅ GDPR: Muvofiqlik
-✅ OWASP: Tekshirilgan
+Mustaqil ISO/GDPR/OWASP/WCAG sertifikati yoki auditi
+mavjudligi bu bot orqali tasdiqlanmagan.
 
 ━━━━━━━━━━━━━━━━━━━━━━━"""
         kb = {"inline_keyboard": [
@@ -120,10 +123,10 @@ Export: /export
         text = """🤝 <b>HAMKORLIK TAKLIFI</b>
 ━━━━━━━━━━━━━━━━━━━━━━━
 
-BEPUL PILOT — hech qanday xarajat yo'q
-MAXFIYLIK — ma'lumotlar himoyalangan
-NATIJA — 1 oyda batafsil hisobot
-XALQARO — ISO 27001, GDPR standartlar
+PILOT — qamrov va muddat hamkor bilan kelishiladi
+MANBALAR — ochiq ma'lumotlar asosida tahlil
+HISOBOT — metodika va cheklovlari ko'rsatiladi
+STANDARTLAR — talablar o'rganilmoqda; sertifikat tasdiqlanmagan
 
 Aloqa: @aiindeksi_bot
 

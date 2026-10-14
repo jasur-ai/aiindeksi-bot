@@ -1,153 +1,49 @@
-# RT Monitor — Deployment Summary
+# Joylashtirish holati va tekshiruv yo'riqnomasi
 
-## ✅ Yaratilgan va deploy qilingan
+> **Bu deploy tasdig'i emas.** Mahalliy koddagi o'zgarishlar hech qayerga push yoki deploy qilinmagan. Jonli Cloudflare Pages yoki Render servisi ushbu nusxa bilan bir xil ekani tekshirilmagan.
 
-### 🤖 Bot — Admin Panel
-**Status:** ✅ Tayyor
+## Joriy koddagi asosiy yo'nalishlar
 
-**Qo'shilgan funksiyalar:**
-- `/admin` — Admin panel bosh menyusi (inline tugmalar bilan)
-- 📊 Statistika — foydalanuvchilar soni, tadbirlar
-- 📈 Pilot natijalari — 10 bank, 60 katak, 32.6 indeks
-- 🔒 Xavfsizlik — ISO 27001, GDPR, AES-256
-- 👥 Foydalanuvchilar — ro'yxat va export
-- 📋 Audit — hisobot
-- 🤝 Hamkorlik — taklif
-- 📤 Export — ma'lumot yuklash
+- Ommaviy sahifada noto'g'ri “Ilovani yuklab olish” amali olib tashlangan; a'zolik havolasi Telegram botga olib boradi.
+- Kirish JSON API orqali amalga oshadi. Sessiya tokeni URL query stringga qo'yilmaydi; brauzer `sessionStorage` va `Authorization: Bearer` sarlavhasidan foydalanadi.
+- API faqat oldindan belgilangan sayt originlariga CORS ruxsat beradi va `OPTIONS` preflight so'rovlariga javob beradi.
+- Web hisoblari PBKDF2-HMAC-SHA256 bilan salt qo'shib xeshlanadi. Administrator va a'zo huquqlari API darajasida ajratilgan.
+- Hisob amallari audit qilinadi; parol matni log yoki audit jurnaliga kiritilmaydi.
+- Hujjatlar `private_docs/` katalogidan faqat sessiyali API orqali beriladi. Omborda hozir yuklab olinadigan hujjat fayllari yo'q.
 
-**Fayllar:**
-- `aiindeksi_bot.py` — asosiy bot
-- `admin_functions.py` — admin panel funksiyalari
-- `admin_panel.py` — qo'shimcha admin modullar
+## Render servisida talab qilinadigan sozlamalar
 
----
+Mavjud loyiha sozlamalarini saqlagan holda quyidagilarni tekshiring:
 
-### 🌐 Sayt — Dashboard
-**Status:** ✅ Deploy qilindi
+- `AIINDEKSI_TOKEN` — Telegram bot tokeni.
+- `AIINDEKSI_ADMIN` — Telegram administrator ID(lar)i; vergul bilan ajratilgan qiymatlar qabul qilinadi.
+- `AILABS_DB_REPO` va `AILABS_DB_TOKEN` — amaldagi baza sinxronlash sozlamalari (maxfiy qiymatlarni faqat hosting sozlamalarida kiriting).
+- `RT_SITE_SESSION_SECRET` — kamida 32 tasodifiy belgili, bot tokenidan alohida sir. Uni, masalan, lokal xavfsiz terminalda `python -c 'import secrets; print(secrets.token_urlsafe(48))'` bilan yarating va faqat Render Environment sahifasida saqlang. Chatga yoki repoga yubormang.
+- `PORT` Render tomonidan beriladi.
 
-**URL:** https://19cdab3f.raqamlitadqiqot.pages.dev
+`RT_SITE_SESSION_SECRET` sozlanmasa, servis ishga tushganda tasodifiy kalit yaratadi; bu holatda restart yoki ko'p nusxali servis sessiyani bekor qilishi mumkin. Doimiy production ishlashi uchun barqaror sirni hostingda sozlang.
 
-**Qo'shilgan funksiyalar:**
-- Real ma'lumotlar dashboard
-- Banklar natijalari jadvali (interaktiv)
-- Metodika — 6 o'lchov yo'nalishi
-- Xavfsizlik standartlari (ISO 27001, GDPR)
-- API endpointlar (/api/stats, /api/pilot, /api/banks, /api/methodology, /api/security, /api/health)
-- PWA — ilova sifatida o'rnatish
-- Offline rejim
+## Cloudflare Pages / CORS
 
-**Fayllar:**
-- `site/index.html` — asosiy sahifa
-- `site/manifest.json` — PWA manifest
-- `site/sw.js` — Service Worker
-- `site/offline.html` — offline sahifa
-- `site/dashboard.html` — eski dashboard (zaxira)
+API ruxsat ro'yxatidagi production origin:
 
----
+- `https://raqamlitadqiqot.pages.dev`
 
-### 📄 Professional hujjatlar
-**Status:** ✅ Tayyor
+Custom domain ishlatilsa, uning aniq HTTPS originini backenddagi `SITE_ORIGINS` ro'yxatiga qo'shib, backendni qayta chiqarish kerak. Har qanday originni `*` bilan ochmang. Local ishlab chiqish uchun `http://localhost:5500` va `http://127.0.0.1:5500` ruxsat etilgan.
 
-**Hujjatlar:**
-1. `COMPREHENSIVE_PROJECT_SUMMARY.md` — to'liq loyiha xulosasi
-2. `professional_docs.py` — professional hujjatlar generatori
-3. `project_plan.py` — loyiha rejas va hisobotlar
-4. `working_site.py` — ishchi sayt ma'lumotlari
+## Hujjat fayllari
 
-**Generatsiya qilingan:**
-- `partnership_proposal.txt` — hamkorlik taklifi
-- `letter_of_intent.txt` — niyat xati
-- `project_reports.txt` — loyiha hisobotlari
+Hujjatlarni `site/` ichiga qo'ymang: u Cloudflare Pages orqali ommaga chiqishi mumkin. Hujjatlarni Render persistent diskiga joylashtiring va `RT_PRIVATE_DOCS_DIR` bilan katalogni ko'rsating yoki shifrlangan, autentifikatsiyalangan saqlash tizimini sozlang. Hozirgi API faqat PDF, DOCX, XLSX, PPTX, TXT va Markdown fayllarni ro'yxatlaydi va sessiya bilan beradi. Render fayl tizimi vaqtinchalik bo'lishi mumkin; doimiy saqlashni alohida hal qiling.
 
----
+## Deploydan keyingi sinovlar
 
-## 🔒 Xalqaro standartlar
+1. `GET /healthz` — servis javob berishini tekshiring.
+2. `https://raqamlitadqiqot.pages.dev` sahifasidan kirish oynasini ochib, faqat test hisobi bilan auth sinovi o'tkazing.
+3. Brauzer Network panelida `OPTIONS /api/auth` va `OPTIONS /api/admin/users` javobida ruxsat etilgan origin hamda `Authorization, Content-Type` sarlavhalari borligini tekshiring.
+4. A'zo hisobi `/api/admin/users` ga kira olmasligini (`403`), web-admin kira olishini (`200`) sinang.
+5. Test parolini tiklab, avvalgi sessiya bekor bo'lishini; audit jurnalida hodisa qayd etilib, parolning o'zi yo'qligini tekshiring.
+6. Hujjat fayli bo'lmasa, katalog bo'sh ko'rinishi kerak. Haqiqiy hujjatlar berilmaguncha test fayllarni official material sifatida chiqarmang.
 
-### ISO 27001:2022
-- ✅ 14 ta boshqaruv (controls)
-- ✅ Ma'lumotlar xavfsizligi siyosati
-- ✅ Kirish nazorati (RBAC)
-- ✅ Kriptografiya (AES-256, SHA-256)
+## Nimalar tasdiqlanmagan
 
-### GDPR
-- ✅ 7 ta tamoyil
-- ✅ Qonuniylik va shaffoflik
-- ✅ Maqsadni cheklash
-
-### OWASP Top 10
-- ✅ 0 ta zaiflik
-- ✅ SQL injection himoyasi
-- ✅ XSS himoyasi
-
----
-
-## 📊 Pilot natijalari
-
-| Ko'rsatkich | Qiymat |
-|-------------|--------|
-| Banklar | 10 ta |
-| O'lchov yo'nalishi | 6 ta |
-| Kataklar | 60 ta |
-| Dalil topildi | 30 ta (50%) |
-| Manbalar | 32 ta |
-| Xatolar tuzatildi | 6 ta |
-| Sektor indeksi | 32.6/100 |
-
----
-
-## 💰 Byudjet
-
-**Yillik:** 10,000,000 UZS (~$850)
-**Oylik:** 833,333 UZS (~$70)
-
-**Ta'rif:**
-- Hosting: Cloudflare Pages (bepul) + Render.com ($7/oy)
-- Domain: raqamlitadqiqot.pages.dev (bepul)
-- Tools: GitHub, VS Code (bepul)
-- Misc: Print, transport (~500,000 UZS/oy)
-
----
-
-## 🎯 Keyingi qadamlar
-
-### Tezkor (1 hafta):
-1. ✅ Botni Render.com ga deploy qilish
-2. ✅ Saytni Cloudflare Pages ga deploy qilish
-3. ⬜ Korxonalarga hamkorlik taklifi yuborish
-
-### Qisqa muddatli (1 oy):
-1. ⬜ Kamida 3 ta korxona bilan hamkorlik
-2. ⬜ 100+ foydalanuvchi
-3. ⬜ 5+ ta tadbir
-
-### O'rta muddatli (3 oy):
-1. ⬜ 10+ ta korxona
-2. ⬜ 500+ foydalanuvchi
-3. ⬜ Xalqaro standartlar sertifikati
-
----
-
-## 📞 Aloqa
-
-- **Email:** aloqa@raqamlitadqiqot.pages.dev
-- **Telegram:** @aiindeksi_bot
-- **Veb-sayt:** raqamlitadqiqot.pages.dev
-- **Kanal:** @Raqamli_tadqiqot
-
----
-
-## ✅ Xulosa
-
-RT Monitor — bu:
-- ✅ Xalqaro standartlar (ISO 27001, GDPR)
-- ✅ Professional yondashuv
-- ✅ Dalilga asoslangan
-- ✅ Maxfiylik kafolati
-- ✅ Arzon narxlar
-- ✅ Tez natijalar
-
-**RAD ETIB BO'LMAYDIGAN TAKLIF!**
-
----
-
-*© 2026 Raqamli Tadqiqot — TDIU*
+Jonli deploy, loginning production muhitida ishlashi, GitHub bazasiga haqiqiy yozilish, zaxira chastotasi, ISO 27001/GDPR/OWASP/WCAG muvofiqligi va mustaqil pentest ushbu ishda tasdiqlanmagan. Koddagi xavfsizlik choralarini sertifikat yoki to'liq audit deb talqin qilmang.

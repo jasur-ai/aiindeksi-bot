@@ -1,208 +1,200 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="uz">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Admin Panel — Raqamli Tadqiqot</title>
-<meta name="robots" content="noindex, nofollow">
-<link rel="preconnect" href="https://fonts.googleapis.com">
+<meta name="robots" content="noindex,nofollow">
+<title>Himoyalangan ish maydoni — Raqamli Tadqiqot</title>
 <style>
-*{box-sizing:border-box;margin:0;padding:0}
-:root{--navy:#1F3864;--navy2:#2E5490;--blue:#2F6FDB;--acc:#4DA3FF;--bg:#F1F4F7;--surf:#fff;--surf2:#E8ECF1;--ink:#0E1A2B;--ink2:#2A3A50;--muted:#526175;--line:#D3DAE3;--green:#1FA971;--red:#E74C3C;--r:14px;--shadow:0 1px 3px rgba(0,0,0,.08),0 8px 24px -8px rgba(0,0,0,.12)}
-body{font-family:Inter,-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:var(--bg);color:var(--ink);min-height:100vh;-webkit-font-smoothing:antialiased}
-.wrap{max-width:960px;margin:0 auto;padding:24px 20px}
-header{display:flex;justify-content:space-between;align-items:center;padding:16px 0;border-bottom:1px solid var(--line);margin-bottom:32px}
-header h1{font-size:20px;font-weight:700;display:flex;align-items:center;gap:10px}
-.back{font-size:14px;color:var(--blue);text-decoration:none;font-weight:600}
-.back:hover{text-decoration:underline}
-.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:16px;margin-bottom:32px}
-.stat{background:var(--surf);border:1px solid var(--line);border-radius:var(--r);padding:20px;box-shadow:var(--shadow)}
-.stat b{display:block;font-size:32px;font-weight:800;letter-spacing:-1px;line-height:1;font-variant-numeric:tabular-nums}
-.stat span{font-size:13px;color:var(--muted);margin-top:4px;display:block}
-.card{background:var(--surf);border:1px solid var(--line);border-radius:var(--r);padding:24px;box-shadow:var(--shadow);margin-bottom:20px}
-.card h2{font-size:17px;font-weight:700;margin-bottom:16px}
-table{width:100%;border-collapse:collapse}
-th,td{padding:10px 14px;text-align:left;font-size:14px;border-bottom:1px solid var(--line)}
-th{font-size:12px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.8px}
-td{color:var(--ink2)}
-.badge{display:inline-block;font-size:11px;font-weight:700;padding:3px 8px;border-radius:6px;background:color-mix(in srgb,var(--green) 15%,transparent);color:var(--green)}
-.badge.admin{background:color-mix(in srgb,var(--blue) 15%,transparent);color:var(--blue)}
-.form{display:flex;gap:10px;flex-wrap:wrap}
-.form input{padding:10px 14px;border-radius:10px;border:1px solid var(--line);font-size:14px;font-family:inherit;outline:none;background:var(--bg);color:var(--ink);flex:1;min-width:140px;transition:border .2s}
-.form input:focus{border-color:var(--blue)}
-.btn{padding:10px 20px;border-radius:10px;font-size:14px;font-weight:700;border:none;cursor:pointer;font-family:inherit;transition:transform .15s}
-.btn:hover{transform:translateY(-1px)}
-.btn.p{background:var(--navy);color:#fff}
-.btn.d{background:color-mix(in srgb,var(--red) 12%,transparent);color:var(--red);font-weight:600}
-.btn.w{background:color-mix(in srgb,var(--blue) 12%,transparent);color:var(--blue);font-weight:600}
-.btn.sm{padding:7px 12px;font-size:12px}
-.msg{padding:12px 16px;border-radius:10px;font-size:14px;margin-bottom:16px;display:none}
-.msg.ok{background:color-mix(in srgb,var(--green) 12%,transparent);color:var(--green);display:block}
-.msg.err{background:color-mix(in srgb,var(--red) 12%,transparent);color:var(--red);display:block}
-.empty{text-align:center;padding:40px;color:var(--muted);font-size:15px}
-.docs{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:14px;margin-top:12px}
-.doc{background:var(--surf2);border:1px solid var(--line);border-radius:14px;padding:18px;font-size:14px}
-.doc b{display:block;font-size:15px;font-weight:700;margin-bottom:4px}
-.doc span{font-size:13px;color:var(--muted)}
-.pass-row{display:flex;gap:8px;align-items:center;margin-top:8px}
-.pass-row input{padding:7px 10px;border-radius:8px;border:1px solid var(--line);font-size:13px;font-family:inherit;outline:none;background:var(--bg);color:var(--ink);flex:1}
-.pass-row input:focus{border-color:var(--blue)}
-.tabs{display:flex;gap:2px;background:var(--surf2);border-radius:10px;padding:3px;margin-bottom:20px}
-.tabs button{flex:1;padding:10px;border:none;background:none;font-size:14px;font-weight:600;color:var(--muted);cursor:pointer;border-radius:8px;font-family:inherit;transition:all .2s}
-.tabs button.on{background:var(--surf);color:var(--ink);box-shadow:0 1px 3px rgba(0,0,0,.08)}
-.panel{display:none}.panel.on{display:block}
-@media(max-width:600px){.form{flex-direction:column}.stats{grid-template-columns:1fr 1fr}.docs{grid-template-columns:1fr}}
+:root{color-scheme:light;--navy:#1f3864;--blue:#2f6fdb;--acc:#4da3ff;--bg:#f1f4f7;--surface:#fff;--surface2:#e8edf3;--ink:#0e1a2b;--ink2:#34445b;--muted:#637187;--line:#d5dde7;--green:#15845a;--red:#c64040;--shadow:0 12px 30px rgba(19,40,71,.08);--radius:16px}
+*{box-sizing:border-box}[hidden]{display:none!important}body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.55 Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;-webkit-font-smoothing:antialiased}
+.wrap{width:min(100% - 32px,980px);margin:0 auto;padding:26px 0 54px}
+header{display:flex;justify-content:space-between;align-items:center;gap:18px;padding:10px 0 22px;border-bottom:1px solid var(--line);margin-bottom:24px}
+.brand{display:flex;align-items:center;gap:12px}.mark{display:grid;place-items:center;width:42px;height:42px;border-radius:13px;background:linear-gradient(145deg,var(--navy),var(--blue));color:#fff;font-weight:800;letter-spacing:-1px}.brand h1{font-size:18px;line-height:1.2;margin:0;font-weight:800}.brand p{font-size:12px;color:var(--muted);margin:4px 0 0}
+.header-actions{display:flex;align-items:center;gap:10px}.back,.btn{appearance:none;border:0;border-radius:10px;text-decoration:none;cursor:pointer;font-family:inherit;font-size:13px;font-weight:600;line-height:1.2;transition:transform .15s,background .15s,color .15s}.back{color:var(--blue);padding:10px 12px}.back:hover{background:var(--surface2)}.btn{padding:11px 15px;background:var(--navy);color:#fff}.btn:hover{transform:translateY(-1px)}.btn:disabled{opacity:.6;cursor:wait;transform:none}.btn.secondary{background:#e8effb;color:var(--navy)}.btn.danger{background:#fff0f0;color:var(--red)}.btn.small{padding:7px 10px;font-size:12px}
+.notice{display:none;padding:12px 15px;border-radius:11px;margin:0 0 18px;font-size:14px}.notice.show{display:block}.notice.ok{background:#e7f6ef;color:#176642}.notice.err{background:#fff0f0;color:#973131}.notice.info{background:#eaf1fc;color:#244b81}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:14px;margin-bottom:22px}.stat{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:17px 19px;box-shadow:var(--shadow)}.stat strong{display:block;font-size:21px;line-height:1.2;letter-spacing:-.3px}.stat span{display:block;color:var(--muted);font-size:12px;margin-top:6px}
+.tabs{display:flex;gap:5px;overflow:auto;background:#e7ecf2;border-radius:12px;padding:4px;margin:0 0 18px}.tabs button{border:0;background:transparent;color:var(--muted);font-family:inherit;font-size:13px;font-weight:600;white-space:nowrap;border-radius:9px;padding:10px 14px;cursor:pointer}.tabs button.active{background:var(--surface);color:var(--ink);box-shadow:0 1px 4px rgba(20,38,64,.1)}
+.panel{display:none}.panel.active{display:block}.card{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:22px;box-shadow:var(--shadow);margin-bottom:16px}.card h2{font-size:16px;margin:0 0 7px}.card .sub{color:var(--muted);font-size:13px;margin:0 0 16px}
+.form{display:flex;gap:10px;align-items:center;flex-wrap:wrap}.field{display:flex;flex-direction:column;gap:5px;flex:1;min-width:165px}.field label{font-size:12px;font-weight:650;color:var(--ink2)}input{width:100%;padding:11px 12px;border:1px solid var(--line);border-radius:9px;background:#fbfcfe;color:var(--ink);font-family:inherit;font-size:14px;outline:none}input:focus{border-color:var(--blue);box-shadow:0 0 0 3px rgba(47,111,219,.12)}.hint{font-size:12px;color:var(--muted);margin-top:9px}
+.table-wrap{overflow-x:auto}table{width:100%;border-collapse:collapse;min-width:600px}th,td{text-align:left;padding:11px 10px;border-bottom:1px solid var(--line);font-size:13px;vertical-align:middle}th{color:var(--muted);font-size:11px;text-transform:uppercase;letter-spacing:.055em}td{color:var(--ink2)}.badge{display:inline-flex;align-items:center;border-radius:20px;padding:4px 9px;background:#edf2fa;color:#3e5879;font-size:11px;font-weight:700}.badge.admin{background:#e8effb;color:var(--blue)}.actions{display:flex;gap:6px;flex-wrap:wrap}.empty{padding:28px 16px;text-align:center;border:1px dashed var(--line);border-radius:12px;color:var(--muted);font-size:13px}
+.doc-list{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:12px}.doc{border:1px solid var(--line);border-radius:13px;background:var(--surface2);padding:15px}.doc strong{display:block;font-size:14px;overflow-wrap:anywhere}.doc span{display:block;color:var(--muted);font-size:12px;margin:5px 0 12px}.audit-list{list-style:none;padding:0;margin:0}.audit-list li{display:grid;grid-template-columns:145px 1fr;gap:12px;padding:11px 0;border-bottom:1px solid var(--line);font-size:13px}.audit-list time{color:var(--muted);font-variant-numeric:tabular-nums}.audit-list b{font-weight:700}.modal{display:none;position:fixed;inset:0;z-index:5;background:rgba(9,18,32,.5);padding:20px;align-items:center;justify-content:center}.modal.show{display:flex}.dialog{width:min(100%,420px);background:var(--surface);border-radius:17px;padding:22px;box-shadow:0 24px 70px rgba(0,0,0,.25)}.dialog h2{font-size:17px;margin:0 0 8px}.dialog p{font-size:13px;color:var(--muted);margin:0 0 16px}.dialog-actions{display:flex;justify-content:flex-end;gap:8px;margin-top:16px}
+@media(max-width:620px){.wrap{width:min(100% - 22px,980px);padding-top:14px}.card{padding:17px}.brand h1{font-size:16px}.back{display:none}.header-actions{gap:5px}.tabs button{padding:9px 11px}.audit-list li{grid-template-columns:1fr;gap:2px}.form .btn{width:100%}}
 </style>
 </head>
 <body>
 <div class="wrap">
 <header>
-<h1>🔐 Admin Panel</h1>
-<a href="/" class="back">← Saytga qaytish</a>
+  <div class="brand"><div class="mark" aria-hidden="true">RT</div><div><h1>Raqamli Tadqiqot</h1><p>Himoyalangan ish maydoni</p></div></div>
+  <div class="header-actions"><a class="back" href="/">← Saytga qaytish</a><button id="logoutBtn" class="btn secondary" type="button">Chiqish</button></div>
 </header>
-
-<div id="msg" class="msg"></div>
-
-<div class="stats">
-<div class="stat"><b id="sUsers">—</b><span>Foydalanuvchilar</span></div>
-<div class="stat"><b>6</b><span>Hujjatlar</span></div>
-<div class="stat"><b id="sSessions">—</b><span>Faol sessiyalar</span></div>
+<div id="notice" class="notice" role="status" aria-live="polite"></div>
+<div class="cards" id="summaryCards" hidden>
+  <div class="stat"><strong id="accountCount">—</strong><span>Sayt hisoblari</span></div>
+  <div class="stat"><strong id="sessionExpiry">—</strong><span>Sessiya tugash vaqti</span></div>
+  <div class="stat"><strong>12 soat</strong><span>Sessiyaning maksimal muddati</span></div>
+</div>
+<nav id="tabs" class="tabs" aria-label="Himoyalangan bo'limlar" hidden></nav>
+<section id="panel-accounts" class="panel">
+  <div class="card">
+    <h2>Yangi sayt hisoblari</h2>
+    <p class="sub">Himoyalangan ish maydoni uchun login/parolni faqat vakolatli Telegram-bot administratori yaratadi. Brauzer orqali yangi hisob ochish ataylab o'chirilgan.</p>
+    <p class="hint">Hisob yaratish va parolni berish — faqat adminning botdagi shaxsiy chatida. A'zolik uchun bot/Mini App ro'yxatidan o'tish esa alohida va ochiq jarayon. Parol xeshlanadi; ochiq matn baza yoki audit jurnalida saqlanmaydi.</p>
+  </div>
+  <div class="card">
+    <h2>Hisoblar</h2>
+    <p class="sub">Hisobni o'chirish yoki parolni tiklash sessiyalarni bekor qiladi. Admin hisobi a'zolar ro'yxatidan boshqarilmaydi.</p>
+    <div id="usersTable"><div class="empty">Yuklanmoqda…</div></div>
+  </div>
+</section>
+<section id="panel-docs" class="panel">
+  <div class="card">
+    <h2>Himoyalangan hujjatlar</h2>
+    <p class="sub">Bu ro'yxat faqat tizimga kirgandan keyin yuklanadi. Hujjat fayllari himoyalangan saqlash katalogiga joylangandagina shu yerda ko'rinadi.</p>
+    <div id="docsList" class="doc-list"><div class="empty">Hujjatlar tekshirilmoqda…</div></div>
+  </div>
+</section>
+<section id="panel-settings" class="panel">
+  <div class="card">
+    <h2>Parol va sessiya</h2>
+    <p class="sub" id="passwordHint">Parolni vaqti-vaqti bilan yangilang. Parol yangilangach, barcha eski sessiyalar bekor qilinadi.</p>
+    <form id="passwordForm" class="form" autocomplete="off">
+      <div class="field"><label for="oldPass">Joriy parol</label><input id="oldPass" type="password" autocomplete="current-password" required></div>
+      <div class="field"><label for="nextPass">Yangi parol</label><input id="nextPass" type="password" minlength="10" maxlength="1024" autocomplete="new-password" required></div>
+      <div class="field"><label for="confirmPass">Yangi parolni takrorlang</label><input id="confirmPass" type="password" minlength="10" maxlength="1024" autocomplete="new-password" required></div>
+      <button class="btn" type="submit">Parolni yangilash</button>
+    </form>
+    <p class="hint">Kamida 10 belgi ishlating. Boshqa foydalanuvchi parolini unutsa, administrator uni qayta o'rnatishi mumkin.</p>
+  </div>
+</section>
+<section id="panel-audit" class="panel">
+  <div class="card">
+    <h2>Hisoblar faoliyati</h2>
+    <p class="sub">Oxirgi hisob yaratish, parol yangilash va o'chirish amallari. Parol qiymatlari qayd etilmaydi.</p>
+    <ul id="auditList" class="audit-list"><li class="empty">Audit jurnali yuklanmoqda…</li></ul>
+  </div>
+</section>
 </div>
 
-<div class="tabs">
-<button class="on" onclick="switchTab('users',this)">👥 Foydalanuvchilar</button>
-<button onclick="switchTab('docs',this)">📄 Hujjatlar</button>
-<button onclick="switchTab('settings',this)">⚙️ Sozlamalar</button>
+<div id="resetModal" class="modal" role="dialog" aria-modal="true" aria-labelledby="resetTitle">
+  <form id="resetForm" class="dialog" autocomplete="off">
+    <h2 id="resetTitle">Parolni tiklash</h2>
+    <p id="resetDescription">Yangi parol kiriting. Eski sessiyalar bekor qilinadi.</p>
+    <div class="field"><label for="resetPass">Yangi parol</label><input id="resetPass" type="password" minlength="10" maxlength="1024" autocomplete="new-password" required></div>
+    <div class="dialog-actions"><button id="cancelReset" class="btn secondary" type="button">Bekor qilish</button><button class="btn" type="submit">Yangilash</button></div>
+  </form>
 </div>
-
-<!-- USERS PANEL -->
-<div id="pUsers" class="panel on">
-<div class="card">
-<h2>Foydalanuvchi qo'shish</h2>
-<p style="font-size:13.5px;color:var(--muted);margin-bottom:14px">Yangi login/parol yarating. Foydalanuvchi shu login/parol bilan saytga kirib hujjatlarni ko'radi.</p>
-<div class="form">
-<input id="newLogin" placeholder="Login (masalan: ali)">
-<input id="newPass" placeholder="Parol">
-<button class="btn p" onclick="addUser()">+ Qo'shish</button>
-</div>
-</div>
-
-<div class="card">
-<h2>Foydalanuvchilar ro'yxati</h2>
-<div id="usersTable"><div class="empty">Yuklanmoqda...</div></div>
-</div>
-</div>
-
-<!-- DOCS PANEL -->
-<div id="pDocs" class="panel">
-<div class="card">
-<h2>Hujjatlar (6 ta)</h2>
-<p style="font-size:13.5px;color:var(--muted);margin-bottom:14px">Faqat kirgandan keyin ko'rinadi. Hujjatlar tashqi saytda ham ko'rsatiladi, lekin yuklab olish faqat login qilgandan keyin.</p>
-<div class="docs">
-<div class="doc"><b>📋 Nizom</b><span>Klub nizomi — maqsad, vazifalar, a'zolik shartlari</span></div>
-<div class="doc"><b>📊 Pilot hisoboti</b><span>10 ta bank × 6 o'lchov — batafsil natijalar</span></div>
-<div class="doc"><b>🔬 Metodika</b><span>Indeks hisoblash usuli va mezonlar</span></div>
-<div class="doc"><b>📝 Ariza shakli</b><span>A'zolik uchun to'ldiriladigan ariza</span></div>
-<div class="doc"><b>🤝 Hamkorlik taklifi</b><span>Tashkilotlar uchun hamkorlik shartlari</span></div>
-<div class="doc"><b>🗺️ Yo'l xaritasi</b><span>2026–2027 yillik rejalari</span></div>
-</div>
-</div>
-</div>
-
-<!-- SETTINGS PANEL -->
-<div id="pSettings" class="panel">
-<div class="card">
-<h2>Admin parolni o'zgartirish</h2>
-<div class="form" style="margin-top:12px">
-<input id="oldPass" type="password" placeholder="Joriy parol">
-<input id="newAdminPass" type="password" placeholder="Yangi parol">
-<button class="btn w" onclick="changeAdminPass()">Saqlash</button>
-</div>
-</div>
-</div>
-</div>
-
 <script>
-var TOKEN=new URLSearchParams(location.search).get('token');
-if(!TOKEN)location.href='/';
-
-function msg(t,type){var m=document.getElementById('msg');m.textContent=t;m.className='msg '+(type||'ok');setTimeout(function(){m.style.display='none'},4000)}
-
-function switchTab(id,btn){
-document.querySelectorAll('.panel').forEach(function(p){p.classList.remove('on')});
-document.querySelectorAll('.tabs button').forEach(function(b){b.classList.remove('on')});
-document.getElementById('p'+id.charAt(0).toUpperCase()+id.slice(1)).classList.add('on');
-btn.classList.add('on');
-}
-
-function loadUsers(){
-fetch('https://aiindeksi-bot.onrender.com/api/admin/users?token='+TOKEN)
-.then(function(r){return r.json()})
-.then(function(d){
-if(!d.ok){msg('Token yaroqsiz','err');setTimeout(function(){location.href='/'},2000);return}
-document.getElementById('sUsers').textContent=d.users.length;
-var h='<table><tr><th>Login</th><th>Holat</th><th>Amal</th></tr>';
-d.users.forEach(function(u){
-h+='<tr><td><strong>'+u.login+'</strong></td><td><span class="badge'+(u.is_admin?' admin':'')+'">'+(u.is_admin?'Admin':'Foydalanuvchi')+'</span></td>';
-if(u.is_admin){h+='<td style="color:var(--muted);font-size:12px">—</td>'}
-else{h+='<td><button class="btn d sm" onclick="delUser(\''+u.login+'\')">O\'chirish</button> <button class="btn w sm" onclick="showPassForm(\''+u.login+'\')">Parol</button></td>'}
-h+='</tr>';
-});
-h+='</table>';
-document.getElementById('usersTable').innerHTML=h;
-}).catch(function(){msg('Server xatoligi','err')})
-}
-
-function addUser(){
-var l=document.getElementById('newLogin').value.trim();
-var p=document.getElementById('newPass').value.trim();
-if(!l||!p){msg('Login va parolni kiriting','err');return}
-fetch('https://aiindeksi-bot.onrender.com/api/admin/add_user?token='+TOKEN,{
-method:'POST',headers:{'Content-Type':'application/json'},
-body:JSON.stringify({login:l,password:p})
-}).then(function(r){return r.json()}).then(function(d){
-if(d.ok){msg(l+' qo\'shildi ✓');document.getElementById('newLogin').value='';document.getElementById('newPass').value='';loadUsers()}
-else{msg(d.error||'Xatolik','err')}
-}).catch(function(){msg('Server xatoligi','err')})
-}
-
-function delUser(login){
-if(!confirm(login+' ni o\'chirasizmi?'))return;
-fetch('https://aiindeksi-bot.onrender.com/api/admin/del_user?token='+TOKEN,{
-method:'POST',headers:{'Content-Type':'application/json'},
-body:JSON.stringify({login:login})
-}).then(function(r){return r.json()}).then(function(d){
-if(d.ok){msg(login+' o\'chirildi ✓');loadUsers()}
-else{msg(d.error||'Xatolik','err')}
-}).catch(function(){msg('Server xatoligi','err')})
-}
-
-function showPassForm(login){
-var np=prompt(login+' uchun yangi parol:');
-if(!np)return;
-fetch('https://aiindeksi-bot.onrender.com/api/admin/change_pass?token='+TOKEN,{
-method:'POST',headers:{'Content-Type':'application/json'},
-body:JSON.stringify({login:login,new_password:np})
-}).then(function(r){return r.json()}).then(function(d){
-if(d.ok){msg(login+' paroli o\'zgartirildi ✓')}
-else{msg(d.error||'Xatolik','err')}
-}).catch(function(){msg('Server xatoligi','err')})
-}
-
-function changeAdminPass(){
-var o=document.getElementById('oldPass').value;
-var n=document.getElementById('newAdminPass').value;
-if(!o||!n){msg('Joriy va yangi parolni kiriting','err');return}
-fetch('https://aiindeksi-bot.onrender.com/api/admin/change_admin_pass?token='+TOKEN,{
-method:'POST',headers:{'Content-Type':'application/json'},
-body:JSON.stringify({old_password:o,new_password:n})
-}).then(function(r){return r.json()}).then(function(d){
-if(d.ok){msg('Admin parol o\'zgartirildi ✓');document.getElementById('oldPass').value='';document.getElementById('newAdminPass').value=''}
-else{msg(d.error||'Xatolik','err')}
-}).catch(function(){msg('Server xatoligi','err')})
-}
-
-loadUsers();
+(function(){
+  'use strict';
+  var API='https://aiindeksi-bot.onrender.com';
+  var TOKEN=sessionStorage.getItem('rt.session');
+  var currentUser=null, resetLogin='';
+  var noticeTimer=null;
+  function byId(id){return document.getElementById(id)}
+  function safe(value){return String(value==null?'':value).replace(/[&<>"']/g,function(ch){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]})}
+  function showNotice(text,type){var n=byId('notice');n.textContent=text;n.className='notice show '+(type||'info');clearTimeout(noticeTimer);noticeTimer=setTimeout(function(){n.className='notice'},6000)}
+  function signInAgain(expired){sessionStorage.removeItem('rt.session');location.replace('/?session='+(expired?'expired':'required'))}
+  if(!TOKEN){signInAgain(false);return}
+  function api(path,options){
+    options=options||{};options.headers=options.headers||{};options.headers.Authorization='Bearer '+TOKEN;
+    return fetch(API+path,options).then(function(response){
+      return response.text().then(function(text){var data={};try{data=text?JSON.parse(text):{}}catch(_){data={error:'Server javobi o\'qilmadi.'}}
+        if(response.status===401){signInAgain(true);throw new Error('Sessiya tugagan.')}
+        if(!response.ok||data.ok===false)throw new Error(data.error||'So\'rov bajarilmadi.');
+        return {response:response,data:data};
+      });
+    });
+  }
+  function jsonOptions(method,data){return {method:method,headers:{'Content-Type':'application/json'},body:JSON.stringify(data)}}
+  function switchTab(name){
+    document.querySelectorAll('.panel').forEach(function(p){p.classList.toggle('active',p.id==='panel-'+name)});
+    document.querySelectorAll('#tabs button').forEach(function(b){b.classList.toggle('active',b.dataset.tab===name)});
+  }
+  function addTab(name,label){var b=document.createElement('button');b.type='button';b.dataset.tab=name;b.textContent=label;b.addEventListener('click',function(){switchTab(name)});byId('tabs').appendChild(b)}
+  function fmtTime(seconds){if(!seconds)return '—';return new Date(seconds*1000).toLocaleString('uz-UZ',{dateStyle:'medium',timeStyle:'short'})}
+  function fmtSize(bytes){if(bytes<1024)return bytes+' B';if(bytes<1048576)return (bytes/1024).toFixed(1)+' KB';return (bytes/1048576).toFixed(1)+' MB'}
+  function loadUsers(){
+    return api('/api/admin/users').then(function(result){
+      var users=result.data.users||[];byId('accountCount').textContent=users.length;
+      if(!users.length){byId('usersTable').innerHTML='<div class="empty">Hozircha sayt hisobi yaratilmagan.</div>';return}
+      var table=document.createElement('div');table.className='table-wrap';
+      var html='<table><thead><tr><th>Login</th><th>Huquq</th><th>Parol yangilangan</th><th>Amallar</th></tr></thead><tbody>';
+      users.forEach(function(user){
+        var isAdmin=!!user.is_admin;
+        html+='<tr><td><strong>'+safe(user.login)+'</strong></td><td><span class="badge'+(isAdmin?' admin':'')+'">'+(isAdmin?'Web-admin':'A\'zo')+'</span></td><td>'+safe(fmtTime(user.password_changed_at))+'</td><td>';
+        if(isAdmin)html+='<span class="hint">Himoyalangan</span>';
+        else html+='<div class="actions"><button class="btn secondary small" type="button" data-reset="'+safe(user.login)+'">Parolni tiklash</button><button class="btn danger small" type="button" data-delete="'+safe(user.login)+'">O\'chirish</button></div>';
+        html+='</td></tr>';
+      });
+      html+='</tbody></table>';table.innerHTML=html;byId('usersTable').replaceChildren(table);
+      table.querySelectorAll('[data-reset]').forEach(function(button){button.addEventListener('click',function(){openReset(button.dataset.reset)})});
+      table.querySelectorAll('[data-delete]').forEach(function(button){button.addEventListener('click',function(){deleteUser(button.dataset.delete)})});
+    }).catch(function(error){if(error.message!=='Sessiya tugagan.')showNotice(error.message,'err')});
+  }
+  function loadDocs(){
+    return api('/api/docs').then(function(result){
+      var docs=result.data.documents||[];var root=byId('docsList');
+      if(!docs.length){root.innerHTML='<div class="empty">Himoyalangan katalog hozircha bo\'sh. Hujjat fayllari joylangach, yuklab olish tugmalari shu yerda paydo bo\'ladi.</div>';return}
+      root.innerHTML='';docs.forEach(function(doc){
+        var card=document.createElement('div');card.className='doc';
+        card.innerHTML='<strong>'+safe(doc.name)+'</strong><span>'+safe(fmtSize(doc.size))+' · '+safe(doc.type)+'</span><button class="btn secondary small" type="button">Yuklab olish</button>';
+        card.querySelector('button').addEventListener('click',function(){downloadDoc(doc.name)});root.appendChild(card);
+      });
+    }).catch(function(error){if(error.message!=='Sessiya tugagan.')showNotice(error.message,'err')});
+  }
+  function downloadDoc(name){
+    fetch(API+'/api/docs/'+encodeURIComponent(name),{headers:{Authorization:'Bearer '+TOKEN}}).then(function(response){
+      if(response.status===401){signInAgain(true);throw new Error('Sessiya tugagan.')}
+      if(!response.ok)throw new Error('Hujjatni olishning iloji bo\'lmadi.');
+      return response.blob();
+    }).then(function(blob){var url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download=name;document.body.appendChild(a);a.click();a.remove();setTimeout(function(){URL.revokeObjectURL(url)},1000)})
+      .catch(function(error){if(error.message!=='Sessiya tugagan.')showNotice(error.message,'err')});
+  }
+  function loadAudit(){
+    return api('/api/admin/audit').then(function(result){
+      var events=result.data.events||[],root=byId('auditList');root.innerHTML='';
+      if(!events.length){root.innerHTML='<li class="empty">Audit jurnali hozircha bo\'sh.</li>';return}
+      var actions={account_created:'hisob yaratildi',admin_account_created:'web-admin yaratildi',admin_account_promoted:'web-admin huquqi berildi',password_reset:'parol administrator tomonidan tiklandi',password_changed:'foydalanuvchi parolini yangiladi',account_deleted:'hisob o\'chirildi',legacy_account_imported:'eski hisob ko\'chirildi',password_hash_upgraded:'parol xeshi yangilandi'};
+      events.forEach(function(event){var li=document.createElement('li');li.innerHTML='<time>'+safe(fmtTime(event.at))+'</time><div><b>'+safe(actions[event.action]||event.action)+'</b> · '+safe(event.target||'')+' <span class="hint">('+safe(event.actor||'')+')</span></div>';root.appendChild(li)});
+    }).catch(function(error){if(error.message!=='Sessiya tugagan.')showNotice(error.message,'err')});
+  }
+  function deleteUser(login){
+    if(!window.confirm(login+' hisobini o\'chirasizmi? Bu amalni qaytarib bo\'lmaydi.'))return;
+    api('/api/admin/del_user',jsonOptions('POST',{login:login})).then(function(){showNotice('Hisob o\'chirildi. Amal audit jurnaliga yozildi.','ok');loadUsers();loadAudit()}).catch(function(error){if(error.message!=='Sessiya tugagan.')showNotice(error.message,'err')});
+  }
+  function openReset(login){resetLogin=login;byId('resetDescription').textContent=login+' uchun yangi parol kiriting. Eski sessiyalar bekor qilinadi.';byId('resetPass').value='';byId('resetModal').classList.add('show');byId('resetPass').focus()}
+  function closeReset(){byId('resetModal').classList.remove('show');byId('resetPass').value='';resetLogin=''}
+  byId('cancelReset').addEventListener('click',closeReset);
+  byId('resetModal').addEventListener('click',function(event){if(event.target===byId('resetModal'))closeReset()});
+  byId('resetForm').addEventListener('submit',function(event){event.preventDefault();var password=byId('resetPass').value;
+    api('/api/admin/change_pass',jsonOptions('POST',{login:resetLogin,new_password:password})).then(function(){closeReset();showNotice('Parol yangilandi; faol sessiyalar bekor qilindi.','ok');loadUsers();loadAudit()}).catch(function(error){if(error.message!=='Sessiya tugagan.')showNotice(error.message,'err')});
+  });
+  byId('passwordForm').addEventListener('submit',function(event){event.preventDefault();var oldPassword=byId('oldPass').value,nextPassword=byId('nextPass').value,confirmPassword=byId('confirmPass').value;
+    if(nextPassword!==confirmPassword){showNotice('Yangi parollar mos kelmadi.','err');return}
+    api('/api/me/change_password',jsonOptions('POST',{old_password:oldPassword,new_password:nextPassword})).then(function(){
+      byId('passwordForm').reset();sessionStorage.removeItem('rt.session');showNotice('Parol yangilandi. Yangi parol bilan qayta kiring.','ok');setTimeout(function(){location.replace('/?session=expired')},900);
+    }).catch(function(error){if(error.message!=='Sessiya tugagan.')showNotice(error.message,'err')});
+  });
+  byId('logoutBtn').addEventListener('click',function(){
+    var button=byId('logoutBtn');button.disabled=true;
+    api('/api/logout',{method:'POST'}).then(function(){sessionStorage.removeItem('rt.session');sessionStorage.removeItem('rt.passwordUpgrade');location.replace('/')})
+      .catch(function(error){button.disabled=false;if(error.message!=='Sessiya tugagan.')showNotice('Chiqish serverda tasdiqlanmadi. Qayta urinib ko‘ring.','err')});
+  });
+  function start(){
+    api('/api/me').then(function(result){
+      currentUser=result.data.user;byId('summaryCards').hidden=false;byId('sessionExpiry').textContent=fmtTime(result.data.expires_at);
+      var tabs=byId('tabs');tabs.hidden=false;
+      if(currentUser.is_admin){addTab('accounts','Hisoblar');addTab('docs','Hujjatlar');addTab('audit','Faoliyat');addTab('settings','Parol');switchTab('accounts');loadUsers();loadAudit();byId('panel-accounts').classList.add('active')}
+      else{byId('accountCount').parentNode.hidden=true;addTab('docs','Hujjatlar');addTab('settings','Parol');switchTab('docs')}
+      if(sessionStorage.getItem('rt.passwordUpgrade')==='1'){
+        sessionStorage.removeItem('rt.passwordUpgrade');showNotice('Eski parolingiz amaldagi xavfsizlik talabiga mos emas. Iltimos, uni kamida 10 belgili parolga yangilang.','info');switchTab('settings');
+      }
+      loadDocs();
+    }).catch(function(error){if(error.message!=='Sessiya tugagan.')showNotice(error.message,'err')});
+  }
+  start();
+})();
 </script>
 </body>
 </html>
