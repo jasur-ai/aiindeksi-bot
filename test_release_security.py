@@ -103,7 +103,7 @@ class ReleaseSecurityTests(unittest.TestCase):
     def test_release_health_reports_auth_api_version(self):
         status,data=self.call('/healthz')
         self.assertEqual(status,200);self.assertEqual(data['auth_api'],2)
-        self.assertEqual(data['release'],'2026-10-14.2')
+        self.assertEqual(data['release'],'2026-10-14.3')
 
     def _member_token(self):
         app._site_create_account(self.db,'doc-reader','Reader-local-password-123','test')

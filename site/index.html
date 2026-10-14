@@ -108,10 +108,9 @@ button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
 [data-theme="dark"] .pill b{color:var(--navy3)}
 .pill svg{width:14px;height:14px;color:var(--muted)}
 h1{font-size:clamp(40px,5.6vw,66px);line-height:1.04;letter-spacing:-2.2px;font-weight:800}
-.rot{display:inline-grid;vertical-align:bottom;overflow:hidden;height:1.08em}
-.rot span{grid-area:1/1;background:linear-gradient(95deg,var(--blue),var(--acc));-webkit-background-clip:text;background-clip:text;color:transparent;transform:translateY(105%);transition:transform .7s var(--ease),opacity .5s;opacity:0;white-space:nowrap;padding-right:4px}
-.rot span.on{transform:none;opacity:1}
-.rot span.out{transform:translateY(-105%);opacity:0}
+.rot{display:inline-block;vertical-align:bottom;overflow:hidden;height:1.08em;perspective:1250px;perspective-origin:50% 50%;padding:0 .26em;margin-left:-.26em}
+.rot .cube{display:inline-grid;height:1.08em;vertical-align:bottom;transform-style:preserve-3d;transition:transform .92s cubic-bezier(.33,.72,.16,1);will-change:transform}
+.rot .cube span{grid-area:1/1;line-height:1.08em;background:linear-gradient(95deg,var(--blue),var(--acc));-webkit-background-clip:text;background-clip:text;color:transparent;white-space:nowrap;padding-right:4px;backface-visibility:hidden;-webkit-backface-visibility:hidden;transition:opacity .45s ease}
 .lead{font-size:clamp(17px,1.5vw,19.5px);color:var(--muted);margin:24px 0 34px;max-width:520px}
 .lead b{color:var(--ink);font-weight:600}
 .cta{display:flex;gap:12px;flex-wrap:wrap}
@@ -462,7 +461,7 @@ footer{padding:56px 0 40px;border-top:1px solid var(--line);margin-top:110px;fon
   <div class="w">
     <div>
       <a class="pill rv" href="#pilot" style="--i:0"><b>YANGI</b>Bank sektori pilot natijasi<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></a>
-      <h1 class="rv" style="--i:1">Sun'iy intellekt<br><span class="rot" id="rot"><span class="on">banklarda</span><span>ta'limda</span><span>tibbiyotda</span><span>davlat xizmatida</span><span>telekomda</span></span><br>qanchalik ishlayapti?</h1>
+      <h1 class="rv" style="--i:1">Sun'iy intellekt<br><span class="rot"><span class="cube" id="rot"><span>banklarda</span><span>ta'limda</span><span>tibbiyotda</span><span>davlat xizmatida</span><span>telekomda</span></span></span><br>qanchalik ishlayapti?</h1>
       <p class="lead rv" style="--i:2"><b>Biz ochiq dalillarni tahlil qilamiz.</b> Ochiq manbalardagi qaydlar asosida pilot natijalari va ularning cheklovlarini ko'rsatamiz. Bu ichki tizimlar sinovi yoki mustaqil audit emas.</p>
       <div class="cta rv" style="--i:3">
         <a class="btn p" href="https://t.me/aiindeksi_bot?start=site" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M21.9 4.3 18.7 19.4c-.2 1.1-.9 1.3-1.8.8l-4.9-3.6-2.4 2.3c-.3.3-.5.5-1 .5l.4-5 9.1-8.2c.4-.4-.1-.6-.6-.2L6.2 13 1.4 11.5c-1-.3-1.1-1 .2-1.5L20.6 2.8c.9-.3 1.6.2 1.3 1.5z"/></svg>Qo'shilish — 40 soniya</a>
@@ -687,9 +686,15 @@ var io=new IntersectionObserver(function(es){es.forEach(function(e){if(!e.isInte
   $$('[data-count]',t).forEach(count); if(t.hasAttribute('data-count'))count(t); if(t.onReveal)t.onReveal(); io.unobserve(t)})},{threshold:.18,rootMargin:'0px 0px -40px 0px'});
 $$('.rv').forEach(function(el){io.observe(el)});
 
-/* rotating word */
-var rw=$$('#rot span'), ri=0;
-if(!RM) setInterval(function(){var a=rw[ri];a.classList.remove('on');a.classList.add('out');ri=(ri+1)%rw.length;var b=rw[ri];b.classList.remove('out');void b.offsetWidth;b.classList.add('on');setTimeout(function(){a.classList.remove('out')},700)},2400);
+/* rotating word — 3D kub */
+var cube=$('#rot'), rw=$$('#rot span'), RN=rw.length, RST=360/RN, rk=0;
+rw.forEach(function(el,i){el.style.transform='rotateX('+(-i*RST)+'deg) translateZ(.58em)';el.style.opacity=i===0?1:0});
+if(!RM) setInterval(function(){
+  var v=rk%RN, nx=(rk+1)%RN;              /* hozirgi va keyingi yuza */
+  rw[nx].style.opacity=.55;               /* keyingi so'z aylanish bilan ko'tarilib keladi */
+  rk++;cube.style.transform='rotateX('+(rk*RST)+'deg)';
+  setTimeout(function(){rw[v].style.opacity=0;rw[nx].style.opacity=1},470)  /* yarim yo'lda almashinadi */
+},2600);
 
 /* hero grid */
 var hg=$('#hg'), tip=$('#tip'), D=DATA.dims;

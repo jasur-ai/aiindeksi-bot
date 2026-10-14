@@ -104,7 +104,7 @@ if _SITE_SECRET_TEXT:
 else:
     SITE_SESSION_KEY = secrets.token_bytes(32)
     log.warning("RT_SITE_SESSION_SECRET sozlanmagan; sessiyalar servis qayta ishga tushganda yangilanadi")
-RELEASE_VERSION = "2026-10-14.2"
+RELEASE_VERSION = "2026-10-14.3"
 SITE_PUBLIC_URL = "https://raqamlitadqiqot.pages.dev"
 SITE_ACTIVATION_TTL = 30 * 60
 SITE_SESSION_TTL = 12 * 60 * 60
