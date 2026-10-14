@@ -2,6 +2,7 @@
 import argparse
 import json
 from pathlib import Path
+import re
 import shutil
 import subprocess
 
@@ -19,7 +20,9 @@ def build(output):
         if source.suffix.lower() not in ALLOWED and source.name not in {'_headers','_redirects'}:continue
         target=output/rel;target.parent.mkdir(parents=True,exist_ok=True);shutil.copyfile(source,target)
     commit=subprocess.check_output(['git','rev-parse','HEAD'],cwd=ROOT,text=True).strip()
-    (output/'release.json').write_text(json.dumps({'release':'2026-10-14.1','commit':commit,'auth_api':2},indent=2)+'\n')
+    source=(ROOT/'aiindeksi_bot.py').read_text(encoding='utf-8')
+    release=re.search(r'^RELEASE_VERSION = "([^"]+)"',source,re.M).group(1)
+    (output/'release.json').write_text(json.dumps({'release':release,'commit':commit,'auth_api':2},indent=2)+'\n')
     print('Static artifact prepared:',output)
 if __name__=='__main__':
     parser=argparse.ArgumentParser();parser.add_argument('output');args=parser.parse_args();build(args.output)
