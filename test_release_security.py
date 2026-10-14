@@ -8,6 +8,7 @@ import tempfile
 import threading
 import time
 import unittest
+from pathlib import Path
 from unittest.mock import patch
 import urllib.request
 import urllib.error
@@ -34,6 +35,13 @@ class ReleaseSecurityTests(unittest.TestCase):
             try:data=json.loads(e.read())
             except Exception:data={}
             return e.code,data
+    def call_raw(self,path,token=None):
+        headers={}
+        if token:headers['Authorization']='Bearer '+token
+        request=urllib.request.Request('http://127.0.0.1:%s%s'%(self.server.server_address[1],path),headers=headers)
+        try:
+            with urllib.request.urlopen(request,timeout=5) as r:return r.status,r.read()
+        except urllib.error.HTTPError as e:return e.code,e.read()
     def issue(self,login='new-member',mode='member'):
         ok,link=app._site_issue_activation(self.db,login,'telegram:77001',mode)
         self.assertTrue(ok,link)
@@ -95,6 +103,44 @@ class ReleaseSecurityTests(unittest.TestCase):
     def test_release_health_reports_auth_api_version(self):
         status,data=self.call('/healthz')
         self.assertEqual(status,200);self.assertEqual(data['auth_api'],2)
-        self.assertEqual(data['release'],'2026-10-14.1')
+        self.assertEqual(data['release'],'2026-10-14.2')
+
+    def _member_token(self):
+        app._site_create_account(self.db,'doc-reader','Reader-local-password-123','test')
+        return app._site_issue_session('doc-reader',self.db['site_users']['doc-reader'])
+
+    def test_documents_are_served_from_private_repo_when_local_dir_empty(self):
+        repo=[{'name':'06_NIZOM.docx','size':11,'type':'application/vnd.openxmlformats-officedocument.wordprocessingml.document'}]
+        blob=b'PK\x03\x04fake-docx'
+        token=self._member_token()
+        with patch.object(app,'docs_repo_list',return_value=repo),patch.object(app,'docs_repo_bytes',return_value=blob) as fetch:
+            status,data=self.call('/api/docs',token=token)
+            self.assertEqual(status,200);self.assertEqual([d['name'] for d in data['documents']],['06_NIZOM.docx'])
+            status,raw=self.call_raw('/api/docs/06_NIZOM.docx',token=token)
+            self.assertEqual(status,200);self.assertEqual(raw,blob)
+            fetch.assert_called_once_with('06_NIZOM.docx')
+            status,_=self.call_raw('/api/docs/..%2Fdb.json',token=token)
+            self.assertIn(status,(400,404))
+
+    def test_documents_require_a_session_and_reject_unknown_names(self):
+        status,data=self.call('/api/docs')
+        self.assertEqual(status,401);self.assertFalse(data.get('ok',False))
+        token=self._member_token()
+        with patch.object(app,'docs_repo_list',return_value=[]),patch.object(app,'docs_repo_bytes',return_value=b'x'):
+            status,_=self.call_raw('/api/docs/06_NIZOM.docx',token=token)
+            self.assertEqual(status,404)
+            status,_=self.call_raw('/api/docs/notes.exe',token=token)
+            self.assertEqual(status,404)
+
+    def test_local_documents_take_precedence_over_repo(self):
+        local_dir=Path(app.SITE_DOCS_DIR);local_dir.mkdir(parents=True,exist_ok=True)
+        (local_dir/'same.docx').write_bytes(b'local-copy')
+        repo=[{'name':'same.docx','size':9,'type':'application/octet-stream'}]
+        token=self._member_token()
+        with patch.object(app,'docs_repo_list',return_value=repo),patch.object(app,'docs_repo_bytes',return_value=b'repo-copy'):
+            status,data=self.call('/api/docs',token=token)
+            self.assertEqual(status,200);self.assertEqual([d['name'] for d in data['documents']],['same.docx'])
+            status,raw=self.call_raw('/api/docs/same.docx',token=token)
+            self.assertEqual(raw,b'local-copy')
 
 if __name__=='__main__': unittest.main()

@@ -2,6 +2,7 @@
 import base64
 import hashlib
 import json
+import time
 import os
 import tempfile
 import threading
@@ -175,6 +176,11 @@ class SiteAuthTests(unittest.TestCase):
              patch.object(app, "send") as send_mock, \
              patch.object(app, "ADMIN_IDS", set()):
             status, _, raw = self.call("/register", method="POST", body=payload)
+            # Tasdiq xabari javobdan keyin yuboriladi; mock patch ichida kutamiz.
+            for _ in range(100):
+                if send_mock.called:
+                    break
+                time.sleep(0.02)
         self.assertEqual(status, 200, raw)
         self.assertTrue(json.loads(raw)["ok"])
         self.assertIn("77002", self.db["users"])

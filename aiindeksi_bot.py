@@ -104,12 +104,18 @@ if _SITE_SECRET_TEXT:
 else:
     SITE_SESSION_KEY = secrets.token_bytes(32)
     log.warning("RT_SITE_SESSION_SECRET sozlanmagan; sessiyalar servis qayta ishga tushganda yangilanadi")
-RELEASE_VERSION = "2026-10-14.1"
+RELEASE_VERSION = "2026-10-14.2"
 SITE_PUBLIC_URL = "https://raqamlitadqiqot.pages.dev"
 SITE_ACTIVATION_TTL = 30 * 60
 SITE_SESSION_TTL = 12 * 60 * 60
 SITE_PASSWORD_MIN = 10
 SITE_DOCS_DIR = os.path.abspath(os.environ.get("RT_PRIVATE_DOCS_DIR", "").strip() or os.path.join(HERE, "private_docs"))
+# Render free tarifida doimiy disk yo'q: himoyalangan hujjatlar yopiq GitHub omborining
+# hujjatlar/ katalogida saqlanadi va faqat sessiya bilan himoyalangan API orqali beriladi.
+SITE_DOCS_REPO_PATH = "hujjatlar"
+SITE_DOC_EXTS = {".pdf", ".docx", ".xlsx", ".pptx", ".txt", ".md"}
+SITE_DOCS_CACHE_TTL = 60
+_DOCS_REPO_CACHE = {"ts": 0.0, "items": []}
 SITE_ORIGINS = frozenset({
     "https://raqamlitadqiqot.pages.dev",
     "http://localhost:5500", "http://127.0.0.1:5500",
@@ -266,6 +272,50 @@ def _gh_req(method, url, data=None):
                  "Accept": "application/vnd.github+json", "Content-Type": "application/json"})
     with urllib.request.urlopen(req, timeout=25) as r:
         return json.loads(r.read().decode("utf-8"))
+
+def _gh_raw(url):
+    req = urllib.request.Request(url, headers={
+        "Authorization": "Bearer " + GH_TOKEN, "User-Agent": "raqamlitadqiqot-bot",
+        "Accept": "application/vnd.github.raw"})
+    with urllib.request.urlopen(req, timeout=30) as r:
+        return r.read()
+
+def docs_repo_list():
+    """Yopiq ombordagi hujjatlar ro'yxati (60 soniya kesh). Xatoda eski kesh qaytadi."""
+    if not (GH_REPO and GH_TOKEN):
+        return []
+    now = time.time()
+    if _DOCS_REPO_CACHE["items"] and now - _DOCS_REPO_CACHE["ts"] < SITE_DOCS_CACHE_TTL:
+        return list(_DOCS_REPO_CACHE["items"])
+    try:
+        items = _gh_req("GET", "https://api.github.com/repos/%s/contents/%s"
+                        % (GH_REPO, SITE_DOCS_REPO_PATH))
+    except urllib.error.HTTPError as e:
+        if e.code != 404:
+            log.warning("Hujjat omborini o'qib bo'lmadi: HTTP %s", e.code)
+        return list(_DOCS_REPO_CACHE["items"])
+    except Exception as exc:
+        log.warning("Hujjat omborini o'qib bo'lmadi: %s", type(exc).__name__)
+        return list(_DOCS_REPO_CACHE["items"])
+    result = []
+    if isinstance(items, list):
+        for item in items:
+            name = item.get("name", "") if isinstance(item, dict) else ""
+            if (not name or name.startswith(".") or name != os.path.basename(name) or
+                    os.path.splitext(name)[1].lower() not in SITE_DOC_EXTS):
+                continue
+            if item.get("type") != "file":
+                continue
+            result.append({"name": name, "size": int(item.get("size") or 0),
+                           "type": mimetypes.guess_type(name)[0] or "application/octet-stream"})
+    _DOCS_REPO_CACHE.update(ts=now, items=result)
+    return list(result)
+
+def docs_repo_bytes(name):
+    """Bitta hujjat baytlarini yopiq ombordan oladi. Faqat tekshirilgan nom uchun."""
+    url = "https://api.github.com/repos/%s/contents/%s/%s" % (
+        GH_REPO, SITE_DOCS_REPO_PATH, urllib.parse.quote(name))
+    return _gh_raw(url)
 
 def gh_fetch():
     """(dict|None, sha|None). 404 → (None, None). Tarmoq xatosi → exception."""
@@ -1820,7 +1870,7 @@ def make_server(get_db, port=None):
     """Mini app, sog'liq tekshiruvi, statistika va sessiya bilan himoyalangan sayt API."""
     from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
     MINI = os.path.join(HERE, "miniapp", "index.html")
-    DOC_EXTS = {".pdf", ".docx", ".xlsx", ".pptx", ".txt", ".md"}
+    DOC_EXTS = SITE_DOC_EXTS
 
     class H(BaseHTTPRequestHandler):
         protocol_version = "HTTP/1.1"
@@ -1878,10 +1928,11 @@ def make_server(get_db, port=None):
             return session
 
         def _doc_list(self):
+            """Lokal katalog (ishlab chiqish) + yopiq ombordagi hujjatlar; lokal ustun."""
+            result, seen = [], set()
             try:
                 os.makedirs(SITE_DOCS_DIR, exist_ok=True)
                 root = os.path.realpath(SITE_DOCS_DIR)
-                result = []
                 for name in sorted(os.listdir(root), key=str.casefold):
                     if not name or name.startswith(".") or name != os.path.basename(name):
                         continue
@@ -1891,10 +1942,15 @@ def make_server(get_db, port=None):
                         continue
                     result.append({"name": name, "size": os.path.getsize(path),
                                    "type": mimetypes.guess_type(name)[0] or "application/octet-stream"})
-                return result
+                    seen.add(name)
             except OSError:
                 log.warning("Himoyalangan hujjatlar katalogini o'qib bo'lmadi")
-                return []
+            for item in docs_repo_list():
+                if item["name"] not in seen:
+                    result.append(item)
+                    seen.add(item["name"])
+            result.sort(key=lambda item: item["name"].casefold())
+            return result
 
         def do_OPTIONS(self):
             if self.headers.get("Origin", "") not in SITE_ORIGINS:
@@ -1994,20 +2050,33 @@ def make_server(get_db, port=None):
                 name = urllib.parse.unquote(path[len("/api/docs/"):])
                 if not name or name != os.path.basename(name) or "/" in name or "\\" in name:
                     return self._json(404, {"ok": False, "error": "Hujjat topilmadi."})
+                if os.path.splitext(name)[1].lower() not in DOC_EXTS:
+                    return self._json(404, {"ok": False, "error": "Hujjat topilmadi."})
+                content = None
                 full_path = os.path.realpath(os.path.join(SITE_DOCS_DIR, name))
                 root = os.path.realpath(SITE_DOCS_DIR)
-                if (os.path.splitext(name)[1].lower() not in DOC_EXTS or
-                        os.path.commonpath((root, full_path)) != root or not os.path.isfile(full_path)):
+                if os.path.commonpath((root, full_path)) == root and os.path.isfile(full_path):
+                    try:
+                        with open(full_path, "rb") as f:
+                            content = f.read()
+                    except OSError:
+                        content = None
+                if content is None and any(item["name"] == name for item in docs_repo_list()):
+                    try:
+                        content = docs_repo_bytes(name)
+                    except urllib.error.HTTPError as e:
+                        if e.code != 404:
+                            log.warning("Hujjatni ombordan olib bo'lmadi: HTTP %s", e.code)
+                        content = None
+                    except Exception as exc:
+                        log.warning("Hujjatni ombordan olib bo'lmadi: %s", type(exc).__name__)
+                        content = None
+                if content is None:
                     return self._json(404, {"ok": False, "error": "Hujjat topilmadi."})
-                try:
-                    with open(full_path, "rb") as f:
-                        content = f.read()
-                    content_type = mimetypes.guess_type(name)[0] or "application/octet-stream"
-                    disposition = "attachment; filename*=UTF-8''" + urllib.parse.quote(name)
-                    return self._send(200, content, content_type,
-                                      {"Content-Disposition": disposition})
-                except OSError:
-                    return self._json(404, {"ok": False, "error": "Hujjat topilmadi."})
+                content_type = mimetypes.guess_type(name)[0] or "application/octet-stream"
+                disposition = "attachment; filename*=UTF-8''" + urllib.parse.quote(name)
+                return self._send(200, content, content_type,
+                                  {"Content-Disposition": disposition})
 
             return self._json(404, {"ok": False, "error": "API yo'li topilmadi."})
 

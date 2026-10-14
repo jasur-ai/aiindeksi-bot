@@ -42,7 +42,7 @@ Parolni Telegramga yubormang: parol argumentli buyruqlar rad etiladi. Vakolatli 
 - Chiqish serverdagi hisob sessiyalarini bekor qiladi; eski bearer bilan API qayta ochilmaydi.
 - Auth sessiyasi 12 soatgacha amal qiladi; token URL query stringga qo'yilmaydi. Frontend `sessionStorage` va `Authorization: Bearer` ishlatadi.
 - CORS ruxsat ro'yxati `SITE_ORIGINS` da. Yangi/custom production domen ishlatilsa, aniq HTTPS originni backend ro'yxatiga qo'shib deploy qilish kerak; wildcard ishlatmang.
-- Himoyalangan hujjatlar `RT_PRIVATE_DOCS_DIR` bilan ko'rsatilgan yoki Render muhitidagi `private_docs/` katalogidan beriladi. Bu katalog `site/` tashqarisida bo'lishi shart; omborda hozir real hujjat fayllari yo'q. Render persistent diskiga mount qilib, yo'lni `RT_PRIVATE_DOCS_DIR` ga sozlash kerak; doimiy saqlash alohida tekshirilsin.
+- Himoyalangan hujjatlar yopiq `AILABS_DB_REPO` omborining `hujjatlar/` katalogidan beriladi (`/api/docs`), lokal `private_docs/` yoki `RT_PRIVATE_DOCS_DIR` nusxasi ustun turadi; Render free tarifida doimiy disk yo'q. Bu katalog `site/` tashqarisida bo'lishi shart; omborda hozir real hujjat fayllari yo'q. Render persistent diskiga mount qilib, yo'lni `RT_PRIVATE_DOCS_DIR` ga sozlash kerak; doimiy saqlash alohida tekshirilsin.
 
 ## Mahalliy tekshiruv va joylashtirish
 
