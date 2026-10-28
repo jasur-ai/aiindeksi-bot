@@ -171,7 +171,7 @@ FOYDA_MATN = (
 )
 MAXFIYLIK_MATN = (
     "⚖️ MA'LUMOTLAR SIYOSATI (qisqa)\n\n"
-    "1. A'zolik ro'yxatida telefon, pasport yoki joylashuv so'ralmaydi. Halloween tadbiriga "
+    "1. A'zolik ro'yxatida telefon, pasport yoki joylashuv so'ralmaydi. THE SEVEN tadbiriga "
     "alohida yozilishda telefon (Telegram kontaktini ulashish orqali), ism-familiya, kurs va guruh "
     "faqat rozilik bilan olinadi.\n"
     "2. Maqsad: klub reyestri, davomat va faoliyat hujjatlari "
@@ -187,11 +187,11 @@ MAXFIYLIK_MATN = (
     "klubga xabar bering (tadbirda yoki kanal orqali), olib tashlanadi.\n"
     "6. Hodisa bo'lsa (token/database ochilsa): 24 soat ichida kanalda ochiq "
     "e'lon qilinadi va barcha kalitlar almashtiriladi.\n"
-    "7. Halloween kvesti ma'lumotlari faol ro'yxatdan 2026-yil 30-noyabrda tozalanadi. "
+    "7. THE SEVEN kvesti ma'lumotlari faol ro'yxatdan 2026-yil 30-noyabrda tozalanadi. "
     "Versiyalangan zaxira nusxalarida avvalgi yozuv qolishi mumkin."
 )
 ADMIN_HELP = (
-    "\n\n🛡 Ichki buyruqlar: /statlar, /royxat, /export (Excel), /export_hallowen (kvest ro'yxati), /elon (kanalga e'lon), "
+    "\n\n🛡 Ichki buyruqlar: /statlar, /royxat, /export (Excel), /export_theseven (kvest ro'yxati), /elon (kanalga e'lon), "
     "/rollar (rollar va ariza), /jamoa (bandlik), /rol N rol (tayinlash)\n"
     "Tadbirlar: kanalga #tadbir heshtegli post → a'zolarga avtomatik xabar; /tadbirlar, /tadbir N, "
     "/tadbir_boshlash N (QR ekrani), /tadbir_yakun N, /tadbir_yangi Nomi"
@@ -203,7 +203,7 @@ HELP_MATN = (
     "/holat — mening yozuvim\n"
     "/maxfiylik — ma'lumotlar siyosati\n"
     "/bekor — jarayonni bekor qilish / yozuvni o'chirish\n"
-    "/bekor_hallowen — Halloween kvesti yozuvini bekor qilish\n"
+    "/bekor_theseven — THE SEVEN kvesti yozuvini bekor qilish\n"
     "/help  — shu ro'yxat\n\n"
     "Klub faqat OCHIQ manbalar bilan ishlaydi. A'zolik BEPUL.\n"
     "📣 Kanal: t.me/Raqamli_tadqiqot\n"
@@ -748,7 +748,7 @@ def handle(msg, db):
         return ("Mini ilovani Telegram ichida ochish uchun tugmani bosing.",
                 {"inline_keyboard": [[{"text": "Ilovani ochish",
                                        "web_app": {"url": MINIAPP_URL}}]]})
-    if matn == "/start" and deep == halloween.HALLOWEEN_DEEP_LINK:
+    if matn == "/start" and deep in (halloween.HALLOWEEN_DEEP_LINK, "halloween"):
         if msg.get("chat", {}).get("type", "private") != "private":
             return "Ro'yxatdan o'tish uchun botga shaxsiy chatdan kiring.", None
         if chat_id not in ADMIN_IDS and not kanal_azosi(chat_id):
@@ -795,20 +795,20 @@ def handle(msg, db):
         return MAXFIYLIK_MATN, None
     if matn == "/holat":
         return holat(chat_id, db)
-    if matn == "/bekor_hallowen":
+    if matn in ("/bekor_theseven", "/bekor_hallowen"):
         return halloween.cancel(chat_id, db)
     if matn in ("/bekor", "/cancel"):
         return bekor(chat_id, db)
-    if matn == "/export_hallowen":
+    if matn in ("/export_theseven", "/export_hallowen"):
         if chat_id not in ADMIN_IDS:
             return "⛭ Bu buyruq faqat klub administratori uchun.", None
         halloween.prune(db)
         header, rows = halloween.rows(db, mahalliy)
         if not rows:
-            return "🎃 Halloween ro'yxatida hozircha tasdiqlangan qatnashchi yo'q.", None
+            return "📚 THE SEVEN ro'yxatida hozircha tasdiqlangan qatnashchi yo'q.", None
         temp_path = None
         try:
-            with tempfile.NamedTemporaryFile(prefix="halloween_", suffix=".xlsx", delete=False) as f:
+            with tempfile.NamedTemporaryFile(prefix="theseven_", suffix=".xlsx", delete=False) as f:
                 temp_path = f.name
             write_xlsx(temp_path, header, rows, widths=[6, 30, 18, 12, 18, 20, 16, 28])
             sent = send_doc(chat_id, temp_path,
@@ -818,7 +818,7 @@ def handle(msg, db):
                 os.unlink(temp_path)
         if not sent:
             return "⚠️ XLSX yuborilmadi. Botning fayl yuborish sozlamasini tekshiring.", None
-        return "📎 Halloween ro'yxati yuborildi: %d ta tasdiqlangan qatnashchi.\n" % len(rows) + baza_holati(), None
+        return "📎 THE SEVEN ro'yxati yuborildi: %d ta tasdiqlangan qatnashchi.\n" % len(rows) + baza_holati(), None
     if matn in ("/statlar", "/stats", "/export", "/export csv", "/royxat", "/list"):
         if chat_id not in ADMIN_IDS:
             return "⛭ Bu buyruq faqat klub administratori uchun.", None
