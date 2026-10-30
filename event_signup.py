@@ -1,28 +1,31 @@
-"""THE SEVEN event sign-up flow, kept separate from ordinary club membership."""
+"""YÖQOLGAN XARITA tadbiri uçun röyxatdan ötiş oqimi."""
 from __future__ import annotations
 
 import html
 import re
 import time
 
-HALLOWEEN_DEEP_LINK = "theseven"
-EVENT_DAY = "2026-10-31"
-DELETE_AFTER = "2026-11-30"  # Toshkent sanasi; faol ro'yxatdan tozalash kuni
+EVENT_DEEP_LINK = "yoqolganxarita"
+EVENT_DAY = "2026-11-07"
+DELETE_AFTER = "2026-12-07"  # Tadbirdan 30 kun ötgaç faol yozuvlarni tozalaş
+EVENT_TITLE = "YÖQOLGAN XARITA"
+EVENT_TIME = "14:30"
+EVENT_VENUE = "TDIU piknik maydoni"
 
 KB_CONSENT = {"inline_keyboard": [
-    [{"text": "✅ Roziman va davom etaman", "callback_data": "halloween:consent"}],
-    [{"text": "Bekor qiliş", "callback_data": "halloween:cancel"}],
+    [{"text": "✅ Roziman va davom etaman", "callback_data": "yoqolganxarita:consent"}],
+    [{"text": "Bekor qiliş", "callback_data": "yoqolganxarita:cancel"}],
 ]}
 KB_CONTACT = {"keyboard": [
-    [{"text": "📱 Telefon raqamimni ulashiş", "request_contact": True}],
+    [{"text": "📱 Telefon raqamimni ulaşiş", "request_contact": True}],
     [{"text": "Bekor qiliş"}],
 ], "resize_keyboard": True, "one_time_keyboard": True}
 KB_COURSE = {"keyboard": [[{"text": c} for c in row]
                            for row in [["1", "2", "3", "4"], ["Magistratura"]]],
              "resize_keyboard": True, "one_time_keyboard": True}
 KB_CONFIRM = {"inline_keyboard": [
-    [{"text": "✅ Ishtirokni tasdiqlayman", "callback_data": "halloween:confirm"}],
-    [{"text": "Bekor qiliş", "callback_data": "halloween:cancel"}],
+    [{"text": "✅ Iştirokni tasdiqlayman", "callback_data": "yoqolganxarita:confirm"}],
+    [{"text": "Bekor qiliş", "callback_data": "yoqolganxarita:cancel"}],
 ]}
 KB_REMOVE = {"remove_keyboard": True}
 
@@ -33,16 +36,16 @@ def _today_tashkent(now=None):
 
 
 def prune(db, now=None, today=None):
-    """Incomplete forms expire in a day; confirmed rows expire after the event retention date."""
+    """Tugallanmagan şakllar 24 soatda, faol tadbir yozuvlari 30 kundan keyin tozalanadi."""
     now = time.time() if now is None else now
-    states = db.setdefault("halloween_state", {})
+    states = db.setdefault("event_state", {})
     for uid, state in list(states.items()):
         if now - float(state.get("updated_at", state.get("started_at", now))) > 86400:
             states.pop(uid, None)
-    if (today or _today_tashkent(now)) > DELETE_AFTER:
-        registrations = db.setdefault("halloween_registrations", {})
-        deleted = db.setdefault("halloween_deleted", {})
-        for uid, record in list(registrations.items()):
+    if (today or _today_tashkent(now)) >= DELETE_AFTER:
+        registrations = db.setdefault("event_registrations", {})
+        deleted = db.setdefault("event_deleted", {})
+        for uid in list(registrations):
             deleted[uid] = max(float(deleted.get(uid, 0)), now)
             registrations.pop(uid, None)
         states.clear()
@@ -58,14 +61,21 @@ def start(chat_id, db, now=None):
     now = time.time() if now is None else now
     prune(db, now=now)
     if _today_tashkent(now) > EVENT_DAY:
-        return "📚 THE SEVEN kvestiga röyxatdan ötiş yopilgan.", None
-    db.setdefault("halloween_state", {}).pop(str(chat_id), None)
+        return "📚 YÖQOLGAN XARITA tadbiriga röyxatdan ötiş yopilgan.", None
+    uid = str(chat_id)
+    if uid in db.setdefault("event_registrations", {}):
+        return ("✅ Siz bu tadbirga allaqaçon röyxatdan ötgansiz. "
+                "Yozuvni bekor qiliş uçun /bekor_xarita buyruğini yuboring."), KB_REMOVE
+    db.setdefault("event_state", {}).pop(uid, None)
     return (
-        "📚 THE SEVEN: Sirli arxiv kvestiga röyxatdan ötiş\n\n"
-        "Bot telefon raqamingizni Telegram kontaktini ulashiş orqali, şuningdek ism-familiya, "
-        "kurs va guruhingizni söraydi. Ma’lumotlarni faqat administratorlar ko‘ra oladi va ular tadbir röyxati uchun ishlatiladi.\n\n"
-        "Faol röyxatdagi ma’lumotlar 2026-yil 30-noyabrda öçiriladi. Baza zaxirasining "
-        "versiya tarixida eski nusxalar qolishi mumkin. Rozilik bersangiz, davom eting.",
+        "🧭 <b>YÖQOLGAN XARITA — tadbirga röyxatdan ötiş</b>\n\n"
+        "📅 7-noyabr 2026 · 14:30\n"
+        "📍 TDIU piknik maydoni\n\n"
+        "Röyxatdan ötiş uçun telefon raqamingizni Telegram kontaktingiz orqali, "
+        "şuningdek ism-familiya, kurs va guruhingizni söraymiz. Ma’lumotlarni faqat "
+        "administratorlar köradi; ular faqat uşbu tadbir röyxati uçun işlatiladi.\n\n"
+        "Faol yozuvlar tadbirdan 30 kun ötgaç tozalanadi; yopiq zaxira tarixida "
+        "avvalgi nusxalar qolişi mumkin. Rozilik bersangiz, davom eting.",
         KB_CONSENT,
     )
 
@@ -73,28 +83,31 @@ def start(chat_id, db, now=None):
 def callback(uid, data, db, now=None, courses=None):
     now = time.time() if now is None else now
     uid_s = str(uid)
-    states = db.setdefault("halloween_state", {})
-    registrations = db.setdefault("halloween_registrations", {})
+    states = db.setdefault("event_state", {})
+    registrations = db.setdefault("event_registrations", {})
     prune(db, now=now)
-    if data == "halloween:cancel":
+    if data == "yoqolganxarita:cancel":
         states.pop(uid_s, None)
         return "Röyxatdan ötiş bekor qilindi.", KB_REMOVE
-    if data == "halloween:consent":
+    if data == "yoqolganxarita:consent":
         if _today_tashkent(now) > EVENT_DAY:
             states.pop(uid_s, None)
-            return "THE SEVEN kvestiga röyxatdan ötiş yopilgan.", KB_REMOVE
+            return "YÖQOLGAN XARITA tadbiriga röyxatdan ötiş yopilgan.", KB_REMOVE
+        if uid_s in registrations:
+            states.pop(uid_s, None)
+            return "Siz bu tadbirga allaqaçon röyxatdan ötgansiz.", KB_REMOVE
         states[uid_s] = {
             "step": "phone", "consent_at": time.strftime("%Y-%m-%d %H:%M", time.gmtime(now)),
             "started_at": now, "updated_at": now,
         }
         return (
-            "📱 Telefon raqamingizni yuborish uchun «Telefon raqamimni ulashiş» tugmasini bosing. "
-            "Faqat özingizning Telegram kontaktingiz qabul qilinadi.", KB_CONTACT,
+            "📱 Telefon raqamingizni yuboriş uçun «Telefon raqamimni ulaşiş» tugmasini bosing. "
+            "Faqat öz Telegram kontaktingiz qabul qilinadi.", KB_CONTACT,
         )
-    if data == "halloween:confirm":
+    if data == "yoqolganxarita:confirm":
         state = states.get(uid_s)
         if not state or state.get("step") != "confirm":
-            return "Röyxat qadami topilmadi. Botdagi yozilish tugmasidan qayta boshlang.", KB_REMOVE
+            return "Röyxatdan ötiş qadami topilmadi. Botdagi havoladan qayta boşlang.", KB_REMOVE
         user = state.get("telegram_user", {})
         record = {
             "ism": state.get("ism", ""), "telefon": state.get("telefon", ""),
@@ -104,23 +117,24 @@ def callback(uid, data, db, now=None, courses=None):
             "confirmed_ts": now, "consent_at": state.get("consent_at", ""),
         }
         registrations[uid_s] = record
-        db.setdefault("halloween_deleted", {}).pop(uid_s, None)
+        db.setdefault("event_deleted", {}).pop(uid_s, None)
         states.pop(uid_s, None)
-        return "✅ Ishtirokingiz tasdiqlandi! Ma’lumotni öçirish uchun /bekor_theseven buyrug‘ini yuboring.", KB_REMOVE
-    return "Tugma eskirgan. Röyxatdan ötişni qayta boshlang.", KB_REMOVE
+        return ("✅ Iştirokingiz tasdiqlandi! Yozuvni bekor qiliş uçun "
+                "/bekor_xarita buyruğini yuboring."), KB_REMOVE
+    return "Tugma eskirgan. Röyxatdan ötişni qayta boşlang.", KB_REMOVE
 
 
 def step(msg, db, now=None, courses=None):
     now = time.time() if now is None else now
     chat_id = msg["chat"]["id"]
     uid = str(chat_id)
-    states = db.setdefault("halloween_state", {})
+    states = db.setdefault("event_state", {})
     prune(db, now=now)
     state = states.get(uid)
     if not state:
         return None, None
     text = (msg.get("text") or "").strip()
-    if text in ("Bekor qiliş", "/bekor_theseven", "/bekor_hallowen"):
+    if text in ("Bekor qiliş", "/bekor_xarita"):
         states.pop(uid, None)
         return "Röyxatdan ötiş bekor qilindi.", KB_REMOVE
     current = state.get("step")
@@ -129,10 +143,10 @@ def step(msg, db, now=None, courses=None):
         if not contact:
             return "Telefon raqamini matn qilib emas, kontakt tugmasi orqali yuboring.", KB_CONTACT
         if str(contact.get("user_id", "")) != uid:
-            return "Faqat özingizning telefon kontaktingizni ulashiş.", KB_CONTACT
+            return "Faqat öz telefon kontaktingizni ulaşing.", KB_CONTACT
         digits = re.sub(r"\D", "", str(contact.get("phone_number", "")))
         if not 7 <= len(digits) <= 15:
-            return "Telefon raqami töğri körinmayapti. Kontaktni qayta ulashiş.", KB_CONTACT
+            return "Telefon raqami töğri körinmayapti. Kontaktni qayta ulaşing.", KB_CONTACT
         state.update({"telefon": "+" + digits, "step": "ism", "updated_at": now,
                       "telegram_user": msg.get("from", {})})
         return "✍️ Ism-familiyangizni töliq yozing:", KB_REMOVE
@@ -156,35 +170,35 @@ def step(msg, db, now=None, courses=None):
             return "Guruhingizni kiriting.", None
         state.update({"guruh": group, "step": "confirm", "updated_at": now})
         tail = state.get("telefon", "")[-4:]
-        phone_mask = ("•••• " + tail) if tail else "yashirilgan"
+        phone_mask = ("•••• " + tail) if tail else "yaşirilgan"
         summary = (
             "🧾 Ma’lumotlaringizni tekşiring:\n"
             "👤 %s\n🎓 %s-kurs\n👥 %s-guruh\n📱 %s\n\n"
-            "Hammasi töğri bölsa, ishtirokni tasdiqlang."
+            "Hammasi töğri bölsa, iştirokni tasdiqlang."
             % (html.escape(state.get("ism", "")),
                html.escape(state.get("kurs", "")), html.escape(state.get("guruh", "")), phone_mask)
         )
         return summary, KB_CONFIRM
     if current == "confirm":
-        return "Ma’lumotlarni tekşirib, «Ishtirokni tasdiqlayman» tugmasini bosing.", KB_CONFIRM
-    return "Röyxat qadami topilmadi. Qayta boshlash uchun botdagi tugmani bosing.", KB_REMOVE
+        return "Ma’lumotlarni tekşirib, «Iştirokni tasdiqlayman» tugmasini bosing.", KB_CONFIRM
+    return "Röyxatdan ötiş qadami topilmadi. Qayta boşlaş uçun botdagi havolani bosing.", KB_REMOVE
 
 
 def cancel(chat_id, db, now=None):
     now = time.time() if now is None else now
     uid = str(chat_id)
-    db.setdefault("halloween_state", {}).pop(uid, None)
-    existed = db.setdefault("halloween_registrations", {}).pop(uid, None)
+    db.setdefault("event_state", {}).pop(uid, None)
+    existed = db.setdefault("event_registrations", {}).pop(uid, None)
     if existed:
-        db.setdefault("halloween_deleted", {})[uid] = now
-        return "THE SEVEN kvesti röyxatidagi ma’lumotlaringiz öçirildi.", KB_REMOVE
-    return "Faol röyxatdan ö’tgan yozuv topilmadi.", KB_REMOVE
+        db.setdefault("event_deleted", {})[uid] = now
+        return "YÖQOLGAN XARITA röyxatidagi ma’lumotlaringiz öçirildi.", KB_REMOVE
+    return "Faol röyxatdan ötgan yozuv topilmadi.", KB_REMOVE
 
 
 def rows(db, local_time):
-    regs = db.get("halloween_registrations", {})
+    regs = db.get("event_registrations", {})
     ordered = sorted(regs.items(), key=lambda kv: (kv[1].get("confirmed_at", ""), kv[1].get("ism", "").casefold()))
-    header = ["№", "Ism-familiya", "Telefon", "Kurs", "Guruh", "Telegram username", "Telegram ID", "Tasdiqlangan vaqt (Toshkent)"]
+    header = ["№", "Ism-familiya", "Telefon", "Kurs", "Guruh", "Telegram username", "Telegram ID", "Tasdiqlangan vaqt (Toşkent)"]
     result = []
     for i, (uid, record) in enumerate(ordered, 1):
         ts = record.get("confirmed_at", "")

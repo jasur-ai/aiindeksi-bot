@@ -1,6 +1,6 @@
 # Admin panel funksiyalari
 from admin_functions import _admin_main_menu, _admin_panel_callback
-import halloween_signup as halloween
+import event_signup as signup
 
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
@@ -170,42 +170,34 @@ FOYDA_MATN = (
     "Biz va'da bermaymiz — natijani ko'rsatamiz. Ro'yxatdan o'tish: /start"
 )
 MAXFIYLIK_MATN = (
-    "⚖️ MA'LUMOTLAR SIYOSATI (qisqa)\n\n"
-    "1. A'zolik ro'yxatida telefon, pasport yoki joylashuv so'ralmaydi. THE SEVEN tadbiriga "
-    "alohida yozilishda telefon (Telegram kontaktini ulashish orqali), ism-familiya, kurs va guruh "
+    "⚖️ MA’LUMOTLAR SIYOSATI (qisqa)\n\n"
+    "1. Klub a’zoligi uchun telefon, pasport yoki joylashuv so‘ralmaydi. YÖQOLGAN XARITA tadbiriga "
+    "alohida röyxatdan ötişda telefon (Telegram kontaktini ulashiş orqali), ism-familiya, kurs va guruh "
     "faqat rozilik bilan olinadi.\n"
-    "2. Maqsad: klub reyestri, davomat va faoliyat hujjatlari "
-    "(Nizom, 8-bo'lim). Uchinchi shaxsga berilmaydi.\n"
-    "3. Huquqlaringiz: /holat (ko'rish), /bekor (o'chirish) — istalgan payt, "
-    "savolsiz.\n"
-    "4. Server: bot vaqtincha xorijiy hostingda (Render), reyestr nusxasi — yopiq "
-    "(private) omborda. Chorak yakunida "
-    "reyestr universitetdagi rasmiy saqlovga topshiriladi va bot bazasi "
-    "tozalanadi (ZRU-547, 27-1-modda talabiga intilamiz).\n"
-    "5. Tadbirlar: QR davomatda faqat qatnashganingiz qayd etiladi; yuborgan suratlaringiz yopiq "
-    "arxivga tushadi va faqat klub foto-hisobotida ishlatilishi mumkin. Suratingiz ishlatilmasin desangiz — "
-    "klubga xabar bering (tadbirda yoki kanal orqali), olib tashlanadi.\n"
-    "6. Hodisa bo'lsa (token/database ochilsa): 24 soat ichida kanalda ochiq "
-    "e'lon qilinadi va barcha kalitlar almashtiriladi.\n"
-    "7. THE SEVEN kvesti ma'lumotlari faol ro'yxatdan 2026-yil 30-noyabrda tozalanadi. "
-    "Versiyalangan zaxira nusxalarida avvalgi yozuv qolishi mumkin."
+    "2. Maqsad: tadbir röyxati va davomat. Ma’lumotlar uchinchi shaxslarga berilmaydi.\n"
+    "3. Huquqlaringiz: /holat orqali körish, /bekor_xarita orqali tadbir yozuvini öçirish — istalgan payt, savolsiz.\n"
+    "4. Ma’lumotlar Render’dagi bot va yopiq omborda saqlanadi; faqat administratorlar köradi.\n"
+    "5. Tadbir suratlari faqat rozilik bilan ishlatiladi. Istamasangiz, klubga xabar bering — olib taşlanadi.\n"
+    "6. Xavfsizlik hodisasi bölsa, 24 soat içida kanalda e’lon qilinadi va kalitlar almashtiriladi.\n"
+    "7. Faol tadbir yozuvlari 2026-yil 7-dekabrda, tadbirdan 30 kun ötgaç tozalanadi; "
+    "yopiq zaxira tarixida avvalgi nusxalar qolişi mumkin."
 )
 ADMIN_HELP = (
-    "\n\n🛡 Ichki buyruqlar: /statlar, /royxat, /export (Excel), /export_theseven (kvest ro'yxati), /elon (kanalga e'lon), "
+    "\n\n🛡 Ichki buyruqlar: /statlar, /royxat, /export (Excel), /export_xarita (tadbir ro‘yxati), /elon (kanalga e'lon), "
     "/rollar (rollar va ariza), /jamoa (bandlik), /rol N rol (tayinlash)\n"
     "Tadbirlar: kanalga #tadbir heshtegli post → a'zolarga avtomatik xabar; /tadbirlar, /tadbir N, "
     "/tadbir_boshlash N (QR ekrani), /tadbir_yakun N, /tadbir_yangi Nomi"
 )
 HELP_MATN = (
     "📘 Buyruqlar:\n"
-    "/start — ro'yxatdan o'tishni boshlash\n"
-    "/foyda — klub nima beradi? (6 ta halol javob)\n"
+    "/start — klubga röyxatdan ötişni boşlaş\n"
+    "/foyda — klub nimani beradi?\n"
     "/holat — mening yozuvim\n"
-    "/maxfiylik — ma'lumotlar siyosati\n"
-    "/bekor — jarayonni bekor qilish / yozuvni o'chirish\n"
-    "/bekor_theseven — THE SEVEN kvesti yozuvini bekor qilish\n"
-    "/help  — shu ro'yxat\n\n"
-    "Klub faqat OCHIQ manbalar bilan ishlaydi. A'zolik BEPUL.\n"
+    "/maxfiylik — ma’lumotlar siyosati\n"
+    "/bekor — a’zolik jarayonini bekor qilish / yozuvni öçirish\n"
+    "/bekor_xarita — tadbir röyxatidagi yozuvni bekor qilish\n"
+    "/help — shu röyxat\n\n"
+    "Klub faqat oçiq manbalar bilan ishlaydi. A’zolik bepul.\n"
     "📣 Kanal: t.me/Raqamli_tadqiqot\n"
     "🌐 Sayt: raqamlitadqiqot.pages.dev"
 )
@@ -215,7 +207,7 @@ HELP_MATN = (
 # Qoidalar: (1) GitHub'dan o'qilmaguncha unga HECH QACHON yozilmaydi (bo'sh baza bilan
 # ustiga yozib yuborish xavfi yo'q); (2) sha to'qnashuvi bo'lsa — birlashtirib qayta yoziladi;
 # (3) /bekor bilan o'chirilganlar "deleted" ro'yxatida turadi, birlashtirishda tirilmaydi.
-PERSIST = ("users", "state", "counter", "deleted", "events", "ev_counter", "roles", "rol_ariza", "cfg", "halloween_registrations", "halloween_deleted")
+PERSIST = ("users", "state", "counter", "deleted", "events", "ev_counter", "roles", "rol_ariza", "cfg", "event_registrations", "event_deleted", "legacy_event_history")
 REF = {}   # chat_id → (deep-link kodi, vaqt): «/start afisha» → manba «bot:afisha» (faqat xotirada, 24 soat)
 
 def ref_qoy(chat_id, kod):
@@ -236,9 +228,20 @@ _DIRTY = threading.Event()
 def _bo_sh_db():
     return {"users": {}, "state": {}, "counter": 0, "deleted": {},
             "events": {}, "ev_counter": 0, "roles": {}, "rol_ariza": {}, "cfg": {},
-            "halloween_state": {}, "halloween_registrations": {}, "halloween_deleted": {}}
+            "event_state": {}, "event_registrations": {}, "event_deleted": {},
+            "legacy_event_history": {}}
 
 def _norm(db):
+    # Eski tadbir yozuvlarini tarix sifatida saqlaymiz; yangi oqim ulardan foydalanmaydi.
+    history = db.setdefault("legacy_event_history", {})
+    for old_key in ("halloween_state", "halloween_registrations", "halloween_deleted"):
+        old = db.pop(old_key, None)
+        if old:
+            target = history.setdefault(old_key, {})
+            if isinstance(target, dict) and isinstance(old, dict):
+                target.update(old)
+            else:
+                history[old_key] = old
     for k, v in _bo_sh_db().items():
         db.setdefault(k, v)
     return db
@@ -293,20 +296,33 @@ def db_merge(local, remote):
                               [int(k) for k in local["events"] if str(k).isdigit()])
     for k in ("roles", "rol_ariza", "cfg"):
         d = dict(remote.get(k, {})); d.update(local.get(k, {})); local[k] = d
-    deleted_h = dict(remote.get("halloween_deleted", {}))
-    for uid, ts in local.get("halloween_deleted", {}).items():
-        deleted_h[uid] = max(float(ts), float(deleted_h.get(uid, 0)))
-    registrations_h = dict(remote.get("halloween_registrations", {}))
-    for uid, rec in local.get("halloween_registrations", {}).items():
-        old = registrations_h.get(uid, {})
+    deleted_e = dict(remote.get("event_deleted", {}))
+    for uid, ts in local.get("event_deleted", {}).items():
+        deleted_e[uid] = max(float(ts), float(deleted_e.get(uid, 0)))
+    registrations_e = dict(remote.get("event_registrations", {}))
+    for uid, rec in local.get("event_registrations", {}).items():
+        old = registrations_e.get(uid, {})
         if not old or float(rec.get("confirmed_ts", 0)) >= float(old.get("confirmed_ts", 0)):
-            registrations_h[uid] = rec
-    for uid, ts in deleted_h.items():
-        if uid in registrations_h and float(registrations_h[uid].get("confirmed_ts", 0)) <= float(ts):
-            registrations_h.pop(uid, None)
-    local["halloween_deleted"] = deleted_h
-    local["halloween_registrations"] = registrations_h
-    local.setdefault("halloween_state", {})  # incomplete contact data stays memory-only
+            registrations_e[uid] = rec
+    for uid, ts in deleted_e.items():
+        if uid in registrations_e and float(registrations_e[uid].get("confirmed_ts", 0)) <= float(ts):
+            registrations_e.pop(uid, None)
+    local["event_deleted"] = deleted_e
+    local["event_registrations"] = registrations_e
+    local.setdefault("event_state", {})  # Tugallanmagan kontakt ma’lumoti faqat xotirada
+    history = dict(remote.get("legacy_event_history", {}))
+    for name, records in local.get("legacy_event_history", {}).items():
+        if isinstance(records, dict) and isinstance(history.get(name), dict):
+            merged = dict(history[name])
+            for uid, rec in records.items():
+                old = merged.get(uid)
+                if not old or not isinstance(rec, dict) or not isinstance(old, dict) or \
+                        float(rec.get("confirmed_ts", 0)) >= float(old.get("confirmed_ts", 0)):
+                    merged[uid] = rec
+            history[name] = merged
+        else:
+            history[name] = records
+    local["legacy_event_history"] = history
     return local
 
 def _merge_events(L, R):
@@ -710,7 +726,7 @@ def flood_guard(chat_id, db):
     return False, False
 
 def handle(msg, db):
-    halloween.prune(db)
+    signup.prune(db)
     chat_id = msg["chat"]["id"]
     matn = (msg.get("text") or "").strip()
     if matn.startswith("/"):
@@ -748,12 +764,14 @@ def handle(msg, db):
         return ("Mini ilovani Telegram ichida ochish uchun tugmani bosing.",
                 {"inline_keyboard": [[{"text": "Ilovani ochish",
                                        "web_app": {"url": MINIAPP_URL}}]]})
-    if matn == "/start" and deep in (halloween.HALLOWEEN_DEEP_LINK, "halloween"):
+    if matn == "/start" and deep == signup.EVENT_DEEP_LINK:
         if msg.get("chat", {}).get("type", "private") != "private":
-            return "Ro'yxatdan o'tish uchun botga shaxsiy chatdan kiring.", None
+            return "Röyxatdan ötiş uçun bot bilan şaxsiy suhbatni oçing.", None
         if chat_id not in ADMIN_IDS and not kanal_azosi(chat_id):
-            return ("Avval klub kanaliga a'zo bo'ling, so'ng yozilishni boshlang.", kanal_kb())
-        return halloween.start(chat_id, db)
+            return ("Avval klub kanaliga a’zo böling, söng röyxatdan öting.",
+                    {"inline_keyboard": [[{"text": "📣 Kanalga qoşiliş",
+                                            "url": kanal_url() or "https://t.me/Raqamli_tadqiqot"}]]})
+        return signup.start(chat_id, db)
 
     if matn == "/rollar":                                   # ICHKI: faqat tashkilotchilar
         if not tadbir_ruxsat(chat_id, db):
@@ -795,20 +813,20 @@ def handle(msg, db):
         return MAXFIYLIK_MATN, None
     if matn == "/holat":
         return holat(chat_id, db)
-    if matn in ("/bekor_theseven", "/bekor_hallowen"):
-        return halloween.cancel(chat_id, db)
+    if matn == "/bekor_xarita":
+        return signup.cancel(chat_id, db)
     if matn in ("/bekor", "/cancel"):
         return bekor(chat_id, db)
-    if matn in ("/export_theseven", "/export_hallowen"):
+    if matn == "/export_xarita":
         if chat_id not in ADMIN_IDS:
             return "⛭ Bu buyruq faqat klub administratori uchun.", None
-        halloween.prune(db)
-        header, rows = halloween.rows(db, mahalliy)
+        signup.prune(db)
+        header, rows = signup.rows(db, mahalliy)
         if not rows:
-            return "📚 THE SEVEN ro'yxatida hozircha tasdiqlangan qatnashchi yo'q.", None
+            return "📚 YÖQOLGAN XARITA ro‘yxatida hozircha tasdiqlangan qatnashchi yo‘q.", None
         temp_path = None
         try:
-            with tempfile.NamedTemporaryFile(prefix="theseven_", suffix=".xlsx", delete=False) as f:
+            with tempfile.NamedTemporaryFile(prefix="yoqolgan_xarita_", suffix=".xlsx", delete=False) as f:
                 temp_path = f.name
             write_xlsx(temp_path, header, rows, widths=[6, 30, 18, 12, 18, 20, 16, 28])
             sent = send_doc(chat_id, temp_path,
@@ -818,7 +836,7 @@ def handle(msg, db):
                 os.unlink(temp_path)
         if not sent:
             return "⚠️ XLSX yuborilmadi. Botning fayl yuborish sozlamasini tekshiring.", None
-        return "📎 THE SEVEN ro'yxati yuborildi: %d ta tasdiqlangan qatnashchi.\n" % len(rows) + baza_holati(), None
+        return "📎 Tadbir ro‘yxati yuborildi: %d ta tasdiqlangan qatnashchi.\n" % len(rows) + baza_holati(), None
     if matn in ("/statlar", "/stats", "/export", "/export csv", "/royxat", "/list"):
         if chat_id not in ADMIN_IDS:
             return "⛭ Bu buyruq faqat klub administratori uchun.", None
@@ -858,9 +876,9 @@ def handle(msg, db):
     if matn.startswith("/"):
         return "Bunday buyruq yo'q.\nBuyruqlar: /help", None
 
-    # Halloween signup is separate from the ordinary membership form.
-    if str(chat_id) in db.get("halloween_state", {}):
-        text, kb = halloween.step(msg, db, courses=KURSLAR)
+    # YÖQOLGAN XARITA ro‘yxati a’zolik shaklidan alohida yuritiladi.
+    if str(chat_id) in db.get("event_state", {}):
+        text, kb = signup.step(msg, db, courses=KURSLAR)
         if text is not None:
             return text, kb
 
@@ -1335,8 +1353,8 @@ def callback(cq, db):
             if m and TOKEN:
                 tg("editMessageReplyMarkup", chat_id=m["chat"]["id"], message_id=m["message_id"],
                    reply_markup=json.dumps(rsvp_kb(ev, uid), ensure_ascii=False))
-    elif data.startswith("halloween:"):
-        yangi, kb = halloween.callback(uid, data, db, courses=KURSLAR)
+    elif data.startswith("yoqolganxarita:"):
+        yangi, kb = signup.callback(uid, data, db, courses=KURSLAR)
         toast = yangi or ""
     elif data.startswith(("rol:", "ariza:", "rollar:")) and not tadbir_ruxsat(uid, db):
         toast = "Bu tugma endi faol emas."                   # rollar — ichki vosita
