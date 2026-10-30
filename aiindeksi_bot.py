@@ -171,19 +171,19 @@ FOYDA_MATN = (
 )
 MAXFIYLIK_MATN = (
     "⚖️ MA’LUMOTLAR SIYOSATI (qisqa)\n\n"
-    "1. Klub a’zoligi uchun telefon, pasport yoki joylashuv so‘ralmaydi. YÖQOLGAN XARITA tadbiriga "
+    "1. Klub a’zoligi uchun telefon, pasport yoki joylashuv so‘ralmaydi. THE SEVEN tadbiriga "
     "alohida röyxatdan ötişda telefon (Telegram kontaktini ulashiş orqali), ism-familiya, kurs va guruh "
     "faqat rozilik bilan olinadi.\n"
-    "2. Maqsad: tadbir röyxati va davomat. Ma’lumotlar uchinchi shaxslarga berilmaydi.\n"
-    "3. Huquqlaringiz: /holat orqali körish, /bekor_xarita orqali tadbir yozuvini öçirish — istalgan payt, savolsiz.\n"
+    "2. Maqsad: tadbir röyxati va davomat. Ma’lumotlar uçinçi şaxslarga berilmaydi.\n"
+    "3. Huquqlaringiz: /holat orqali körish, /bekor_theseven orqali tadbir yozuvini öçirish — istalgan payt, savolsiz.\n"
     "4. Ma’lumotlar Render’dagi bot va yopiq omborda saqlanadi; faqat administratorlar köradi.\n"
-    "5. Tadbir suratlari faqat rozilik bilan ishlatiladi. Istamasangiz, klubga xabar bering — olib taşlanadi.\n"
+    "5. Tadbir suratlari faqat rozilik bilan işlatiladi. Istamasangiz, klubga xabar bering — olib taşlanadi.\n"
     "6. Xavfsizlik hodisasi bölsa, 24 soat içida kanalda e’lon qilinadi va kalitlar almashtiriladi.\n"
     "7. Faol tadbir yozuvlari 2026-yil 7-dekabrda, tadbirdan 30 kun ötgaç tozalanadi; "
     "yopiq zaxira tarixida avvalgi nusxalar qolişi mumkin."
 )
 ADMIN_HELP = (
-    "\n\n🛡 Ichki buyruqlar: /statlar, /royxat, /export (Excel), /export_xarita (tadbir ro‘yxati), /elon (kanalga e'lon), "
+    "\n\n🛡 Ichki buyruqlar: /statlar, /royxat, /export (Excel), /export_theseven (THE SEVEN röyxati), /elon (kanalga e'lon), "
     "/rollar (rollar va ariza), /jamoa (bandlik), /rol N rol (tayinlash)\n"
     "Tadbirlar: kanalga #tadbir heshtegli post → a'zolarga avtomatik xabar; /tadbirlar, /tadbir N, "
     "/tadbir_boshlash N (QR ekrani), /tadbir_yakun N, /tadbir_yangi Nomi"
@@ -194,9 +194,9 @@ HELP_MATN = (
     "/foyda — klub nimani beradi?\n"
     "/holat — mening yozuvim\n"
     "/maxfiylik — ma’lumotlar siyosati\n"
-    "/bekor — a’zolik jarayonini bekor qilish / yozuvni öçirish\n"
-    "/bekor_xarita — tadbir röyxatidagi yozuvni bekor qilish\n"
-    "/help — shu röyxat\n\n"
+    "/bekor — a’zolik jarayonini bekor qiliş / yozuvni öçirish\n"
+    "/bekor_theseven — tadbir röyxatidagi yozuvni bekor qiliş\n"
+    "/help — şu röyxat\n\n"
     "Klub faqat oçiq manbalar bilan ishlaydi. A’zolik bepul.\n"
     "📣 Kanal: t.me/Raqamli_tadqiqot\n"
     "🌐 Sayt: raqamlitadqiqot.pages.dev"
@@ -467,7 +467,67 @@ def admin_xabar(y, uname, kanal=""):
     return "\n".join(q)
 
 # ─────────────────────────── TELEGRAM API ───────────────────────────
+_SCRIPT_PROTECTED = re.compile(
+    r'https?://[^\s<>]+|<[^>]*>|@[A-Za-z0-9_]+|/[A-Za-z0-9_]+(?:@[A-Za-z0-9_]+)?|`[^`]*`|'
+    r'\b(?:dashboard|channel|chat|check|checked|checkin|check-in|checkout|show|share|search|push|pull|switch|watch|'
+    r'machine|teacher|technical|technology|tech|research|schema|schedule|chrome|change|changed|choice|choose|'
+    r'launch|attached|cache|achievement|architecture|peer-review|telegram|github|python|excel|csv|xlsx|html|json|api|qr)\b',
+    re.IGNORECASE,
+)
+_APOSTROPHE_VOWEL = re.compile(r"([oOgG])['‘’ʻʼ]")
+_DIGRAPH_SH = re.compile(r'sh', re.IGNORECASE)
+_DIGRAPH_CH = re.compile(r'ch', re.IGNORECASE)
+
+
+def _yangi_alifbo_qismi(text):
+    def apostrophe(m):
+        return {"o": "ö", "O": "Ö", "g": "ğ", "G": "Ğ"}[m.group(1)]
+
+    def digraph(m, lower, upper):
+        value = m.group(0)
+        return upper if value[0].isupper() else lower
+
+    text = _APOSTROPHE_VOWEL.sub(apostrophe, text)
+    text = _DIGRAPH_SH.sub(lambda m: digraph(m, "ş", "Ş"), text)
+    return _DIGRAPH_CH.sub(lambda m: digraph(m, "ç", "Ç"), text)
+
+
+def yangi_alifbo(text):
+    """Convert Uzbek Latin digraphs to the revised letters, preserving tags, links, commands and English tech terms."""
+    if not isinstance(text, str) or not text:
+        return text
+    result, cursor = [], 0
+    for match in _SCRIPT_PROTECTED.finditer(text):
+        result.append(_yangi_alifbo_qismi(text[cursor:match.start()]))
+        result.append(match.group(0))
+        cursor = match.end()
+    result.append(_yangi_alifbo_qismi(text[cursor:]))
+    return "".join(result)
+
+
+def _yangi_alifbo_markup(value):
+    if isinstance(value, dict):
+        return {key: (yangi_alifbo(item) if key == "text" and isinstance(item, str)
+                      else _yangi_alifbo_markup(item)) for key, item in value.items()}
+    if isinstance(value, list):
+        return [_yangi_alifbo_markup(item) for item in value]
+    return value
+
+
 def tg(method, **kw):
+    # Barcha botdan chiqadigan matn va tugma yorliqlarini yangi o‘zbek alifbosiga o‘tkazamiz.
+    if isinstance(kw.get("text"), str):
+        kw["text"] = yangi_alifbo(kw["text"])
+    if isinstance(kw.get("caption"), str):
+        kw["caption"] = yangi_alifbo(kw["caption"])
+    markup = kw.get("reply_markup")
+    if isinstance(markup, str):
+        try:
+            kw["reply_markup"] = json.dumps(_yangi_alifbo_markup(json.loads(markup)), ensure_ascii=False)
+        except (TypeError, ValueError):
+            pass
+    elif markup is not None:
+        kw["reply_markup"] = _yangi_alifbo_markup(markup)
     if not TOKEN:
         return None
     url = "%s/bot%s/%s" % (API, TOKEN, method)
@@ -764,7 +824,7 @@ def handle(msg, db):
         return ("Mini ilovani Telegram ichida ochish uchun tugmani bosing.",
                 {"inline_keyboard": [[{"text": "Ilovani ochish",
                                        "web_app": {"url": MINIAPP_URL}}]]})
-    if matn == "/start" and deep == signup.EVENT_DEEP_LINK:
+    if matn == "/start" and deep in (signup.EVENT_DEEP_LINK, *signup.EVENT_DEEP_LINK_ALIASES):
         if msg.get("chat", {}).get("type", "private") != "private":
             return "Röyxatdan ötiş uçun bot bilan şaxsiy suhbatni oçing.", None
         if chat_id not in ADMIN_IDS and not kanal_azosi(chat_id):
@@ -775,7 +835,7 @@ def handle(msg, db):
 
     if matn == "/rollar":                                   # ICHKI: faqat tashkilotchilar
         if not tadbir_ruxsat(chat_id, db):
-            return "Bunday buyruq yo'q. Buyruqlar ro'yxati: /help", None
+            return "Bunday buyruq yöq. Buyruqlar röyxati: /help", None
         return rollar_matn(), rollar_kb()
     if matn.startswith(("/tadbirlar", "/tadbir_yangi", "/tadbir_boshlash", "/tadbir_yakun")) or \
             matn == "/tadbir" or matn.startswith("/tadbir "):
@@ -783,7 +843,7 @@ def handle(msg, db):
     if matn == "/jamoa" or matn.startswith("/rol "):
         if not tadbir_ruxsat(chat_id, db) or (matn.startswith("/rol ") and chat_id not in ADMIN_IDS
                                                and "koordinator" not in db.get("roles", {}).get(str(chat_id), [])):
-            return "Bunday buyruq yo'q. Buyruqlar ro'yxati: /help", None
+            return "Bunday buyruq yöq. Buyruqlar röyxati: /help", None
         return (jamoa_matn(db), None) if matn == "/jamoa" else rol_tayinla(matn, db)
 
     # ═════ ADMIN PANEL BUYRUG'I ═════
@@ -813,20 +873,20 @@ def handle(msg, db):
         return MAXFIYLIK_MATN, None
     if matn == "/holat":
         return holat(chat_id, db)
-    if matn == "/bekor_xarita":
+    if matn in ("/bekor_theseven", "/bekor_xarita"):
         return signup.cancel(chat_id, db)
     if matn in ("/bekor", "/cancel"):
         return bekor(chat_id, db)
-    if matn == "/export_xarita":
+    if matn in ("/export_theseven", "/export_xarita"):
         if chat_id not in ADMIN_IDS:
             return "⛭ Bu buyruq faqat klub administratori uchun.", None
         signup.prune(db)
         header, rows = signup.rows(db, mahalliy)
         if not rows:
-            return "📚 YÖQOLGAN XARITA ro‘yxatida hozircha tasdiqlangan qatnashchi yo‘q.", None
+            return "📚 THE SEVEN röyxatida hozirça tasdiqlangan qatnaşçi yöq.", None
         temp_path = None
         try:
-            with tempfile.NamedTemporaryFile(prefix="yoqolgan_xarita_", suffix=".xlsx", delete=False) as f:
+            with tempfile.NamedTemporaryFile(prefix="theseven_", suffix=".xlsx", delete=False) as f:
                 temp_path = f.name
             write_xlsx(temp_path, header, rows, widths=[6, 30, 18, 12, 18, 20, 16, 28])
             sent = send_doc(chat_id, temp_path,
@@ -835,8 +895,8 @@ def handle(msg, db):
             if temp_path and os.path.exists(temp_path):
                 os.unlink(temp_path)
         if not sent:
-            return "⚠️ XLSX yuborilmadi. Botning fayl yuborish sozlamasini tekshiring.", None
-        return "📎 Tadbir ro‘yxati yuborildi: %d ta tasdiqlangan qatnashchi.\n" % len(rows) + baza_holati(), None
+            return "⚠️ XLSX yuborilmadi. Botning fayl yuboriş sozlamasini tekşiring.", None
+        return "📎 THE SEVEN röyxati yuborildi: %d ta tasdiqlangan qatnaşçi.\n" % len(rows) + baza_holati(), None
     if matn in ("/statlar", "/stats", "/export", "/export csv", "/royxat", "/list"):
         if chat_id not in ADMIN_IDS:
             return "⛭ Bu buyruq faqat klub administratori uchun.", None
@@ -874,9 +934,9 @@ def handle(msg, db):
                 "⚠️ Yuborilmadi: bot kanalga ADMIN qilib qo'shilganmi va post "
                 "huquqi bormi?"), None
     if matn.startswith("/"):
-        return "Bunday buyruq yo'q.\nBuyruqlar: /help", None
+        return "Bunday buyruq yöq.\nBuyruqlar: /help", None
 
-    # YÖQOLGAN XARITA ro‘yxati a’zolik shaklidan alohida yuritiladi.
+    # THE SEVEN ro‘yxati a’zolik shaklidan alohida yuritiladi.
     if str(chat_id) in db.get("event_state", {}):
         text, kb = signup.step(msg, db, courses=KURSLAR)
         if text is not None:
@@ -1179,7 +1239,7 @@ def tadbir_tavsif(ev, toliq=False):
 def tadbir_buyruq(chat_id, matn, db):
     """/tadbirlar · /tadbir N · /tadbir_yangi NOM · /tadbir_boshlash N · /tadbir_yakun N"""
     if not tadbir_ruxsat(chat_id, db):
-        return "Bunday buyruq yo'q. Buyruqlar ro'yxati: /help", None
+        return "Bunday buyruq yöq. Buyruqlar röyxati: /help", None
     _avto_yakun(db)
     bosh, _, arg = matn.partition(" ")
     arg = arg.strip()
@@ -1353,7 +1413,7 @@ def callback(cq, db):
             if m and TOKEN:
                 tg("editMessageReplyMarkup", chat_id=m["chat"]["id"], message_id=m["message_id"],
                    reply_markup=json.dumps(rsvp_kb(ev, uid), ensure_ascii=False))
-    elif data.startswith("yoqolganxarita:"):
+    elif data.startswith(("theseven:", "yoqolganxarita:")):
         yangi, kb = signup.callback(uid, data, db, courses=KURSLAR)
         toast = yangi or ""
     elif data.startswith(("rol:", "ariza:", "rollar:")) and not tadbir_ruxsat(uid, db):
@@ -1865,6 +1925,23 @@ def demo():
         print()
     print("\nDemo yakunlandi. Bazada %d ta yozuv (%s)." % (len(db["users"]), DB_PATH))
 
+def test_new_alphabet():
+    assert yangi_alifbo("Do‘stlaringizni THE SEVEN ishtirokiga taklif qiling!") == \
+        "Döstlaringizni THE SEVEN iştirokiga taklif qiling!"
+    assert yangi_alifbo("Topishmoq, bog‘laymiz, g‘alaba, o‘yin") == \
+        "Topişmoq, boğlaymiz, ğalaba, öyin"
+    assert yangi_alifbo("SHART: CHAQIRISH") == "ŞART: ÇAQIRIŞ"
+    assert yangi_alifbo("<tg-spoiler>O‘yin</tg-spoiler> https://example.com/show /start") == \
+        "<tg-spoiler>Öyin</tg-spoiler> https://example.com/show /start"
+    markup = {"inline_keyboard": [[{"text": "Do‘stni taklif qiling",
+                                    "callback_data": "theseven:confirm",
+                                    "url": "https://example.com/show"}]]}
+    out = _yangi_alifbo_markup(markup)["inline_keyboard"][0][0]
+    assert out["text"] == "Döstni taklif qiling"
+    assert out["callback_data"] == "theseven:confirm"
+    assert out["url"] == "https://example.com/show"
+
+
 def test():
     db = _bo_sh_db()
     ketma = ["/start", "Aliyeva Malika Rashidovna", "Boshqa",
@@ -1892,6 +1969,7 @@ def test():
     m = db_merge(a, b)
     assert set(m["users"]) == {"1", "3"} and m["counter"] == 3, m
     test_v3(db)
+    test_new_alphabet()
     print("\n✅ TEST O'TDI: ro'yxat (Boshqa→erkin matn) → saqlash → holat → "
           "statistika → XLSX (uslubli) + CSV (vergul) → birlashtirish → tadbir (kanal posti, "
           "Boraman, QR davomat, eskirgan QR, surat oynasi) → rollar (ariza, tayinlash, jamoa).")
@@ -1933,10 +2011,10 @@ def test_v3(db):
     assert "kelgan: 1" in j, j
     # 5) ruxsat: oddiy a'zo tadbir buyrug'ini ishlata olmaydi
     j, _ = handle({"chat": {"id": 300003}, "text": "/tadbir_boshlash 1"}, db)
-    assert "Bunday buyruq yo'q" in j
+    assert "Bunday buyruq yöq" in j
     # 5b) rollar ommaga ko'rinmaydi: oddiy a'zoga /rollar yo'q, /help da ichki buyruqlar yo'q
     j, _ = handle({"chat": {"id": 300003}, "text": "/rollar"}, db)
-    assert "Bunday buyruq yo'q" in j, j
+    assert "Bunday buyruq yöq" in j, j
     j, _ = handle({"chat": {"id": 300003}, "text": "/help"}, db)
     assert "/rollar" not in j and "/jamoa" not in j and "rol" not in j.lower().replace("ro'yxat", ""), j
     # 6) rollar: 17 ta, komissiya — 3 ovoz; ariza → tayinlash → jamoa → holat
