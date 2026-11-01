@@ -19,7 +19,7 @@ Ushbu modul joriy bot routeriga ulanmagan va undagi buyruqlar ishlab turgan deb 
 Standartlar yoki production monitoring holatini tasdiqlamaydi.
 
 Sayt hisoblarini boshqarish uchun vakolatli adminning shaxsiy chatida:
-/loginlar · /qosh login parol · /sayt_admin login parol · /parol login yangi_parol · /ochir login · /sayt_audit
+/loginlar · /qosh login · /sayt_admin login · /parol login · /ochir login · /sayt_audit (parolni buyruqda yubormang)
 """
 
 def get_admin_stats(db):

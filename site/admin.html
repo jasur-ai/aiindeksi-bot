@@ -178,7 +178,7 @@ header{display:flex;justify-content:space-between;align-items:center;gap:18px;pa
   });
   byId('logoutBtn').addEventListener('click',function(){
     var button=byId('logoutBtn');button.disabled=true;
-    api('/api/logout',{method:'POST'}).then(function(){sessionStorage.removeItem('rt.session');sessionStorage.removeItem('rt.passwordUpgrade');location.replace('/')})
+    api('/api/logout',jsonOptions('POST',{})).then(function(){sessionStorage.removeItem('rt.session');sessionStorage.removeItem('rt.passwordUpgrade');location.replace('/')})
       .catch(function(error){button.disabled=false;if(error.message!=='Sessiya tugagan.')showNotice('Chiqish serverda tasdiqlanmadi. Qayta urinib ko‘ring.','err')});
   });
   function start(){

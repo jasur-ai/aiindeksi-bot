@@ -7,7 +7,7 @@ import shutil
 import subprocess
 
 ROOT=Path(__file__).resolve().parents[1]
-ALLOWED={'.html','.css','.js','.svg','.png','.jpg','.jpeg','.webp','.woff2','.woff','.ico','.txt','.xml'}
+ALLOWED={'.html','.css','.js','.svg','.png','.jpg','.jpeg','.webp','.woff2','.woff','.ico','.txt','.xml','.json'}
 def build(output):
     output=Path(output).resolve()
     if output.exists() and any(output.iterdir()):

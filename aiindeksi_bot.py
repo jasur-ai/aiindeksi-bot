@@ -12,7 +12,7 @@ import event_signup as signup
 ════════════════════════════════════════════════════════════════════════════
 
  v3.0: TADBIRLAR VA ROLLAR —
-   • kanalda #tadbir heshtegli post → barcha a'zolarga «✅ Boraman» tugmali xabar (taxminiy son);
+   • kanalda #tadbir heştegli post → barcha a'zolarga «✅ Boraman» tugmali xabar (taxminiy son);
    • /tadbir_boshlash N → admin QR ekrani (/qr/N): QR har 30 soniyada yangilanadi, ≤90 soniya amal qiladi;
      skanerlagan — davomatda; shu chatda tadbir suratlarini yuboradi → yopiq arxiv guruhi (har tadbir —
      alohida mavzu, havola hech kimga berilmaydi, qabul yakundan 1 soat o'tib yopiladi);
@@ -171,22 +171,23 @@ FOYDA_MATN = (
 )
 MAXFIYLIK_MATN = (
     "⚖️ MA’LUMOTLAR SIYOSATI (qisqa)\n\n"
-    "1. Klub a’zoligi uchun telefon, pasport yoki joylashuv so‘ralmaydi. THE SEVEN tadbiriga "
-    "alohida röyxatdan ötişda telefon (Telegram kontaktini ulashiş orqali), ism-familiya, kurs va guruh "
+    "1. Klub a’zoligi uçun telefon, pasport yoki joylaşuv söralmaydi. THE SEVEN tadbiriga "
+    "alohida röyxatdan ötişda telefon (Telegram kontaktini ulaşiş orqali), ism-familiya, kurs va guruh "
     "faqat rozilik bilan olinadi.\n"
     "2. Maqsad: tadbir röyxati va davomat. Ma’lumotlar uçinçi şaxslarga berilmaydi.\n"
-    "3. Huquqlaringiz: /holat orqali körish, /bekor_theseven orqali tadbir yozuvini öçirish — istalgan payt, savolsiz.\n"
+    "3. Huquqlaringiz: /holat orqali köriş, /bekor_theseven orqali tadbir yozuvini öçiriş — istalgan payt, savolsiz.\n"
     "4. Ma’lumotlar Render’dagi bot va yopiq omborda saqlanadi; faqat administratorlar köradi.\n"
     "5. Tadbir suratlari faqat rozilik bilan işlatiladi. Istamasangiz, klubga xabar bering — olib taşlanadi.\n"
-    "6. Xavfsizlik hodisasi bölsa, 24 soat içida kanalda e’lon qilinadi va kalitlar almashtiriladi.\n"
+    "6. Xavfsizlik hodisasi bölsa, 24 soat içida kanalda e’lon qilinadi va kalitlar almaştıriladi.\n"
     "7. Faol tadbir yozuvlari 2026-yil 7-dekabrda, tadbirdan 30 kun ötgaç tozalanadi; "
     "yopiq zaxira tarixida avvalgi nusxalar qolişi mumkin."
 )
 ADMIN_HELP = (
-    "\n\n🛡 Ichki buyruqlar: /statlar, /royxat, /export (Excel), /export_theseven (THE SEVEN röyxati), /elon (kanalga e'lon), "
-    "/rollar (rollar va ariza), /jamoa (bandlik), /rol N rol (tayinlash)\n"
-    "Tadbirlar: kanalga #tadbir heshtegli post → a'zolarga avtomatik xabar; /tadbirlar, /tadbir N, "
-    "/tadbir_boshlash N (QR ekrani), /tadbir_yakun N, /tadbir_yangi Nomi"
+    "\n\n🛡 Içki buyruqlar: /statlar, /royxat, /export (Excel), /export_theseven (THE SEVEN röyxati), /elon (kanalga e'lon), "
+    "/rollar (rollar va ariza), /jamoa (bandlik), /rol N rol (tayinlaş)\n"
+    "Tadbirlar: kanalga #tadbir heştegli post → a'zolarga avtomatik xabar; /tadbirlar, /tadbir N, "
+    "/tadbir_boshlash N (QR ekrani), /tadbir_yakun N, /tadbir_yangi Nomi\n"
+    "Sayt hisoblari (faqat şaxsiy chatda): /loginlar, /qosh login, /sayt_admin login, /parol login, /ochir login, /sayt_audit. Parolni buyruqda yubormang."
 )
 HELP_MATN = (
     "📘 Buyruqlar:\n"
@@ -194,10 +195,10 @@ HELP_MATN = (
     "/foyda — klub nimani beradi?\n"
     "/holat — mening yozuvim\n"
     "/maxfiylik — ma’lumotlar siyosati\n"
-    "/bekor — a’zolik jarayonini bekor qiliş / yozuvni öçirish\n"
+    "/bekor — a’zolik jarayonini bekor qiliş / yozuvni öçiriş\n"
     "/bekor_theseven — tadbir röyxatidagi yozuvni bekor qiliş\n"
     "/help — şu röyxat\n\n"
-    "Klub faqat oçiq manbalar bilan ishlaydi. A’zolik bepul.\n"
+    "Klub faqat oçiq manbalar bilan işlaydi. A’zolik bepul.\n"
     "📣 Kanal: t.me/Raqamli_tadqiqot\n"
     "🌐 Sayt: raqamlitadqiqot.pages.dev"
 )
@@ -207,7 +208,7 @@ HELP_MATN = (
 # Qoidalar: (1) GitHub'dan o'qilmaguncha unga HECH QACHON yozilmaydi (bo'sh baza bilan
 # ustiga yozib yuborish xavfi yo'q); (2) sha to'qnashuvi bo'lsa — birlashtirib qayta yoziladi;
 # (3) /bekor bilan o'chirilganlar "deleted" ro'yxatida turadi, birlashtirishda tirilmaydi.
-PERSIST = ("users", "state", "counter", "deleted", "events", "ev_counter", "roles", "rol_ariza", "cfg", "event_registrations", "event_deleted", "legacy_event_history")
+PERSIST = ("users", "state", "counter", "deleted", "events", "ev_counter", "roles", "rol_ariza", "cfg", "event_registrations", "event_deleted", "legacy_event_history", "site_users", "site_invites", "site_invite_versions", "site_audit", "site_accounts_initialized", "site_deleted")
 REF = {}   # chat_id → (deep-link kodi, vaqt): «/start afisha» → manba «bot:afisha» (faqat xotirada, 24 soat)
 
 def ref_qoy(chat_id, kod):
@@ -229,7 +230,8 @@ def _bo_sh_db():
     return {"users": {}, "state": {}, "counter": 0, "deleted": {},
             "events": {}, "ev_counter": 0, "roles": {}, "rol_ariza": {}, "cfg": {},
             "event_state": {}, "event_registrations": {}, "event_deleted": {},
-            "legacy_event_history": {}}
+            "legacy_event_history": {}, "site_users": {}, "site_invites": {},
+            "site_invite_versions": {}, "site_audit": [], "site_accounts_initialized": False, "site_deleted": {}}
 
 def _norm(db):
     # Eski tadbir yozuvlarini tarix sifatida saqlaymiz; yangi oqim ulardan foydalanmaydi.
@@ -323,6 +325,32 @@ def db_merge(local, remote):
         else:
             history[name] = records
     local["legacy_event_history"] = history
+    # Sayt hisoblari: eng yangi yangilanish yutadi; o'chirish tombstonelari qayta tirilishni to'sadi.
+    site_deleted = dict(remote.get("site_deleted", {}))
+    for login, ts in local.get("site_deleted", {}).items():
+        site_deleted[login] = max(float(ts), float(site_deleted.get(login, 0)))
+    site_users = dict(remote.get("site_users", {}))
+    for login, user in local.get("site_users", {}).items():
+        old = site_users.get(login)
+        if not old or float(user.get("updated_at", user.get("created_at", 0))) >= float(old.get("updated_at", old.get("created_at", 0))):
+            site_users[login] = user
+    for login, ts in site_deleted.items():
+        user = site_users.get(login)
+        if user and float(user.get("updated_at", user.get("created_at", 0))) <= float(ts):
+            site_users.pop(login, None)
+    local["site_users"], local["site_deleted"] = site_users, site_deleted
+    versions = dict(remote.get("site_invite_versions", {}))
+    for login, version in local.get("site_invite_versions", {}).items():
+        versions[login] = max(int(version), int(versions.get(login, 0)))
+    local["site_invite_versions"] = versions
+    invites = dict(remote.get("site_invites", {})); invites.update(local.get("site_invites", {}))
+    local["site_invites"] = invites
+    audit_by_id = {str(e.get("id")): e for e in remote.get("site_audit", []) if isinstance(e, dict) and e.get("id")}
+    for event in local.get("site_audit", []):
+        if isinstance(event, dict) and event.get("id"):
+            audit_by_id[str(event["id"])] = event
+    local["site_audit"] = sorted(audit_by_id.values(), key=lambda e: float(e.get("at", 0)))[-2000:]
+    local["site_accounts_initialized"] = bool(local.get("site_accounts_initialized") or remote.get("site_accounts_initialized"))
     return local
 
 def _merge_events(L, R):
@@ -785,6 +813,67 @@ def flood_guard(chat_id, db):
         return True, False
     return False, False
 
+def _site_account_bot_command(msg, db, matn):
+    """Site-account lifecycle: Telegram admins issue one-time activation/reset links in private chat."""
+    command = str(matn or "").strip().split(" ", 1)[0].split("@")[0]
+    if command not in ("/loginlar", "/qosh", "/sayt_admin", "/parol", "/ochir", "/sayt_audit"):
+        return None
+    chat = msg.get("chat", {})
+    chat_id = chat.get("id")
+    sender_id = (msg.get("from") or {}).get("id", chat_id)
+    if sender_id not in ADMIN_IDS:
+        return ("Bunday buyruq yo'q.", None)
+    if chat.get("type", "private") != "private":
+        return ("Bunday buyruq yo'q.", None)
+    _ensure_site_accounts(db)
+    parts = str(matn or "").strip().split()
+    if command == "/loginlar":
+        users = sorted(db.get("site_users", {}).values(), key=lambda item: item.get("login", ""))
+        if not users:
+            return ("Sayt hisobi hozircha yo'q. Yangi a'zo: /qosh login · web-admin: /sayt_admin login", None)
+        lines = ["Sayt hisoblari:"]
+        lines.extend("• %s — %s" % (u.get("login", "?"), "Web-admin" if u.get("is_admin") else "A'zo") for u in users)
+        lines.append("\nYangi a'zo: /qosh login · Web-admin: /sayt_admin login · Parol tiklash: /parol login · O'chirish: /ochir login")
+        return ("\n".join(lines), None)
+    if command in ("/qosh", "/sayt_admin", "/parol") and len(parts) >= 3:
+        return ("Parolni Telegramga yozmang. Buyruq faqat login bilan bo'lsin; bot bir martalik xavfsiz havola beradi.", None)
+    if command in ("/qosh", "/sayt_admin", "/parol"):
+        if len(parts) != 2:
+            return ("Foydalanish: /qosh login · /sayt_admin login · /parol login", None)
+        login = _site_login(parts[1])
+        mode = {"/qosh": "member", "/sayt_admin": "admin", "/parol": "reset"}[command]
+        ok, result = _site_issue_activation(db, login, "telegram:" + str(sender_id), mode)
+        if not ok:
+            return ("Xato: " + result, None)
+        db_save(db)
+        label = "hisob yaratish" if mode != "reset" else "parol tiklash"
+        return ("Kirish uchun bir martalik havola — %s (24 soat amal qiladi; uni faqat mo'ljallangan foydalanuvchiga yuboring):\n%s" % (label, result), None)
+    if command == "/ochir":
+        if len(parts) != 2:
+            return ("Foydalanish: /ochir login", None)
+        login = _site_login(parts[1])
+        user = db.get("site_users", {}).get(login)
+        if not user or user.get("is_admin"):
+            return ("Login topilmadi yoki himoyalangan web-admin hisobidir.", None)
+        with DB_LOCK:
+            db["site_users"].pop(login, None)
+            db.setdefault("site_deleted", {})[login] = time.time()
+            versions = db.setdefault("site_invite_versions", {})
+            versions[login] = int(versions.get(login, 0)) + 1
+            for key, invite in list(db.setdefault("site_invites", {}).items()):
+                if invite.get("login") == login:
+                    db["site_invites"].pop(key, None)
+            _site_audit_add(db, "account_deleted", login, "telegram:" + str(sender_id))
+        db_save(db)
+        return ("Hisob o'chirildi va uning sessiyalari bekor qilindi.", None)
+    if command == "/sayt_audit":
+        events = db.get("site_audit", [])[-15:]
+        return ("Sayt hisobi faoliyati:\n" + ("\n".join("• %s — %s (%s)" % (
+            time.strftime("%d.%m.%Y %H:%M", time.gmtime(float(e.get("at", 0)) + TZ_SOAT * 3600)),
+            e.get("action", ""), e.get("target", "")) for e in reversed(events)) or "Hozircha yozuv yo'q."), None)
+    return None
+
+
 def handle(msg, db):
     signup.prune(db)
     chat_id = msg["chat"]["id"]
@@ -799,6 +888,10 @@ def handle(msg, db):
         matn = bosh if bosh == "/start" else (bosh + (" " + qolgan if qolgan else ""))
     else:
         deep = ""
+    if matn.split(" ", 1)[0] in ("/loginlar", "/qosh", "/sayt_admin", "/parol", "/ochir", "/sayt_audit"):
+        handled = _site_account_bot_command(msg, db, matn)
+        if handled is not None:
+            return handled
     blok, jim = flood_guard(chat_id, db)
     if blok:
         return ("⏳ Juda tez yozyapsiz. Iltimos, 10 daqiqadan keyin "
@@ -980,7 +1073,7 @@ def handle(msg, db):
 
 
 # ─────────────────────────── TADBIRLAR (v3.0) ───────────────────────────
-# Oqim: kanalda #tadbir heshtegli post → bot tadbirni yaratadi → barcha a'zolarga «✅ Boraman» tugmasi bilan
+# Oqim: kanalda #tadbir heştegli post → bot tadbirni yaratadi → barcha a'zolarga «✅ Boraman» tugmasi bilan
 # xabar (taxminiy son). Tadbir kuni: /tadbir_boshlash N → admin ekranida har 30 soniyada yangilanadigan QR
 # (≤90 soniya amal qiladi, skrinshot keyin ishlamaydi) → skanerlagan odam davomatdan o'tadi va SHU CHATDA
 # tadbir suratlarini yuboradi. Suratlar yopiq arxiv guruhiga (har tadbir — alohida mavzu) nusxalanadi; hech
@@ -1455,9 +1548,403 @@ def webapp_auth(init_data):
     except Exception:
         return None
 
+# ─────────────── HIMOYALANGAN SAYT HISOBLARI ───────────────
+import secrets
+import mimetypes
+
+RELEASE_VERSION = "2026-11-01.1"
+SITE_SESSION_TTL = 12 * 60 * 60
+SITE_ACTIVATION_TTL = 24 * 60 * 60
+SITE_PBKDF2_ITERATIONS = 240_000
+SITE_AUTH_LIMIT = 8
+SITE_DOCS_DIR = os.environ.get("RT_PRIVATE_DOCS_DIR", os.environ.get("SITE_DOCS_DIR", os.path.join(HERE, "private_docs")))
+_SITE_DOCS_DIR_INITIAL = SITE_DOCS_DIR
+SITE_DOCS_REPO = os.environ.get("SITE_DOCS_REPO", GH_REPO).strip()
+SITE_DOCS_PATH = os.environ.get("SITE_DOCS_PATH", "hujjatlar").strip("/")
+SITE_ALLOWED_ORIGINS = {"https://raqamlitadqiqot.pages.dev", "https://raqamli-tadqiqot-v2.pages.dev",
+                        "http://localhost:5500", "http://127.0.0.1:5500"}
+for _origin in os.environ.get("SITE_ORIGINS", "").split(","):
+    _origin = _origin.strip().rstrip("/")
+    if _origin and not ("*" in _origin or "/" in _origin.split("://", 1)[-1]):
+        if _origin.startswith("https://") or _origin in ("http://localhost:5500", "http://127.0.0.1:5500"):
+            SITE_ALLOWED_ORIGINS.add(_origin)
+SITE_ALLOWED_ORIGINS = frozenset(SITE_ALLOWED_ORIGINS)
+# Separate from the bot/GitHub keys. Without the hosting secret, generate an
+# ephemeral local-development key; that deliberately expires sessions on restart.
+_site_key_source = (os.environ.get("RT_SITE_SESSION_SECRET", "") or
+                    os.environ.get("SITE_SESSION_KEY", "")).strip()
+SITE_SESSION_KEY = hashlib.sha256(_site_key_source.encode("utf-8")).digest() if _site_key_source else secrets.token_bytes(32)
+SITE_DOC_EXTENSIONS = frozenset((".pdf", ".docx", ".xlsx", ".pptx", ".csv", ".txt", ".md"))
+SITE_DOC_MIME = {
+    ".pdf": "application/pdf",
+    ".docx": "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+    ".xlsx": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+    ".pptx": "application/vnd.openxmlformats-officedocument.presentationml.presentation",
+    ".csv": "text/csv; charset=utf-8", ".txt": "text/plain; charset=utf-8",
+    ".md": "text/markdown; charset=utf-8",
+}
+# Fingerprint of the deprecated weak bootstrap password; only the hash is kept here.
+_LEGACY_DEFAULT_HASH = "7d69b7fc7c45c8fefddfa81dd029879ef7e9c7c2ea7f26ca3483ad03728e7877"
+_SITE_AUTH_LOCK = threading.RLock()
+_SITE_AUTH_FAILURES = {}
+
+
+def _site_login(value):
+    return str(value or "").strip().lower()[:64]
+
+
+def _site_valid_login(value):
+    value = _site_login(value)
+    return bool(3 <= len(value) <= 48 and re.fullmatch(r"[a-z0-9][a-z0-9_.-]*", value))
+
+
+def _site_hash_password(password):
+    salt = secrets.token_bytes(16)
+    digest = hashlib.pbkdf2_hmac("sha256", password.encode("utf-8"), salt, SITE_PBKDF2_ITERATIONS)
+    return "pbkdf2_sha256$%d$%s$%s" % (
+        SITE_PBKDF2_ITERATIONS,
+        base64.urlsafe_b64encode(salt).decode("ascii").rstrip("="),
+        base64.urlsafe_b64encode(digest).decode("ascii").rstrip("="),
+    )
+
+
+def _site_password_check(stored, password):
+    """Returns (valid, needs_rehash); imports legacy unsalted SHA-256 only for migration."""
+    if not isinstance(password, str) or not isinstance(stored, str):
+        return False, False
+    if stored.startswith("pbkdf2_sha256$"):
+        try:
+            _, rounds, salt64, hash64 = stored.split("$", 3)
+            rounds = int(rounds)
+            if not 100_000 <= rounds <= 2_000_000:
+                return False, False
+            salt = base64.urlsafe_b64decode(salt64 + "=" * (-len(salt64) % 4))
+            expected = base64.urlsafe_b64decode(hash64 + "=" * (-len(hash64) % 4))
+            actual = hashlib.pbkdf2_hmac("sha256", password.encode("utf-8"), salt, rounds)
+            return hmac.compare_digest(actual, expected), rounds < SITE_PBKDF2_ITERATIONS
+        except (ValueError, TypeError):
+            return False, False
+    if re.fullmatch(r"[0-9a-fA-F]{64}", stored):
+        actual = hashlib.sha256(password.encode("utf-8")).hexdigest()
+        return hmac.compare_digest(actual.lower(), stored.lower()), True
+    return False, False
+
+
+def _site_audit_add(db, action, target="", actor="system"):
+    now = time.time()
+    event = {"id": secrets.token_hex(12), "at": now, "action": str(action)[:64],
+             "target": str(target or "")[:80], "actor": str(actor or "")[:80]}
+    audit = db.setdefault("site_audit", [])
+    audit.append(event)
+    db["site_audit"] = audit[-2000:]
+    return event
+
+
+def _site_create_account(db, login, password, actor="system", is_admin=False):
+    login = _site_login(login)
+    if not _site_valid_login(login):
+        return False, "Login 3–48 belgidan iborat bo'lsin (lotin harflari, raqam, nuqta, _ yoki -)."
+    if not isinstance(password, str) or not 10 <= len(password) <= 1024:
+        return False, "Parol kamida 10 belgidan iborat bo'lishi kerak."
+    with DB_LOCK:
+        db.setdefault("site_users", {})
+        if login in db["site_users"]:
+            return False, "Bu login allaqachon mavjud."
+        now = time.time()
+        user = {"login": login, "password_hash": _site_hash_password(password),
+                "is_admin": bool(is_admin), "created_at": now, "password_changed_at": now,
+                "updated_at": now, "session_version": 0, "last_login_at": 0}
+        db["site_users"][login] = user
+        db.setdefault("site_deleted", {}).pop(login, None)
+        _site_audit_add(db, "admin_account_created" if is_admin else "account_created", login, actor)
+    return True, user
+
+
+def _ensure_site_accounts(db):
+    """One-time import of old local account files; never recreates the known weak default."""
+    db.setdefault("site_users", {})
+    db.setdefault("site_invites", {})
+    db.setdefault("site_invite_versions", {})
+    db.setdefault("site_audit", [])
+    db.setdefault("site_deleted", {})
+    if db.get("site_accounts_initialized"):
+        return False
+    imported = False
+    creds_path = os.path.join(HERE, "site_creds.json")
+    admin_path = os.path.join(HERE, "admin_creds.json")
+    def import_one(login, password_hash, is_admin):
+        nonlocal imported
+        login = _site_login(login)
+        if not _site_valid_login(login) or not isinstance(password_hash, str):
+            return
+        if hmac.compare_digest(password_hash.lower(), _LEGACY_DEFAULT_HASH):
+            return
+        if login in db["site_users"]:
+            return
+        now = time.time()
+        db["site_users"][login] = {"login": login, "password_hash": password_hash,
+            "is_admin": bool(is_admin), "created_at": 0, "password_changed_at": 0,
+            "updated_at": now, "session_version": 0, "last_login_at": 0}
+        _site_audit_add(db, "legacy_account_imported", login, "system")
+        imported = True
+    try:
+        if os.path.isfile(creds_path):
+            with open(creds_path, encoding="utf-8") as f:
+                records = json.load(f)
+            if isinstance(records, list):
+                for item in records:
+                    if isinstance(item, dict):
+                        import_one(item.get("login"), item.get("password_hash"), item.get("is_admin", False))
+        if os.path.isfile(admin_path):
+            with open(admin_path, encoding="utf-8") as f:
+                item = json.load(f)
+            if isinstance(item, dict):
+                import_one(item.get("login"), item.get("password_hash"), True)
+    except (OSError, ValueError, TypeError) as exc:
+        log.warning("Eski sayt hisoblarini o'qib bo'lmadi: %s", exc)
+    db["site_accounts_initialized"] = True
+    return imported
+
+
+def _site_issue_activation(db, login, actor, mode="member"):
+    login = _site_login(login)
+    mode = str(mode or "member")
+    if not _site_valid_login(login) or mode not in ("member", "admin", "reset"):
+        return False, "Login yoki amal turi noto'g'ri."
+    users = db.setdefault("site_users", {})
+    if mode == "reset":
+        user = users.get(login)
+        if not user:
+            return False, "Login topilmadi."
+        # Reset havolasi chiqarilishi bilan avvalgi sessiyalar va havolalar bekor bo'ladi.
+        user["session_version"] = int(user.get("session_version", 0)) + 1
+        user["reset_pending"] = True
+        user["updated_at"] = time.time()
+        for key, invitation in list(db.setdefault("site_invites", {}).items()):
+            if invitation.get("login") == login:
+                db["site_invites"].pop(key, None)
+    elif login in users:
+        return False, "Bu login allaqachon mavjud."
+    now = time.time()
+    versions = db.setdefault("site_invite_versions", {})
+    versions[login] = int(versions.get(login, 0)) + 1
+    raw = secrets.token_urlsafe(32)
+    digest = hashlib.sha256(raw.encode("ascii")).hexdigest()
+    db.setdefault("site_invites", {})[digest] = {
+        "login": login, "mode": mode, "version": versions[login],
+        "is_admin": bool(mode == "admin" or (mode == "reset" and users.get(login, {}).get("is_admin"))),
+        "issued_at": now, "expires_at": now + SITE_ACTIVATION_TTL, "actor": str(actor or "")[:80],
+    }
+    _site_audit_add(db, "activation_issued", login, actor)
+    return True, "https://raqamlitadqiqot.pages.dev/activate.html#token=" + raw
+
+
+def _site_activate(db, token, password):
+    if not isinstance(token, str) or not token or len(token) > 200:
+        return False, "Havola noto'g'ri yoki muddati tugagan."
+    if not isinstance(password, str) or not 10 <= len(password) <= 1024:
+        return False, "Parol kamida 10 belgidan iborat bo'lishi kerak."
+    digest = hashlib.sha256(token.encode("ascii", "ignore")).hexdigest()
+    with DB_LOCK:
+        invite = db.setdefault("site_invites", {}).get(digest)
+        now = time.time()
+        if not invite or float(invite.get("expires_at", 0)) <= now:
+            db.get("site_invites", {}).pop(digest, None)
+            return False, "Havola noto'g'ri yoki muddati tugagan."
+        login, mode = invite.get("login", ""), invite.get("mode", "member")
+        if int(invite.get("version", 0)) != int(db.get("site_invite_versions", {}).get(login, 0)):
+            return False, "Havola bekor qilingan yoki yangilangan."
+        users = db.setdefault("site_users", {})
+        old_user = users.get(login)
+        if mode == "reset":
+            if not old_user:
+                return False, "Hisob topilmadi."
+            old_user["password_hash"] = _site_hash_password(password)
+            old_user["password_changed_at"] = now
+            old_user["updated_at"] = now
+            old_user["session_version"] = int(old_user.get("session_version", 0)) + 1
+            old_user.pop("reset_pending", None)
+            action = "password_reset"
+        else:
+            if old_user or not _site_valid_login(login):
+                return False, "Hisob allaqachon mavjud yoki login noto'g'ri."
+            users[login] = {"login": login, "password_hash": _site_hash_password(password),
+                "is_admin": bool(invite.get("is_admin")), "created_at": now,
+                "password_changed_at": now, "updated_at": now, "session_version": 0,
+                "last_login_at": 0}
+            action = "admin_account_created" if invite.get("is_admin") else "account_created"
+            db.setdefault("site_deleted", {}).pop(login, None)
+        db["site_invites"].pop(digest, None)
+        _site_audit_add(db, action, login, invite.get("actor", "system"))
+    return True, "Hisob faollashtirildi. Endi yangi parol bilan tizimga kiring."
+
+
+def _site_key_bytes():
+    key = SITE_SESSION_KEY
+    return key.encode("utf-8") if isinstance(key, str) else bytes(key)
+
+
+def _site_issue_session(login, user):
+    now = int(time.time())
+    payload = {"login": _site_login(login), "iat": now, "exp": now + SITE_SESSION_TTL,
+               "ver": int(user.get("session_version", 0)), "jti": secrets.token_urlsafe(12)}
+    raw = json.dumps(payload, separators=(",", ":"), sort_keys=True).encode("utf-8")
+    part = base64.urlsafe_b64encode(raw).decode("ascii").rstrip("=")
+    sig = hmac.new(_site_key_bytes(), part.encode("ascii"), hashlib.sha256).digest()
+    return part + "." + base64.urlsafe_b64encode(sig).decode("ascii").rstrip("=")
+
+
+def _site_decode_session(token):
+    try:
+        part, sigpart = str(token).split(".", 1)
+        expected = hmac.new(_site_key_bytes(), part.encode("ascii"), hashlib.sha256).digest()
+        signature = base64.urlsafe_b64decode(sigpart + "=" * (-len(sigpart) % 4))
+        if not hmac.compare_digest(expected, signature):
+            return None
+        payload = json.loads(base64.urlsafe_b64decode(part + "=" * (-len(part) % 4)).decode("utf-8"))
+        if not isinstance(payload, dict) or int(payload.get("exp", 0)) <= int(time.time()):
+            return None
+        return payload
+    except (ValueError, TypeError, UnicodeError, json.JSONDecodeError):
+        return None
+
+
+def _site_session_user(authorization, db):
+    value = str(authorization or "").strip()
+    if not value.lower().startswith("bearer "):
+        return None
+    payload = _site_decode_session(value[7:].strip())
+    if not payload:
+        return None
+    login = _site_login(payload.get("login"))
+    user = db.get("site_users", {}).get(login)
+    if not user or int(user.get("session_version", 0)) != int(payload.get("ver", -1)):
+        return None
+    return user
+
+
+def _site_session_expiry(authorization):
+    value = str(authorization or "").strip()
+    payload = _site_decode_session(value[7:].strip()) if value.lower().startswith("bearer ") else None
+    return int(payload.get("exp", 0)) if payload else 0
+
+
+def _site_auth_allowed(bucket):
+    now = time.time()
+    with _SITE_AUTH_LOCK:
+        count, since = _SITE_AUTH_FAILURES.get(bucket, (0, now))
+        if now - since > 900:
+            _SITE_AUTH_FAILURES.pop(bucket, None)
+            return True, 0
+        return (False, max(1, int(900 - (now - since)))) if count >= SITE_AUTH_LIMIT else (True, 0)
+
+
+def _site_auth_failed(bucket):
+    now = time.time()
+    with _SITE_AUTH_LOCK:
+        count, since = _SITE_AUTH_FAILURES.get(bucket, (0, now))
+        if now - since > 900:
+            count, since = 0, now
+        if len(_SITE_AUTH_FAILURES) > 10_000:
+            for key, (_, started) in list(_SITE_AUTH_FAILURES.items()):
+                if now - started > 900:
+                    _SITE_AUTH_FAILURES.pop(key, None)
+        _SITE_AUTH_FAILURES[bucket] = (count + 1, since)
+
+
+def _site_auth_succeeded(bucket):
+    with _SITE_AUTH_LOCK:
+        _SITE_AUTH_FAILURES.pop(bucket, None)
+
+
+def _site_safe_doc_name(name):
+    name = str(name or "")
+    return bool(name and name not in (".", "..") and len(name) <= 180 and
+                re.fullmatch(r"[A-Za-z0-9][A-Za-z0-9._ -]*", name) and
+                os.path.splitext(name)[1].lower() in SITE_DOC_EXTENSIONS)
+
+
+def docs_repo_list():
+    if not SITE_DOCS_REPO or not GH_TOKEN:
+        return []
+    path = urllib.parse.quote(SITE_DOCS_PATH, safe="/")
+    url = "https://api.github.com/repos/%s/contents/%s" % (SITE_DOCS_REPO, path)
+    try:
+        response = _gh_req("GET", url)
+        if not isinstance(response, list):
+            return []
+        docs = []
+        for item in response:
+            name = item.get("name", "")
+            if item.get("type") != "file" or not _site_safe_doc_name(name):
+                continue
+            ext = os.path.splitext(name)[1].lower()
+            docs.append({"name": name, "size": int(item.get("size", 0)),
+                         "type": SITE_DOC_MIME.get(ext, "application/octet-stream")})
+        return sorted(docs, key=lambda item: item["name"].lower())
+    except Exception as exc:
+        log.warning("Sayt hujjatlari ro'yxatini olib bo'lmadi: %s", exc)
+        return []
+
+
+def docs_repo_bytes(name):
+    if not SITE_DOCS_REPO or not GH_TOKEN or not _site_safe_doc_name(name):
+        return None
+    path = "/".join(urllib.parse.quote(part, safe="") for part in (SITE_DOCS_PATH, name) if part)
+    url = "https://api.github.com/repos/%s/contents/%s" % (SITE_DOCS_REPO, path)
+    try:
+        item = _gh_req("GET", url)
+        if int(item.get("size", 0)) > 25 * 1024 * 1024:
+            return None
+        raw = item.get("content") or ""
+        if not raw and item.get("download_url"):
+            req = urllib.request.Request(item["download_url"], headers={"Authorization": "Bearer " + GH_TOKEN,
+                "User-Agent": "raqamlitadqiqot-site", "Accept": "application/vnd.github.raw"})
+            with urllib.request.urlopen(req, timeout=20) as response:
+                content = response.read(25 * 1024 * 1024 + 1)
+                return content if len(content) <= 25 * 1024 * 1024 else None
+        return base64.b64decode(raw)
+    except Exception as exc:
+        log.warning("Sayt hujjatini olib bo'lmadi: %s", exc)
+        return None
+
+
+def _site_local_docs():
+    docs = {}
+    try:
+        configured = SITE_DOCS_DIR if (os.environ.get("SITE_DOCS_DIR") or SITE_DOCS_DIR != _SITE_DOCS_DIR_INITIAL) else os.path.join(HERE, "protected_docs")
+        root = os.path.realpath(configured)
+        if not os.path.isdir(root):
+            return docs
+        for name in os.listdir(root):
+            if not _site_safe_doc_name(name):
+                continue
+            path = os.path.realpath(os.path.join(root, name))
+            if os.path.dirname(path) != root or not os.path.isfile(path):
+                continue
+            size = os.path.getsize(path)
+            if size <= 25 * 1024 * 1024:
+                ext = os.path.splitext(name)[1].lower()
+                docs[name] = {"name": name, "size": size,
+                              "type": SITE_DOC_MIME.get(ext, "application/octet-stream"), "path": path}
+    except OSError as exc:
+        log.warning("Mahalliy himoyalangan hujjatlar o'qilmadi: %s", exc)
+    return docs
+
+
+def _site_doc_catalog():
+    docs = _site_local_docs()
+    for item in docs_repo_list():
+        name = item.get("name", "")
+        if name not in docs and _site_safe_doc_name(name):
+            docs[name] = {"name": name, "size": int(item.get("size", 0)),
+                          "type": item.get("type", "application/octet-stream"), "path": None}
+    return sorted(docs.values(), key=lambda item: item["name"].lower())
+
+
 # ─────────────────── WEB QATLAM (Render free uchun) ───────────────────
-def make_server(get_db):
-    """Mini app (/), health check (/healthz) va jonli statistika (/stats.json)."""
+def make_server(get_db, port=None):
+    """Mini app, V2 site-auth API, health check va jonli statistika."""
     from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
     MINI = os.path.join(HERE, "miniapp", "index.html")
 
@@ -1471,10 +1958,20 @@ def make_server(get_db):
             self.send_header("Content-Type", ctype)
             self.send_header("Content-Length", str(len(b)))
             self.send_header("Cache-Control", "no-store")
+            origin = self.headers.get("Origin", "")
+            if origin in SITE_ALLOWED_ORIGINS:
+                self.send_header("Access-Control-Allow-Origin", origin)
+                self.send_header("Vary", "Origin")
+                self.send_header("Access-Control-Allow-Methods", "GET, POST, OPTIONS")
+                self.send_header("Access-Control-Allow-Headers", "Authorization, Content-Type")
+                self.send_header("Access-Control-Max-Age", "600")
             self.end_headers()
-            self.wfile.write(b)
+            if b:
+                self.wfile.write(b)
         def do_GET(self):
-            p = self.path.split("?")[0]
+            p = urllib.parse.urlsplit(self.path).path
+            if p in ("/api/me", "/api/admin/users", "/api/admin/audit", "/api/admin/stats", "/api/docs") or p.startswith("/api/docs/"):
+                return self._site_api_get(p)
             if p in ("/", "/index.html"):
                 try:
                     with open(MINI, encoding="utf-8") as f:
@@ -1488,36 +1985,9 @@ def make_server(get_db):
                 except OSError:
                     self._send(404, "admin sahifa topilmadi", "text/plain")
             elif p.startswith("/api/admin"):
-                # Admin API — token tekshirish
-                q = urllib.parse.parse_qs(self.path.partition("?")[2])
-                token = (q.get("token") or [""])[0]
-                import hashlib
-                expected = hashlib.sha256(("rt_admin_" + str(ADMIN_IDS)).encode()).hexdigest()[:32]
-                if not token or token != expected:
-                    return self._send(403, '{"ok":false,"error":"Ruxsat yo\'q"}', "application/json")
-                db = get_db()
-                users = db.get("users", {})
-                if p == "/api/admin/stats":
-                    from datetime import datetime, timezone, timedelta
-                    now = datetime.now(timezone(timedelta(hours=5)))
-                    today_count = sum(1 for u in users.values() if u.get("sana","").startswith(now.strftime("%Y-%m-%d")))
-                    faks = set(u.get("fakultet","?") for u in users.values())
-                    self._send(200, json.dumps({"ok":True,"members":len(users),"fakultet_count":len(faks),"today":today_count}, ensure_ascii=False), "application/json")
-                elif p == "/api/admin/users":
-                    # Site admin panel uchun — login/parol bilan
-                    import hashlib
-                    creds_file = os.path.join(HERE, "site_creds.json")
-                    if os.path.exists(creds_file):
-                        creds = json.load(open(creds_file))
-                    else:
-                        creds = [{"login":"admin","is_admin":True}]
-                        json.dump(creds, open(creds_file,"w"))
-                    ul = [{"login":c.get("login","?"),"is_admin":c.get("is_admin",False)} for c in creds]
-                    self._send(200, json.dumps({"ok":True,"users":ul}, ensure_ascii=False), "application/json")
-                else:
-                    self._send(404, '{"ok":false}', "application/json")
+                return self._json(404, {"ok": False, "error": "Topilmadi."})
             elif p == "/healthz":
-                self._send(200, '{"ok":true}', "application/json")
+                self._json(200, {"ok": True, "auth_api": 2, "release": RELEASE_VERSION})
             elif p.startswith("/qr/"):
                 q = urllib.parse.parse_qs(self.path.partition("?")[2])
                 qism = p.strip("/").split("/")
@@ -1552,159 +2022,240 @@ def make_server(get_db):
             self._send(code, json.dumps(obj, ensure_ascii=False),
                        "application/json; charset=utf-8")
 
+        def do_OPTIONS(self):
+            origin = self.headers.get("Origin", "")
+            if origin not in SITE_ALLOWED_ORIGINS:
+                return self._json(403, {"ok": False, "error": "Origin ruxsat etilmagan."})
+            return self._send(204, b"", "application/json; charset=utf-8")
+
+        def _site_body(self, limit=16384):
+            try:
+                length = int(self.headers.get("Content-Length", "0"))
+                if not 0 < length <= limit:
+                    raise ValueError("length")
+                body = json.loads(self.rfile.read(length).decode("utf-8"))
+                if not isinstance(body, dict):
+                    raise ValueError("body")
+                return body
+            except Exception:
+                return None
+
+        def _site_user(self, db, admin=False):
+            user = _site_session_user(self.headers.get("Authorization", ""), db)
+            if not user:
+                self._json(401, {"ok": False, "error": "Sessiya talab qilinadi."})
+                return None
+            if admin and not user.get("is_admin"):
+                self._json(403, {"ok": False, "error": "Administrator huquqi kerak."})
+                return None
+            return user
+
+        def _site_api_get(self, path):
+            db = get_db()
+            imported = _ensure_site_accounts(db)
+            if imported:
+                db_save(db)
+            user = self._site_user(db, admin=path.startswith("/api/admin/"))
+            if not user:
+                return
+            if path == "/api/me":
+                return self._json(200, {"ok": True, "user": {"login": user["login"],
+                    "is_admin": bool(user.get("is_admin"))},
+                    "expires_at": _site_session_expiry(self.headers.get("Authorization", ""))})
+            if path == "/api/admin/users":
+                users = [{"login": item.get("login", key), "is_admin": bool(item.get("is_admin")),
+                          "password_changed_at": float(item.get("password_changed_at", 0))}
+                         for key, item in sorted(db.get("site_users", {}).items())]
+                return self._json(200, {"ok": True, "users": users})
+            if path == "/api/admin/audit":
+                events = [{k: event.get(k, "") for k in ("at", "action", "target", "actor")}
+                          for event in reversed(db.get("site_audit", [])[-200:]) if isinstance(event, dict)]
+                return self._json(200, {"ok": True, "events": events})
+            if path == "/api/admin/stats":
+                users = db.get("users", {})
+                from datetime import datetime, timezone, timedelta
+                today = datetime.now(timezone(timedelta(hours=5))).strftime("%Y-%m-%d")
+                return self._json(200, {"ok": True, "members": len(users),
+                    "fakultet_count": len({u.get("fakultet", "?") for u in users.values()}),
+                    "today": sum(1 for u in users.values() if u.get("sana", "").startswith(today))})
+            if path == "/api/docs":
+                docs = [{k: d[k] for k in ("name", "size", "type")} for d in _site_doc_catalog()]
+                return self._json(200, {"ok": True, "documents": docs})
+            prefix = "/api/docs/"
+            if path.startswith(prefix):
+                name = urllib.parse.unquote(path[len(prefix):])
+                if not _site_safe_doc_name(name):
+                    return self._json(404, {"ok": False, "error": "Hujjat topilmadi."})
+                item = next((d for d in _site_doc_catalog() if d["name"] == name), None)
+                if not item:
+                    return self._json(404, {"ok": False, "error": "Hujjat topilmadi."})
+                if item.get("path"):
+                    try:
+                        with open(item["path"], "rb") as f:
+                            content = f.read(25 * 1024 * 1024 + 1)
+                    except OSError:
+                        return self._json(404, {"ok": False, "error": "Hujjat topilmadi."})
+                    if len(content) > 25 * 1024 * 1024:
+                        return self._json(413, {"ok": False, "error": "Hujjat hajmi ruxsat etilgan chegaradan katta."})
+                else:
+                    content = docs_repo_bytes(name)
+                    if content is None:
+                        return self._json(404, {"ok": False, "error": "Hujjat topilmadi."})
+                self.send_response(200)
+                self.send_header("Content-Type", item["type"])
+                self.send_header("Content-Length", str(len(content)))
+                self.send_header("Cache-Control", "private, no-store")
+                self.send_header("X-Content-Type-Options", "nosniff")
+                self.send_header("Content-Disposition", "attachment; filename*=UTF-8''" + urllib.parse.quote(name))
+                origin = self.headers.get("Origin", "")
+                if origin in SITE_ALLOWED_ORIGINS:
+                    self.send_header("Access-Control-Allow-Origin", origin)
+                    self.send_header("Vary", "Origin")
+                    self.send_header("Access-Control-Allow-Methods", "GET, POST, OPTIONS")
+                    self.send_header("Access-Control-Allow-Headers", "Authorization, Content-Type")
+                self.end_headers()
+                self.wfile.write(content)
+                return
+            return self._json(404, {"ok": False, "error": "Topilmadi."})
+
+        def _site_api_post(self, path):
+            body = self._site_body()
+            if body is None:
+                return self._json(400, {"ok": False, "error": "Xato so'rov formati."})
+            db = get_db()
+            imported = _ensure_site_accounts(db)
+            if path == "/api/auth":
+                login = _site_login(body.get("login"))
+                password = body.get("password")
+                bucket = "%s:%s" % (self.client_address[0], login)
+                allowed, _wait = _site_auth_allowed(bucket)
+                if not allowed:
+                    return self._json(429, {"ok": False, "error": "Urinishlar ko'p. Biroz kutib qayta urinib ko'ring."})
+                if not _site_valid_login(login) or not isinstance(password, str) or len(password) > 1024:
+                    _site_auth_failed(bucket)
+                    if imported:
+                        db_save(db)
+                    return self._json(401, {"ok": False, "error": "Login yoki parol noto'g'ri."})
+                user = db.get("site_users", {}).get(login)
+                valid, rehash = _site_password_check(user.get("password_hash", "") if user else "", password)
+                if not user or user.get("reset_pending") or not valid:
+                    _site_auth_failed(bucket)
+                    if imported:
+                        db_save(db)
+                    return self._json(401, {"ok": False, "error": "Login yoki parol noto'g'ri."})
+                _site_auth_succeeded(bucket)
+                if rehash:
+                    user["password_hash"] = _site_hash_password(password)
+                    user["updated_at"] = time.time()
+                    _site_audit_add(db, "password_hash_upgraded", login, login)
+                user["last_login_at"] = time.time()
+                if imported or rehash:
+                    db_save(db)
+                token = _site_issue_session(login, user)
+                return self._json(200, {"ok": True, "token": token, "is_admin": bool(user.get("is_admin")),
+                    "expires_at": _site_session_expiry("Bearer " + token),
+                    "password_upgrade_required": bool(rehash and len(password) < 10)})
+            if path == "/api/activate":
+                ok, message = _site_activate(db, body.get("token", ""), body.get("password", ""))
+                if not ok:
+                    return self._json(400, {"ok": False, "error": message})
+                db_save(db)
+                return self._json(200, {"ok": True, "message": message})
+            if path == "/api/logout":
+                user = self._site_user(db)
+                if not user:
+                    return
+                with DB_LOCK:
+                    user["session_version"] = int(user.get("session_version", 0)) + 1
+                    user["updated_at"] = time.time()
+                    _site_audit_add(db, "logout", user["login"], user["login"])
+                db_save(db)
+                return self._json(200, {"ok": True})
+            if path == "/api/me/change_password":
+                user = self._site_user(db)
+                if not user:
+                    return
+                old_password, new_password = body.get("old_password"), body.get("new_password")
+                valid, _ = _site_password_check(user.get("password_hash", ""), old_password)
+                if not valid:
+                    return self._json(401, {"ok": False, "error": "Joriy parol noto'g'ri."})
+                if not isinstance(new_password, str) or not 10 <= len(new_password) <= 1024:
+                    return self._json(400, {"ok": False, "error": "Yangi parol kamida 10 belgidan iborat bo'lsin."})
+                if hmac.compare_digest(old_password, new_password):
+                    return self._json(400, {"ok": False, "error": "Yangi parol joriy paroldan farq qilishi kerak."})
+                with DB_LOCK:
+                    user["password_hash"] = _site_hash_password(new_password)
+                    user["password_changed_at"] = user["updated_at"] = time.time()
+                    user["session_version"] = int(user.get("session_version", 0)) + 1
+                    _site_audit_add(db, "password_changed", user["login"], user["login"])
+                db_save(db)
+                return self._json(200, {"ok": True, "must_relogin": True})
+            if path.startswith("/api/admin/"):
+                user = self._site_user(db, admin=True)
+                if not user:
+                    return
+                if path == "/api/admin/add_user":
+                    return self._json(403, {"ok": False, "error": "Hisobni faqat Telegram-bot administratori taklif orqali yaratadi."})
+                if path == "/api/admin/del_user":
+                    login = _site_login(body.get("login"))
+                    target = db.get("site_users", {}).get(login)
+                    if not target or target.get("is_admin"):
+                        return self._json(404, {"ok": False, "error": "Hisob topilmadi yoki himoyalangan."})
+                    with DB_LOCK:
+                        db["site_users"].pop(login, None)
+                        db.setdefault("site_deleted", {})[login] = time.time()
+                        versions = db.setdefault("site_invite_versions", {})
+                        versions[login] = int(versions.get(login, 0)) + 1
+                        for key, invitation in list(db.setdefault("site_invites", {}).items()):
+                            if invitation.get("login") == login:
+                                db["site_invites"].pop(key, None)
+                        _site_audit_add(db, "account_deleted", login, user["login"])
+                    db_save(db)
+                    return self._json(200, {"ok": True})
+                if path == "/api/admin/change_pass":
+                    login = _site_login(body.get("login"))
+                    password = body.get("new_password")
+                    target = db.get("site_users", {}).get(login)
+                    if not target or target.get("is_admin"):
+                        return self._json(404, {"ok": False, "error": "Hisob topilmadi yoki himoyalangan."})
+                    if not isinstance(password, str) or not 10 <= len(password) <= 1024:
+                        return self._json(400, {"ok": False, "error": "Yangi parol kamida 10 belgidan iborat bo'lsin."})
+                    with DB_LOCK:
+                        target["password_hash"] = _site_hash_password(password)
+                        target["password_changed_at"] = target["updated_at"] = time.time()
+                        target["session_version"] = int(target.get("session_version", 0)) + 1
+                        versions = db.setdefault("site_invite_versions", {})
+                        versions[login] = int(versions.get(login, 0)) + 1
+                        for key, invitation in list(db.setdefault("site_invites", {}).items()):
+                            if invitation.get("login") == login:
+                                db["site_invites"].pop(key, None)
+                        _site_audit_add(db, "password_reset", login, user["login"])
+                    db_save(db)
+                    return self._json(200, {"ok": True})
+                if path == "/api/admin/change_admin_pass":
+                    old_password, new_password = body.get("old_password"), body.get("new_password")
+                    valid, _ = _site_password_check(user.get("password_hash", ""), old_password)
+                    if not valid:
+                        return self._json(401, {"ok": False, "error": "Joriy parol noto'g'ri."})
+                    if not isinstance(new_password, str) or not 10 <= len(new_password) <= 1024:
+                        return self._json(400, {"ok": False, "error": "Yangi parol kamida 10 belgidan iborat bo'lsin."})
+                    with DB_LOCK:
+                        user["password_hash"] = _site_hash_password(new_password)
+                        user["password_changed_at"] = user["updated_at"] = time.time()
+                        user["session_version"] = int(user.get("session_version", 0)) + 1
+                        _site_audit_add(db, "password_changed", user["login"], user["login"])
+                    db_save(db)
+                    return self._json(200, {"ok": True, "must_relogin": True})
+                return self._json(404, {"ok": False, "error": "Topilmadi."})
+            return self._json(404, {"ok": False, "error": "Topilmadi."})
+
         def do_POST(self):
-            if self.path.split("?")[0] == "/api/admin/change_admin_pass":
-                try:
-                    n = int(self.headers.get("Content-Length", "0"))
-                    body = json.loads(self.rfile.read(n).decode("utf-8"))
-                except:
-                    return self._json(400, {"ok":False,"error":"Xato so'rov"})
-                import hashlib
-                q = urllib.parse.parse_qs(self.path.partition("?")[2])
-                token = (q.get("token") or [""])[0]
-                expected = hashlib.sha256(("rt_admin_" + str(ADMIN_IDS)).encode()).hexdigest()[:32]
-                if not token or token != expected:
-                    return self._json(403, {"ok":False,"error":"Ruxsat yo'q"})
-                old_pass = body.get("old_password","")
-                new_pass = body.get("new_password","")
-                if not old_pass or not new_pass:
-                    return self._json(400, {"ok":False,"error":"Joriy va yangi parol kerak"})
-                creds_file = os.path.join(HERE, "site_creds.json")
-                if os.path.exists(creds_file):
-                    creds = json.load(open(creds_file))
-                else:
-                    creds = [{"login":"admin","password_hash":hashlib.sha256("rtmonitor2026".encode()).hexdigest(),"is_admin":True}]
-                # Admin parolini tekshirish
-                admin_user = next((c for c in creds if c.get("is_admin")), None)
-                if not admin_user:
-                    return self._json(404, {"ok":False,"error":"Admin topilmadi"})
-                if admin_user["password_hash"] != hashlib.sha256(old_pass.encode()).hexdigest():
-                    return self._json(401, {"ok":False,"error":"Joriy parol notogri"})
-                admin_user["password_hash"] = hashlib.sha256(new_pass.encode()).hexdigest()
-                json.dump(creds, open(creds_file,"w"))
-                # admin_creds.json ni ham yangilash
-                admin_creds_file = os.path.join(HERE, "admin_creds.json")
-                admin_creds = {"login":"admin","password_hash":hashlib.sha256(new_pass.encode()).hexdigest()}
-                json.dump(admin_creds, open(admin_creds_file,"w"))
-                return self._json(200, {"ok":True})
-            if self.path.split("?")[0] == "/api/admin/add_user":
-                try:
-                    n = int(self.headers.get("Content-Length", "0"))
-                    body = json.loads(self.rfile.read(n).decode("utf-8"))
-                except:
-                    return self._json(400, {"ok":False,"error":"Xato so'rov"})
-                import hashlib
-                q = urllib.parse.parse_qs(self.path.partition("?")[2])
-                token = (q.get("token") or [""])[0]
-                expected = hashlib.sha256(("rt_admin_" + str(ADMIN_IDS)).encode()).hexdigest()[:32]
-                if not token or token != expected:
-                    return self._json(403, {"ok":False,"error":"Ruxsat yo'q"})
-                login = body.get("login","").strip()
-                password = body.get("password","").strip()
-                if not login or not password:
-                    return self._json(400, {"ok":False,"error":"Login va parol kerak"})
-                creds_file = os.path.join(HERE, "site_creds.json")
-                if os.path.exists(creds_file):
-                    creds = json.load(open(creds_file))
-                else:
-                    creds = [{"login":"admin","is_admin":True}]
-                if any(c["login"]==login for c in creds):
-                    return self._json(409, {"ok":False,"error":"Bu login allaqachon bor"})
-                creds.append({"login":login,"password_hash":hashlib.sha256(password.encode()).hexdigest(),"is_admin":False})
-                json.dump(creds, open(creds_file,"w"))
-                return self._json(200, {"ok":True})
-            if self.path.split("?")[0] == "/api/admin/del_user":
-                try:
-                    n = int(self.headers.get("Content-Length", "0"))
-                    body = json.loads(self.rfile.read(n).decode("utf-8"))
-                except:
-                    return self._json(400, {"ok":False,"error":"Xato so'rov"})
-                import hashlib
-                q = urllib.parse.parse_qs(self.path.partition("?")[2])
-                token = (q.get("token") or [""])[0]
-                expected = hashlib.sha256(("rt_admin_" + str(ADMIN_IDS)).encode()).hexdigest()[:32]
-                if not token or token != expected:
-                    return self._json(403, {"ok":False,"error":"Ruxsat yo'q"})
-                login = body.get("login","").strip()
-                creds_file = os.path.join(HERE, "site_creds.json")
-                if os.path.exists(creds_file):
-                    creds = json.load(open(creds_file))
-                else:
-                    return self._json(404, {"ok":False,"error":"Foydalanuvchi topilmadi"})
-                new_creds = [c for c in creds if c.get("login")!=login or c.get("is_admin")]
-                if len(new_creds)==len(creds):
-                    return self._json(404, {"ok":False,"error":"Foydalanuvchi topilmadi"})
-                json.dump(new_creds, open(creds_file,"w"))
-                return self._json(200, {"ok":True})
-            if self.path.split("?")[0] == "/api/admin/change_pass":
-                try:
-                    n = int(self.headers.get("Content-Length", "0"))
-                    body = json.loads(self.rfile.read(n).decode("utf-8"))
-                except:
-                    return self._json(400, {"ok":False,"error":"Xato so'rov"})
-                import hashlib
-                q = urllib.parse.parse_qs(self.path.partition("?")[2])
-                token = (q.get("token") or [""])[0]
-                expected = hashlib.sha256(("rt_admin_" + str(ADMIN_IDS)).encode()).hexdigest()[:32]
-                if not token or token != expected:
-                    return self._json(403, {"ok":False,"error":"Ruxsat yo'q"})
-                login = body.get("login","").strip()
-                new_pass = body.get("new_password","").strip()
-                if not login or not new_pass:
-                    return self._json(400, {"ok":False,"error":"Login va yangi parol kerak"})
-                creds_file = os.path.join(HERE, "site_creds.json")
-                if os.path.exists(creds_file):
-                    creds = json.load(open(creds_file))
-                else:
-                    return self._json(404, {"ok":False,"error":"Foydalanuvchi topilmadi"})
-                found = False
-                for c in creds:
-                    if c.get("login")==login and not c.get("is_admin"):
-                        c["password_hash"] = hashlib.sha256(new_pass.encode()).hexdigest()
-                        found = True
-                        break
-                if not found:
-                    return self._json(404, {"ok":False,"error":"Foydalanuvchi topilmadi"})
-                json.dump(creds, open(creds_file,"w"))
-                return self._json(200, {"ok":True})
-            if self.path.split("?")[0] == "/api/auth":
-                try:
-                    n = int(self.headers.get("Content-Length", "0"))
-                    body = json.loads(self.rfile.read(n).decode("utf-8"))
-                except:
-                    return self._json(400, {"ok":False,"error":"Xato so'rov"})
-                login = body.get("login","")
-                password = body.get("password","")
-                # Admin credentials — bot orqali o'zgartiriladi
-                import hashlib, json as _json
-                creds_file = os.path.join(HERE, "admin_creds.json")
-                if os.path.exists(creds_file):
-                    creds = _json.load(open(creds_file))
-                else:
-                    creds = {"login":"admin","password_hash":hashlib.sha256("rtmonitor2026".encode()).hexdigest()}
-                    _json.dump(creds, open(creds_file,"w"))
-                pwd_hash = hashlib.sha256(password.encode()).hexdigest()
-                # site_creds.json dan tekshirish
-                site_creds_file = os.path.join(HERE, "site_creds.json")
-                if os.path.exists(site_creds_file):
-                    site_creds = json.load(open(site_creds_file))
-                else:
-                    site_creds = [{"login":"admin","password_hash":hashlib.sha256("rtmonitor2026".encode()).hexdigest(),"is_admin":True}]
-                    json.dump(site_creds, open(site_creds_file,"w"))
-                found_user = None
-                for sc in site_creds:
-                    if sc.get("login")==login and sc.get("password_hash")==pwd_hash:
-                        found_user = sc
-                        break
-                if found_user:
-                    token = hashlib.sha256(("rt_admin_" + str(ADMIN_IDS)).encode()).hexdigest()[:32]
-                    return self._json(200, {"ok":True,"token":token,"is_admin":found_user.get("is_admin",False)})
-                # Eski admin_creds.json dan ham tekshirish
-                if login == creds.get("login","") and pwd_hash == creds.get("password_hash",""):
-                    token = hashlib.sha256(("rt_admin_" + str(ADMIN_IDS)).encode()).hexdigest()[:32]
-                    return self._json(200, {"ok":True,"token":token,"is_admin":True})
-                return self._json(401, {"ok":False,"error":"Xato login yoki parol"})
-            if self.path.split("?")[0] != "/register":
+            path = urllib.parse.urlsplit(self.path).path
+            if path in ("/api/auth", "/api/activate", "/api/logout", "/api/me/change_password",
+                        "/api/admin/add_user", "/api/admin/del_user", "/api/admin/change_pass",
+                        "/api/admin/change_admin_pass"):
+                return self._site_api_post(path)
+            if path != "/register":
                 return self._send(404, "not found", "text/plain")
             try:
                 n = int(self.headers.get("Content-Length", "0"))
@@ -1764,7 +2315,7 @@ def make_server(get_db):
                      "\n📊 Jami: %d" % len(db["users"]))
             send(uid, YAKUN.format(**yozuv), kanal_kb())
 
-    port = int(os.environ.get("PORT", "8000"))
+    port = int(os.environ.get("PORT", "8000")) if port is None else int(port)
     return ThreadingHTTPServer(("0.0.0.0", port), H)
 
 def qr_html(ev, k):
@@ -1854,7 +2405,11 @@ def update_ishla(up, db):
     tur = (msg.get("chat") or {}).get("type", "private")
     uid = (msg.get("from") or {}).get("id")
     if tur != "private":                                # guruhlarda faqat /arxiv_shu va /ulash (admin)
-        buyruq = (msg.get("text") or "").split("@")[0].strip()
+        text = (msg.get("text") or "").strip()
+        if text.split(" ", 1)[0].split("@")[0] in ("/qosh", "/sayt_admin", "/parol"):
+            tg("deleteMessage", chat_id=msg["chat"]["id"], message_id=msg.get("message_id"))
+            return
+        buyruq = text.split("@")[0].strip()
         if buyruq == "/ulash" and uid in ADMIN_IDS:      # ishchi guruh ID sini qayd etish (sozlash uchun)
             cid = msg["chat"]["id"]
             tg("deleteMessage", chat_id=cid, message_id=msg.get("message_id"))
@@ -1870,6 +2425,11 @@ def update_ishla(up, db):
                  "va havolasi hech kimga berilmasin. «Mavzular» (Topics) yoqilgan bo'lsa, har tadbir alohida "
                  "mavzuga tushadi.")
         return
+    private_text = (msg.get("text") or "").strip()
+    private_command = private_text.split(" ", 1)[0].split("@")[0]
+    if tur == "private" and uid in ADMIN_IDS and private_command in ("/qosh", "/sayt_admin", "/parol") and len(private_text.split()) >= 3:
+        # Best-effort deletion for an accidentally pasted secret; never persist or echo it.
+        tg("deleteMessage", chat_id=msg["chat"]["id"], message_id=msg.get("message_id"))
     if any(k in msg for k in ("photo", "video", "document")) and "text" not in msg:
         javob = surat_qabul(msg, db)
         if javob:
@@ -1926,13 +2486,10 @@ def demo():
     print("\nDemo yakunlandi. Bazada %d ta yozuv (%s)." % (len(db["users"]), DB_PATH))
 
 def test_new_alphabet():
-    assert yangi_alifbo("Do‘stlaringizni THE SEVEN ishtirokiga taklif qiling!") == \
-        "Döstlaringizni THE SEVEN iştirokiga taklif qiling!"
-    assert yangi_alifbo("Topishmoq, bog‘laymiz, g‘alaba, o‘yin") == \
-        "Topişmoq, boğlaymiz, ğalaba, öyin"
+    assert yangi_alifbo("Do‘stlaringizni THE SEVEN ishtirokiga taklif qiling!") ==         "Döstlaringizni THE SEVEN iştirokiga taklif qiling!"
+    assert yangi_alifbo("Topishmoq, bog‘laymiz, g‘alaba, o‘yin") ==         "Topişmoq, boğlaymiz, ğalaba, öyin"
     assert yangi_alifbo("SHART: CHAQIRISH") == "ŞART: ÇAQIRIŞ"
-    assert yangi_alifbo("<tg-spoiler>O‘yin</tg-spoiler> https://example.com/show /start") == \
-        "<tg-spoiler>Öyin</tg-spoiler> https://example.com/show /start"
+    assert yangi_alifbo("<tg-spoiler>O‘yin</tg-spoiler> https://example.com/show /start") ==         "<tg-spoiler>Öyin</tg-spoiler> https://example.com/show /start"
     markup = {"inline_keyboard": [[{"text": "Do‘stni taklif qiling",
                                     "callback_data": "theseven:confirm",
                                     "url": "https://example.com/show"}]]}
@@ -1972,7 +2529,7 @@ def test():
     test_new_alphabet()
     print("\n✅ TEST O'TDI: ro'yxat (Boshqa→erkin matn) → saqlash → holat → "
           "statistika → XLSX (uslubli) + CSV (vergul) → birlashtirish → tadbir (kanal posti, "
-          "Boraman, QR davomat, eskirgan QR, surat oynasi) → rollar (ariza, tayinlash, jamoa).")
+          "Boraman, QR davomat, eskirgan QR, surat oynasi) → rollar (ariza, tayinlaş, jamoa).")
 
 def test_v3(db):
     global ADMIN_IDS, CHANNEL
@@ -2017,7 +2574,7 @@ def test_v3(db):
     assert "Bunday buyruq yöq" in j, j
     j, _ = handle({"chat": {"id": 300003}, "text": "/help"}, db)
     assert "/rollar" not in j and "/jamoa" not in j and "rol" not in j.lower().replace("ro'yxat", ""), j
-    # 6) rollar: 17 ta, komissiya — 3 ovoz; ariza → tayinlash → jamoa → holat
+    # 6) rollar: 17 ta, komissiya — 3 ovoz; ariza → tayinlaş → jamoa → holat
     assert len(ROL) == 17 and sum(1 for r in ROL.values() if r.get("ovoz")) == 3, len(ROL)
     j, kb = handle({"chat": {"id": 100001}, "text": "/rollar"}, db)
     assert "Metodologiya komissiyasi" in j and kb["inline_keyboard"]
@@ -2103,77 +2660,9 @@ def admin_panel_handler(chat_id, matn, db):
         monitor.update("uptime", 168)
         return format_realtime_status(monitor), None
     
-    # === SAYT LOGIN/PAROL BOSHQARUV ===
-    elif matn == "/loginlar":
-        import json as _json, hashlib, os as _os
-        creds_file = _os.path.join(HERE, "site_creds.json")
-        if _os.path.exists(creds_file):
-            creds = _json.load(open(creds_file))
-        else:
-            creds = [{"login":"admin","password_hash":hashlib.sha256("rtmonitor2026".encode()).hexdigest(),"is_admin":True}]
-            _json.dump(creds, open(creds_file,"w"))
-        if not creds:
-            return "📋 Hech qanday login yo'q.", None
-        text = "📋 **Sayt loginlari:**\n\n"
-        for c in creds:
-            role = "🔑 Admin" if c.get("is_admin") else "👤 A'zo"
-            text += f"• `{c['login']}` — {role}\n"
-        text += "\n➕ Yangi qo'shish: `/qosh login parol`\n✏️ Parol o'zgartirish: `/parol login yangi_parol`\n❌ O'chirish: `/ochir login`"
-        return text, None
-    
-    elif matn.startswith("/qosh ") and chat_id in ADMIN_IDS:
-        parts = matn.split(maxsplit=2)
-        if len(parts) < 3:
-            return "❌ Format: `/qosh login parol`", None
-        login, password = parts[1].strip(), parts[2].strip()
-        import json as _json, hashlib, os as _os
-        creds_file = _os.path.join(HERE, "site_creds.json")
-        if _os.path.exists(creds_file):
-            creds = _json.load(open(creds_file))
-        else:
-            creds = [{"login":"admin","password_hash":hashlib.sha256("rtmonitor2026".encode()).hexdigest(),"is_admin":True}]
-        if any(c["login"]==login for c in creds):
-            return f"❌ `{login}` allaqachon mavjud.", None
-        creds.append({"login":login,"password_hash":hashlib.sha256(password.encode()).hexdigest(),"is_admin":False})
-        _json.dump(creds, open(creds_file,"w"))
-        return f"✅ `{login}` qo'shildi.\nLogin: `{login}`\nParol: `{password}`", None
-    
-    elif matn.startswith("/ochir ") and chat_id in ADMIN_IDS:
-        parts = matn.split(maxsplit=1)
-        if len(parts) < 2:
-            return "❌ Format: `/ochir login`", None
-        login = parts[1].strip()
-        import json as _json, hashlib, os as _os
-        creds_file = _os.path.join(HERE, "site_creds.json")
-        if not _os.path.exists(creds_file):
-            return "❌ Login topilmadi.", None
-        creds = _json.load(open(creds_file))
-        new_creds = [c for c in creds if c.get("login")!=login or c.get("is_admin")]
-        if len(new_creds)==len(creds):
-            return f"❌ `{login}` topilmadi yoki adminni o'chirib bo'lmaydi.", None
-        _json.dump(new_creds, open(creds_file,"w"))
-        return f"✅ `{login}` o'chirildi.", None
-    
-    elif matn.startswith("/parol ") and chat_id in ADMIN_IDS:
-        parts = matn.split(maxsplit=2)
-        if len(parts) < 3:
-            return "❌ Format: `/parol login yangi_parol`", None
-        login, new_pass = parts[1].strip(), parts[2].strip()
-        import json as _json, hashlib, os as _os
-        creds_file = _os.path.join(HERE, "site_creds.json")
-        if not _os.path.exists(creds_file):
-            return "❌ Login topilmadi.", None
-        creds = _json.load(open(creds_file))
-        found = False
-        for c in creds:
-            if c.get("login")==login and not c.get("is_admin"):
-                c["password_hash"] = hashlib.sha256(new_pass.encode()).hexdigest()
-                found = True
-                break
-        if not found:
-            return f"❌ `{login}` topilmadi yoki admin parolini `/parol` emas, admin paneldan o'zgartiring.", None
-        _json.dump(creds, open(creds_file,"w"))
-        return f"✅ `{login}` paroli o'zgartirildi.\nYangi parol: `{new_pass}`", None
-
+    # === SAYT HISOBLARI: bir martalik havola, parol hech qachon Telegramga yuborilmaydi ===
+    elif matn.split(" ", 1)[0] in ("/loginlar", "/qosh", "/sayt_admin", "/parol", "/ochir", "/sayt_audit"):
+        msg = {"chat": {"id": chat_id, "type": "private"}, "from": {"id": chat_id}, "text": matn}
+        return _site_account_bot_command(msg, db, matn)
     else:
         return None, None  # Not handled

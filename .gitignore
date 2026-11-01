@@ -5,6 +5,7 @@ secrets.txt
 site_session_secret.txt
 private_docs/
 *.json
+!site/manifest.json
 *.csv
 *.xlsx
 __pycache__/

@@ -17,7 +17,7 @@ import aiindeksi_bot as app
 class ReleaseSecurityTests(unittest.TestCase):
     def setUp(self):
         self.tmp=tempfile.TemporaryDirectory()
-        self.patch=patch.multiple(app, HERE=self.tmp.name, DB_PATH=os.path.join(self.tmp.name,'db.json'), GH_TOKEN='', TOKEN='', ADMIN_IDS={77001})
+        self.patch=patch.multiple(app, HERE=self.tmp.name, DB_PATH=os.path.join(self.tmp.name,'db.json'), SITE_DOCS_DIR=os.path.join(self.tmp.name,'protected_docs'), GH_TOKEN='', TOKEN='', ADMIN_IDS={77001})
         self.patch.start()
         self.db=app._bo_sh_db();self.db['site_accounts_initialized']=True
         self.server=app.make_server(lambda:self.db,port=0)
@@ -45,14 +45,17 @@ class ReleaseSecurityTests(unittest.TestCase):
     def issue(self,login='new-member',mode='member'):
         ok,link=app._site_issue_activation(self.db,login,'telegram:77001',mode)
         self.assertTrue(ok,link)
+        self.assertTrue(link.startswith('https://raqamlitadqiqot.pages.dev/activate.html#token='))
         return link.split('#token=',1)[1]
     def test_activation_once_and_no_plaintext_in_persisted_db(self):
         token=self.issue();password='Local-only-password-123'
         self.assertNotIn(token,json.dumps(self.db))
         self.assertEqual(self.call('/api/activate',{'token':token,'password':password})[0],200)
         self.assertEqual(self.call('/api/activate',{'token':token,'password':password})[0],400)
-        self.assertNotIn(password,open(app.DB_PATH).read())
-        self.assertNotIn(token,open(app.DB_PATH).read())
+        with open(app.DB_PATH, encoding='utf-8') as handle:
+            persisted = handle.read()
+        self.assertNotIn(password, persisted)
+        self.assertNotIn(token, persisted)
         self.assertEqual(self.call('/api/auth',{'login':'new-member','password':password})[0],200)
     def test_expired_and_tampered_invites_fail(self):
         token=self.issue()
@@ -103,7 +106,7 @@ class ReleaseSecurityTests(unittest.TestCase):
     def test_release_health_reports_auth_api_version(self):
         status,data=self.call('/healthz')
         self.assertEqual(status,200);self.assertEqual(data['auth_api'],2)
-        self.assertEqual(data['release'],'2026-10-14.3')
+        self.assertEqual(data['release'],'2026-11-01.1')
 
     def _member_token(self):
         app._site_create_account(self.db,'doc-reader','Reader-local-password-123','test')

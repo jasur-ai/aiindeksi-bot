@@ -1,0 +1,27 @@
+{
+  "name": "Raqamli Tadqiqot",
+  "short_name": "Raqamli Tadqiqot",
+  "description": "TDIU talabalari tashabbusi: ochiq manbalardagi AI dalillarini o‘lchash va tahlil qilish.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#E8ECF1",
+  "theme_color": "#E8ECF1",
+  "orientation": "portrait",
+  "lang": "uz",
+  "categories": ["education", "research"],
+  "icons": [
+    {
+      "src": "/apple-touch-icon.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/apple-touch-icon.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
