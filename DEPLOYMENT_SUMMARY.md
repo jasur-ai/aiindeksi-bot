@@ -1,6 +1,6 @@
 # Joylashtirish holati va tekshiruv yo'riqnomasi
 
-> **Bu deploy tasdig'i emas.** Mahalliy koddagi o'zgarishlar hech qayerga push yoki deploy qilinmagan. Jonli Cloudflare Pages yoki Render servisi ushbu nusxa bilan bir xil ekani tekshirilmagan.
+> **Holat (2026-11-01):** V2 sayt va backend integratsiyasi `fa38b8925565a41558fbfed23811b8e02f007b3e` commitida GitHub `main` ga push qilindi. Push deploy tasdig'i emas. Pushdan keyingi tekshiruvda Cloudflare Pages hali eski sahifani, Render `/healthz` esa eski javobni qaytardi; production deploy tasdiqlanmagan.
 
 ## Joriy koddagi asosiy yo'nalishlar
 
