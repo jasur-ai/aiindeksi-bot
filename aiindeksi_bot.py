@@ -208,6 +208,7 @@ HELP_MATN = (
 # Qoidalar: (1) GitHub'dan o'qilmaguncha unga HECH QACHON yozilmaydi (bo'sh baza bilan
 # ustiga yozib yuborish xavfi yo'q); (2) sha to'qnashuvi bo'lsa — birlashtirib qayta yoziladi;
 # (3) /bekor bilan o'chirilganlar "deleted" ro'yxatida turadi, birlashtirishda tirilmaydi.
+# event_state is omitted intentionally: only confirmed THE SEVEN registrations sync.
 PERSIST = ("users", "state", "counter", "deleted", "events", "ev_counter", "roles", "rol_ariza", "cfg", "event_registrations", "event_deleted", "legacy_event_history", "site_users", "site_invites", "site_invite_versions", "site_audit", "site_accounts_initialized", "site_deleted")
 REF = {}   # chat_id → (deep-link kodi, vaqt): «/start afisha» → manba «bot:afisha» (faqat xotirada, 24 soat)
 
@@ -621,13 +622,26 @@ def kanal_kb():
         return {"inline_keyboard": [[{"text": "📣 Kanalga a'zo bo'ling", "url": kanal_url()}]]}
     return KB_YOQ
 
+def kanal_theseven_kb():
+    url = kanal_url() or "https://t.me/Raqamli_tadqiqot"
+    return {"inline_keyboard": [[
+        {"text": "📣 Kanalga obuna böling", "url": url},
+        {"text": "✅ Obuna böldim", "callback_data": "theseven:check_subscribe"},
+    ]]}
+
 def kanal_azosi(uid):
+    """True = a'zo, False = a'zo emas, None = Telegram API javobi olinmadi."""
     if not CHANNEL or not TOKEN:
         return True
     r = tg("getChatMember", chat_id=CHANNEL, user_id=uid)
-    if r is None:   # bot kanal a'zosi/admin emas yoki tarmoq xatosi -> to'siqni ochiq qoldiramiz
+    if not isinstance(r, dict):
+        return None
+    status = r.get("status")
+    if status in ("member", "administrator", "creator"):
         return True
-    return r.get("status") in ("member", "administrator", "creator", "restricted")
+    if status == "restricted":
+        return bool(r.get("is_member", False))
+    return False
 
 # ─────────────────────────── EXPORT (CSV + XLSX) ───────────────────────────
 def _xml(t):
@@ -796,20 +810,43 @@ def statlar(db):
     q += ["  • %s — %d" % (k, v) for k, v in sorted(manba.items(), key=lambda kv: -kv[1])]
     return "\n".join(q), None
 
-def flood_guard(chat_id, db):
+EVENT_FLOOD_LIMIT = 18
+EVENT_FLOOD_WINDOW = 60
+EVENT_FLOOD_COOLDOWN = 30
+
+
+def flood_guard(chat_id, db, event_flow=False, starting_event=False):
     if TEST or DEMO:
         return False, False
-    """60 soniyada 6+ xabar → 10 daqiqalik tanaffus (spam/flood himoyasi)."""
     now = time.time()
+    uid = str(chat_id)
+    if event_flow:
+        # THE SEVEN qadamlari umumiy xabar limitiga qo'shilmaydi; oqim uchun yumşoq limit bor.
+        if starting_event:
+            general = db.setdefault("flood", {})
+            general.setdefault("cool", {}).pop(uid, None)
+            general[uid] = []
+        flow = db.setdefault("event_flood", {})
+        cooldowns = flow.setdefault("cool", {})
+        if cooldowns.get(uid, 0) > now:
+            return True, False
+        arr = [t for t in flow.setdefault(uid, []) if now - t < EVENT_FLOOD_WINDOW]
+        if len(arr) >= EVENT_FLOOD_LIMIT:
+            cooldowns[uid] = now + EVENT_FLOOD_COOLDOWN
+            return True, False
+        arr.append(now)
+        flow[uid] = arr[-EVENT_FLOOD_LIMIT:]
+        return False, False
+
     fl = db.setdefault("flood", {})
-    cool = fl.get("cool", {})
-    if cool.get(str(chat_id), 0) > now:
-        return False, True          # sovutish davri: jim o'tkazamiz
-    arr = [t for t in fl.setdefault(str(chat_id), []) if now - t < 60]
+    cool = fl.setdefault("cool", {})
+    if cool.get(uid, 0) > now:
+        return False, True
+    arr = [t for t in fl.setdefault(uid, []) if now - t < 60]
     arr.append(now)
-    fl[str(chat_id)] = arr[-8:]
+    fl[uid] = arr[-8:]
     if len(arr) >= 6:
-        cool[str(chat_id)] = now + 600
+        cool[uid] = now + 600
         return True, False
     return False, False
 
@@ -892,8 +929,16 @@ def handle(msg, db):
         handled = _site_account_bot_command(msg, db, matn)
         if handled is not None:
             return handled
-    blok, jim = flood_guard(chat_id, db)
+    event_deep_link = matn == "/start" and deep in (
+        signup.EVENT_DEEP_LINK, *signup.EVENT_DEEP_LINK_ALIASES)
+    active_event_flow = str(chat_id) in db.get("event_state", {})
+    event_flow = event_deep_link or active_event_flow
+    blok, jim = flood_guard(chat_id, db, event_flow=event_flow,
+                            starting_event=event_deep_link)
     if blok:
+        if event_flow:
+            return ("⏳ Juda köp urinish böldi. 30 soniyadan söng davom eting — "
+                    "arizangiz saqlanadi, /start ni qayta yuboriş şart emas.", None)
         return ("⏳ Juda tez yozyapsiz. Iltimos, 10 daqiqadan keyin "
                 "qayta urinib ko'ring.", None)
     if jim:
@@ -920,10 +965,13 @@ def handle(msg, db):
     if matn == "/start" and deep in (signup.EVENT_DEEP_LINK, *signup.EVENT_DEEP_LINK_ALIASES):
         if msg.get("chat", {}).get("type", "private") != "private":
             return "Röyxatdan ötiş uçun bot bilan şaxsiy suhbatni oçing.", None
-        if chat_id not in ADMIN_IDS and not kanal_azosi(chat_id):
-            return ("Avval klub kanaliga a’zo böling, söng röyxatdan öting.",
-                    {"inline_keyboard": [[{"text": "📣 Kanalga qoşiliş",
-                                            "url": kanal_url() or "https://t.me/Raqamli_tadqiqot"}]]})
+        if chat_id not in ADMIN_IDS:
+            membership = kanal_azosi(chat_id)
+            if membership is not True:
+                text = ("Avval klub kanaliga obuna böling, söng «Obuna böldim» tugmasini bosing."
+                        if membership is False else
+                        "A’zolikni hozir tekşirib böilmadi. Birozdan söng «Obuna böldim» tugmasini bosing.")
+                return text, kanal_theseven_kb()
         return signup.start(chat_id, db)
 
     if matn == "/rollar":                                   # ICHKI: faqat tashkilotchilar
@@ -946,7 +994,7 @@ def handle(msg, db):
     if matn == "/start":
         pref = ("🛡 Siz ADMIN sifatida tanildingiz: /statlar, /royxat, /export, /elon, /tadbirlar, /jamoa faol.\n\n"
                 if chat_id in ADMIN_IDS else "")
-        if chat_id not in ADMIN_IDS and not kanal_azosi(chat_id):
+        if chat_id not in ADMIN_IDS and kanal_azosi(chat_id) is False:
             return ("Avval klub kanaliga a'zo bo'ling — e'lonlar va tadbir "
                     "chaqiruvlari shu yerda:\n\n" + (kanal_url() or CHANNEL) +
                     "\n\nQo'shilib, /start ni qayta yuboring.",
@@ -1496,7 +1544,39 @@ def callback(cq, db):
     uid = (cq.get("from") or {}).get("id")
     m = cq.get("message") or {}
     toast, yangi, kb = "", None, None
-    if data.startswith("rsvp:"):
+    edited_gate_message = False
+    membership_callback = data in ("theseven:check_subscribe", "yoqolganxarita:check_subscribe")
+    if membership_callback and TOKEN and cq.get("id"):
+        tg("answerCallbackQuery", callback_query_id=cq["id"], text="A’zolik tekşirilmoqda…")
+    if membership_callback:
+        membership = kanal_azosi(uid)
+        if membership is True:
+            yangi, kb = signup.start(uid, db)
+            toast = "A’zolik tasdiqlandi. Davom eting."
+        elif membership is False:
+            yangi, kb = ("Hozirça kanal a’zoligi körinmayapti. Kanalga obuna bölib, "
+                         "şu tugmani yana bosing.", kanal_theseven_kb())
+            toast = "Avval kanalga obuna böling."
+        else:
+            yangi, kb = ("A’zolikni tekşirish vaqtinça işlamadi. Birozdan söng «Obuna böldim» "
+                         "tugmasini yana bosing.", kanal_theseven_kb())
+            toast = "Tekşirish işlamadi; qayta urinib köring."
+        if TOKEN and m and m.get("chat") and m.get("message_id"):
+            has_inline_keyboard = isinstance(kb, dict) and "inline_keyboard" in kb
+            if m.get("text") == yangi and has_inline_keyboard:
+                edited_gate_message = True
+            else:
+                edit_markup = kb if has_inline_keyboard else {"inline_keyboard": []}
+                edit_text = yangi if has_inline_keyboard else "A’zolik tasdiqlandi. Davom eting."
+                result = tg("editMessageText", chat_id=m["chat"]["id"],
+                            message_id=m["message_id"], text=edit_text, parse_mode="HTML",
+                            disable_web_page_preview=True,
+                            reply_markup=json.dumps(edit_markup, ensure_ascii=False))
+                if result is not None:
+                    edited_gate_message = True
+                    if not has_inline_keyboard and yangi:
+                        send(uid, yangi, kb)
+    elif data.startswith("rsvp:"):
         ev = db["events"].get(data[5:])
         if not ev or ev["holat"] == "yakun":
             toast = "Bu tadbir yakunlangan."
@@ -1518,9 +1598,9 @@ def callback(cq, db):
     # ═════ ADMIN PANEL CALLBACKS ═════
     elif data.startswith("admin:") and uid in ADMIN_IDS:
         yangi, kb = _admin_panel_callback(uid, data[6:], db)
-    if TOKEN and cq.get("id"):
+    if TOKEN and cq.get("id") and not membership_callback:
         tg("answerCallbackQuery", callback_query_id=cq["id"], text=toast[:190])
-    if yangi and TOKEN and uid:
+    if yangi and TOKEN and uid and not edited_gate_message:
         send(uid, yangi, kb)
     return toast, yangi, kb
 
@@ -2499,6 +2579,123 @@ def test_new_alphabet():
     assert out["url"] == "https://example.com/show"
 
 
+def test_theseven_flow():
+    global ADMIN_IDS, CHANNEL, TOKEN, TEST, tg
+    old_admins, old_channel, old_token, old_test, old_tg = ADMIN_IDS, CHANNEL, TOKEN, TEST, tg
+    try:
+        ADMIN_IDS, CHANNEL, TOKEN, TEST = set(), "@Raqamli_tadqiqot", "test-token", False
+        membership = {"result": {"status": "left"}}
+        api_calls = []
+
+        def fake_tg(method, **kw):
+            api_calls.append((method, kw))
+            if method == "getChatMember":
+                return membership["result"]
+            if method in ("editMessageText", "answerCallbackQuery", "sendMessage"):
+                return {"ok": True}
+            return None
+
+        tg = fake_tg
+        uid = 912345
+        db = _bo_sh_db()
+        db.setdefault("flood", {})[str(uid)] = [time.time() - 1] * 6
+        db["flood"].setdefault("cool", {})[str(uid)] = time.time() + 600
+        initial_snapshot = _snapshot(db)
+        gate, gate_kb = handle({"chat": {"id": uid, "type": "private"},
+                                "text": "/start theseven"}, db)
+        buttons = gate_kb["inline_keyboard"][0]
+        assert len(buttons) == 2 and buttons[1]["callback_data"] == "theseven:check_subscribe"
+        assert buttons[1]["text"] == "✅ Obuna böldim"
+        assert str(uid) not in db["flood"].get("cool", {})
+        assert "10 daqiqadan keyin" not in gate
+        assert _snapshot(db) == initial_snapshot
+
+        def click_check(message_text):
+            return callback({"id": "cb-test", "data": "theseven:check_subscribe",
+                             "from": {"id": uid},
+                             "message": {"chat": {"id": uid}, "message_id": 77,
+                                         "text": message_text}}, db)
+
+        call_start = len(api_calls)
+        _, not_member_text, not_member_kb = click_check(gate)
+        check_calls = [method for method, _ in api_calls[call_start:]]
+        assert check_calls[0] == "answerCallbackQuery" and check_calls[1] == "getChatMember"
+        assert "a’zoligi" in not_member_text.lower() and not_member_kb["inline_keyboard"]
+        assert str(uid) not in db["event_state"]
+
+        membership["result"] = None
+        _, api_error_text, api_error_kb = click_check(not_member_text)
+        assert "vaqtinça" in api_error_text and api_error_kb["inline_keyboard"]
+        assert kanal_azosi(uid) is None
+
+        membership["result"] = {"status": "member"}
+        _, consent_text, consent_kb = click_check(api_error_text)
+        assert "THE SEVEN" in consent_text
+        assert consent_kb["inline_keyboard"][0][0]["callback_data"] == "theseven:consent"
+        assert str(uid) not in db["event_state"]
+        assert _snapshot(db) == initial_snapshot
+
+        resume_uid = uid + 4
+        resume_db = _bo_sh_db()
+        resume_db["event_state"][str(resume_uid)] = {
+            "step": "phone", "started_at": time.time(), "updated_at": time.time(),
+            "telefon": "", "consent_at": "2026-11-02 10:00",
+        }
+        callback({"id": "resume-test", "data": "theseven:check_subscribe",
+                  "from": {"id": resume_uid},
+                  "message": {"chat": {"id": resume_uid}, "message_id": 88,
+                              "text": "Avval kanalga obuna bo‘ling."}}, resume_db)
+        edit_call = next(kw for method, kw in reversed(api_calls) if method == "editMessageText")
+        assert json.loads(edit_call["reply_markup"]) == {"inline_keyboard": []}
+        send_call = next(kw for method, kw in reversed(api_calls)
+                         if method == "sendMessage" and kw.get("chat_id") == resume_uid)
+        assert json.loads(send_call["reply_markup"])["keyboard"][0][0]["request_contact"] is True
+        assert resume_db["event_state"][str(resume_uid)]["step"] == "phone"
+
+        callback({"id": "consent-test", "data": "theseven:consent",
+                  "from": {"id": uid}, "message": {"chat": {"id": uid}}}, db)
+        assert db["event_state"][str(uid)]["step"] == "phone"
+        for _ in range(7):
+            reply, _ = handle({"chat": {"id": uid}, "text": "raqamni matn qilib yubordim"}, db)
+            assert "10 daqiqadan keyin" not in (reply or "")
+        resume, _ = handle({"chat": {"id": uid}, "text": "/start yoqolganxarita"}, db)
+        assert "kontakt" in resume.lower() and db["event_state"][str(uid)]["step"] == "phone"
+
+        contact_msg = {"chat": {"id": uid}, "from": {"id": uid, "username": "test_user"},
+                       "contact": {"user_id": uid, "phone_number": "+998901234567"}}
+        handle(contact_msg, db)
+        handle({"chat": {"id": uid}, "text": "Zuhra Karimova", "from": {"id": uid}}, db)
+        handle({"chat": {"id": uid}, "text": "2", "from": {"id": uid}}, db)
+        handle({"chat": {"id": uid}, "text": "DI-12", "from": {"id": uid}}, db)
+        assert db["event_state"][str(uid)]["step"] == "confirm"
+        assert _snapshot(db) == initial_snapshot
+        callback({"id": "confirm-test", "data": "theseven:confirm",
+                  "from": {"id": uid}, "message": {"chat": {"id": uid}}}, db)
+        assert str(uid) in db["event_registrations"] and _snapshot(db) != initial_snapshot
+        duplicate, _, _ = callback({"id": "confirm-again", "data": "theseven:confirm",
+                                    "from": {"id": uid}}, db)
+        assert "allaqaçon" in duplicate
+
+        alias_db = _bo_sh_db()
+        alias_text, _ = handle({"chat": {"id": uid + 1, "type": "private"},
+                               "text": "/start yoqolganxarita"}, alias_db)
+        assert "THE SEVEN" in alias_text
+        assert signup.EVENT_DEEP_LINK == "theseven" and "yoqolganxarita" in signup.EVENT_DEEP_LINK_ALIASES
+
+        limiter_db = {}
+        for _ in range(EVENT_FLOOD_LIMIT):
+            assert flood_guard(uid + 2, limiter_db, event_flow=True) == (False, False)
+        blocked, _ = flood_guard(uid + 2, limiter_db, event_flow=True)
+        assert blocked and limiter_db["event_flood"]["cool"][str(uid + 2)] > time.time()
+        normal_db = {}
+        for _ in range(5):
+            assert flood_guard(uid + 3, normal_db) == (False, False)
+        assert flood_guard(uid + 3, normal_db) == (True, False)
+        print("✅ THE SEVEN: a’zolik callbacki, API xatosi, alias, flood va yakuniy saqlash testlari ötdi")
+    finally:
+        ADMIN_IDS, CHANNEL, TOKEN, TEST, tg = old_admins, old_channel, old_token, old_test, old_tg
+
+
 def test():
     db = _bo_sh_db()
     ketma = ["/start", "Aliyeva Malika Rashidovna", "Boshqa",
@@ -2527,6 +2724,7 @@ def test():
     assert set(m["users"]) == {"1", "3"} and m["counter"] == 3, m
     test_v3(db)
     test_new_alphabet()
+    test_theseven_flow()
     print("\n✅ TEST O'TDI: ro'yxat (Boshqa→erkin matn) → saqlash → holat → "
           "statistika → XLSX (uslubli) + CSV (vergul) → birlashtirish → tadbir (kanal posti, "
           "Boraman, QR davomat, eskirgan QR, surat oynasi) → rollar (ariza, tayinlaş, jamoa).")

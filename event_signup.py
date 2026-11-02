@@ -58,6 +58,30 @@ def _clean(value, limit=100):
     return value.replace("<", "").replace(">", "")[:limit]
 
 
+def _confirmation_text(state):
+    tail = state.get("telefon", "")[-4:]
+    phone_mask = ("•••• " + tail) if tail else "yaşirilgan"
+    return (
+        "🧾 Ma’lumotlaringizni tekşiring:\n"
+        "👤 %s\n🎓 %s-kurs\n👥 %s-guruh\n📱 %s\n\n"
+        "Hammasi töğri bölsa, iştirokni tasdiqlang."
+        % (html.escape(state.get("ism", "")), html.escape(state.get("kurs", "")),
+           html.escape(state.get("guruh", "")), phone_mask)
+    )
+
+
+def _resume(state):
+    prompts = {
+        "phone": ("📱 Telefon raqamingizni yuboriş uçun «Telefon raqamimni ulaşiş» "
+                  "tugmasini bosing. Faqat öz Telegram kontaktingiz qabul qilinadi.", KB_CONTACT),
+        "ism": ("✍️ Ism-familiyangizni töliq yozing:", KB_REMOVE),
+        "kurs": ("🎓 Kursingizni tanlang:", KB_COURSE),
+        "guruh": ("👥 Guruhingizni yozing:", KB_REMOVE),
+        "confirm": (_confirmation_text(state), KB_CONFIRM),
+    }
+    return prompts.get(state.get("step"), (None, None))
+
+
 def start(chat_id, db, now=None):
     now = time.time() if now is None else now
     prune(db, now=now)
@@ -67,7 +91,12 @@ def start(chat_id, db, now=None):
     if uid in db.setdefault("event_registrations", {}):
         return ("✅ Siz bu tadbirga allaqaçon röyxatdan ötgansiz. "
                 "Yozuvni bekor qiliş uçun /bekor_theseven buyruğini yuboring."), KB_REMOVE
-    db.setdefault("event_state", {}).pop(uid, None)
+    active = db.setdefault("event_state", {}).get(uid)
+    if active:
+        resume_text, resume_kb = _resume(active)
+        if resume_text:
+            return resume_text, resume_kb
+        db["event_state"].pop(uid, None)
     return (
         "📚 <b>THE SEVEN: Sirli arxiv kvestiga röyxatdan ötiş</b>\n\n"
         "📅 7-noyabr 2026 · 14:30\n"
@@ -110,6 +139,8 @@ def callback(uid, data, db, now=None, courses=None):
             "Faqat öz Telegram kontaktingiz qabul qilinadi.", KB_CONTACT,
         )
     if data == "theseven:confirm":
+        if uid_s in registrations:
+            return "✅ Siz bu tadbirga allaqaçon röyxatdan ötgansiz.", KB_REMOVE
         state = states.get(uid_s)
         if not state or state.get("step") != "confirm":
             return "Röyxatdan ötiş qadami topilmadi. Botdagi havoladan qayta boşlang.", KB_REMOVE
@@ -174,16 +205,7 @@ def step(msg, db, now=None, courses=None):
         if len(group) < 1:
             return "Guruhingizni kiriting.", None
         state.update({"guruh": group, "step": "confirm", "updated_at": now})
-        tail = state.get("telefon", "")[-4:]
-        phone_mask = ("•••• " + tail) if tail else "yaşirilgan"
-        summary = (
-            "🧾 Ma’lumotlaringizni tekşiring:\n"
-            "👤 %s\n🎓 %s-kurs\n👥 %s-guruh\n📱 %s\n\n"
-            "Hammasi töğri bölsa, iştirokni tasdiqlang."
-            % (html.escape(state.get("ism", "")),
-               html.escape(state.get("kurs", "")), html.escape(state.get("guruh", "")), phone_mask)
-        )
-        return summary, KB_CONFIRM
+        return _confirmation_text(state), KB_CONFIRM
     if current == "confirm":
         return "Ma’lumotlarni tekşirib, «Iştirokni tasdiqlayman» tugmasini bosing.", KB_CONFIRM
     return "Röyxatdan ötiş qadami topilmadi. Qayta boşlaş uçun botdagi havolani bosing.", KB_REMOVE
