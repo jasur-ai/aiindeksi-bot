@@ -187,6 +187,7 @@ ADMIN_HELP = (
     "/rollar (rollar va ariza), /jamoa (bandlik), /rol N rol (tayinlaş)\n"
     "Tadbirlar: kanalga #tadbir heştegli post → a'zolarga avtomatik xabar; /tadbirlar, /tadbir N, "
     "/tadbir_boshlash N (QR ekrani), /tadbir_yakun N, /tadbir_yangi Nomi\n"
+    "/kanal_tugma ID | Matn | HTTPS-havola [|| Matn | HTTPS-havola] — post tugmalarining töliq röyxatini yangilaydi (eskilari almashtiriladi).\n"
     "Sayt hisoblari (faqat şaxsiy chatda): /loginlar, /qosh login, /sayt_admin login, /parol login, /ochir login, /sayt_audit. Parolni buyruqda yubormang."
 )
 HELP_MATN = (
@@ -1059,6 +1060,50 @@ def handle(msg, db):
                     "Telefonda tez ko'rish: /royxat · CSV kerak bo'lsa: /export csv\n%s"
                     % (len(db["users"]), baza_holati()), None)
         return statlar(db)
+    if matn.split(" ", 1)[0].split("@")[0] == "/kanal_tugma":
+        if msg.get("from", {}).get("id") not in ADMIN_IDS or msg.get("chat", {}).get("type", "private") != "private":
+            return "Bu buyruq faqat administratorning şaxsiy suhbatida işlaydi.", None
+        if not CHANNEL:
+            return "Kanal sozlanmagan; avval kanalni sozlang.", None
+        args = matn.partition(" ")[2].strip()
+        post_id_text, sep, button_specs = args.partition("|")
+        if not sep or not post_id_text.strip():
+            return ("Foydalanış: /kanal_tugma ID | Tugma matni | https://havola "
+                    "[|| Ikkinçi tugma | https://havola]\n"
+                    "Bu buyruq postdagi barcha inline tugmalarni almashtiradi; saqlamoqçi "
+                    "tugmalarni ham röyxatga kiriting.", None)
+        try:
+            post_id = int(post_id_text.strip())
+        except ValueError:
+            return "Post ID faqat raqam bölişi kerak.", None
+        rows = []
+        for spec in button_specs.split("||"):
+            label, sep, url = spec.partition("|")
+            label, url = label.strip(), url.strip()
+            if not sep or not label or len(label) > 64:
+                return "Har bir tugma: matn | havola bölişi, matn 64 belgidan oşmasin.", None
+            try:
+                parsed = urllib.parse.urlsplit(url)
+                parsed.port  # Force validation of any explicit port.
+            except ValueError:
+                parsed = None
+            if (not parsed or parsed.scheme != "https" or not parsed.hostname or
+                    parsed.username or parsed.password or len(url) > 1024 or
+                    any(ch.isspace() or ord(ch) < 32 or ord(ch) == 127 for ch in url)):
+                return "Faqat yaroqli HTTPS havolalar qabul qilinadi.", None
+            rows.append([{"text": label, "url": url}])
+            if len(rows) > 8:
+                return "Bir postga köpi bilan 8 ta tugma qöşing.", None
+        if not rows:
+            return "Kamida bitta tugma kiriting.", None
+        result = tg("editMessageReplyMarkup", chat_id=CHANNEL, message_id=post_id,
+                    reply_markup=json.dumps({"inline_keyboard": rows}, ensure_ascii=False))
+        if result:
+            return ("✅ Post tugmalari yangilandi. Avvalgi inline tugmalar almashtirildi; "
+                    "keraklilarini ham kiritganingizni tekşiring."), None
+        return ("⚠️ Tugmalar yangilanmadi. Post ID va botning kanaldagi administrator "
+                "huquqini tekşiring.", None)
+
     if matn.startswith("/elon"):
         if chat_id not in ADMIN_IDS:
             return "⛭ Bu buyruq faqat klub administratori uchun.", None
@@ -2696,6 +2741,43 @@ def test_theseven_flow():
         ADMIN_IDS, CHANNEL, TOKEN, TEST, tg = old_admins, old_channel, old_token, old_test, old_tg
 
 
+def test_channel_inline_button_command():
+    global ADMIN_IDS, CHANNEL, TOKEN, TEST, tg
+    old_admins, old_channel, old_token, old_test, old_tg = ADMIN_IDS, CHANNEL, TOKEN, TEST, tg
+    try:
+        ADMIN_IDS, CHANNEL, TOKEN, TEST = {12345}, "@Raqamli_tadqiqot", "test-token", False
+        calls = []
+
+        def fake_tg(method, **kw):
+            calls.append((method, kw))
+            return True
+
+        tg = fake_tg
+        command = ("/kanal_tugma 44 | 📝 Röyxatdan ötiş | "
+                   "https://t.me/aiindeksi_bot?start=theseven || "
+                   "▶️ YouTube’da tomosha qilish | https://youtu.be/abc123")
+        reply, _ = handle({"chat": {"id": 12345, "type": "private"},
+                           "from": {"id": 12345}, "text": command}, _bo_sh_db())
+        method, kw = calls[-1]
+        assert method == "editMessageReplyMarkup" and kw["message_id"] == 44
+        markup = json.loads(kw["reply_markup"])["inline_keyboard"]
+        assert len(markup) == 2 and markup[0][0]["url"].endswith("start=theseven")
+        assert markup[1][0]["url"] == "https://youtu.be/abc123"
+        assert "yangilandi" in reply.lower()
+
+        before = len(calls)
+        bad, _ = handle({"chat": {"id": 12345, "type": "private"},
+                         "from": {"id": 12345},
+                         "text": "/kanal_tugma 44 | X | http://example.com"}, _bo_sh_db())
+        assert "HTTPS" in bad and len(calls) == before
+        denied, _ = handle({"chat": {"id": 999, "type": "private"},
+                            "from": {"id": 999}, "text": command}, _bo_sh_db())
+        assert "administrator" in denied.lower() and len(calls) == before
+        print("✅ /kanal_tugma: admin ruxsati, mavjud röyxatdan ötiş CTA’si, URL tekshiruvi va tugma yangilash testi ötdi")
+    finally:
+        ADMIN_IDS, CHANNEL, TOKEN, TEST, tg = old_admins, old_channel, old_token, old_test, old_tg
+
+
 def test():
     db = _bo_sh_db()
     ketma = ["/start", "Aliyeva Malika Rashidovna", "Boshqa",
@@ -2725,6 +2807,7 @@ def test():
     test_v3(db)
     test_new_alphabet()
     test_theseven_flow()
+    test_channel_inline_button_command()
     print("\n✅ TEST O'TDI: ro'yxat (Boshqa→erkin matn) → saqlash → holat → "
           "statistika → XLSX (uslubli) + CSV (vergul) → birlashtirish → tadbir (kanal posti, "
           "Boraman, QR davomat, eskirgan QR, surat oynasi) → rollar (ariza, tayinlaş, jamoa).")
